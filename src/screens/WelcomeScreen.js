@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import Lottie from 'lottie-react';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import welcomeAnimation from '../../assets/images/welcome.json';
-import { LinearGradient } from 'expo-linear-gradient';
 const { width, height } = Dimensions.get("screen"); // use screen height
 
 export default function WelcomeScreen() {
@@ -42,7 +42,7 @@ export default function WelcomeScreen() {
                 )
             )}
 
-            <TouchableOpacity style={styles.button} onPress={() => alert("Started!")}>
+            <TouchableOpacity style={styles.button} onPress={() => router.push("/onboarding")}>
                 <Text style={styles.buttonText}>Get Started</Text>
             </TouchableOpacity>
         </View>
