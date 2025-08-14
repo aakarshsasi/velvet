@@ -1,17 +1,34 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 export default function HomeScreen() {
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [userProfile, setUserProfile] = useState(null);
+
+  useEffect(() => {
+    loadUserProfile();
+  }, []);
+
+  const loadUserProfile = async () => {
+    try {
+      const profileData = await AsyncStorage.getItem('userProfile');
+      if (profileData) {
+        setUserProfile(JSON.parse(profileData));
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
+  };
 
   const categories = [
     { id: 'soft-domination', name: 'Soft Domination', icon: '👑', color: '#8B5CF6' },
@@ -97,7 +114,11 @@ export default function HomeScreen() {
         <View style={styles.brandSection}>
           <Text style={styles.brandSubtitle}>velvet</Text>
           <Text style={styles.brandTitle}>Velvet</Text>
-          <Text style={styles.tagline}>Your fantasy, your rules</Text>
+          {userProfile ? (
+            <Text style={styles.personaText}>Welcome back, {userProfile.persona} ✨</Text>
+          ) : (
+            <Text style={styles.tagline}>Play deeper. Love bolder.</Text>
+          )}
         </View>
         <TouchableOpacity style={styles.profileButton}>
           <Text style={styles.profileIcon}>👤</Text>
@@ -248,6 +269,12 @@ const styles = StyleSheet.create({
     color: '#D1D5DB',
     fontFamily: 'System',
     fontStyle: 'italic',
+  },
+  personaText: {
+    fontSize: 16,
+    color: '#EC4899',
+    fontFamily: 'System',
+    fontWeight: '600',
   },
   profileButton: {
     width: 40,
