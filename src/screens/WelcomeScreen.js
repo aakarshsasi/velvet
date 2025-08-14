@@ -73,24 +73,26 @@ export default function WelcomeScreen() {
       ])
     ).start();
 
-    // Shimmer effect
+    // Shimmer effect - optimized for cross-device compatibility
     Animated.loop(
-      Animated.timing(shimmerAnim, {
-        toValue: 1,
-        duration: 2500,
-        useNativeDriver: true,
-      })
+      Animated.sequence([
+        Animated.timing(shimmerAnim, {
+          toValue: 1,
+          duration: 3000, // Slightly slower for better performance
+          useNativeDriver: true,
+        }),
+        Animated.timing(shimmerAnim, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+      ])
     ).start();
   };
 
   const handleGetStarted = () => {
     router.push('/onboarding');
   };
-
-  const shimmerTranslateX = shimmerAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-width, width],
-  });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -232,10 +234,20 @@ export default function WelcomeScreen() {
                 style={[
                   styles.shimmer,
                   {
-                    transform: [{ translateX: shimmerTranslateX }],
+                    transform: [{ translateX: shimmerAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [-200, 250],
+                    }) }],
                   },
                 ]}
-              />
+              >
+                <LinearGradient
+                  colors={['transparent', 'rgba(255, 255, 255, 0.3)', 'transparent']}
+                  style={styles.shimmerGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                />
+              </Animated.View>
               
               <Text style={styles.buttonText}>Begin Your Journey</Text>
               <Text style={styles.buttonSubtext}>Discover what awaits</Text>
@@ -278,13 +290,15 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingTop: 60,
+    paddingBottom: 40,
     paddingHorizontal: 32,
   },
   logoSection: {
     alignItems: 'center',
-    marginBottom: 48,
+    marginTop: 20,
   },
   brandTitleContainer: {
     marginBottom: 16,
@@ -324,7 +338,7 @@ const styles = StyleSheet.create({
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 48,
+    marginVertical: 20,
     width: 200,
   },
   dividerLine: {
@@ -340,8 +354,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   featurePreview: {
-    marginBottom: 48,
     width: '100%',
+    marginVertical: 20,
   },
   featureRow: {
     flexDirection: 'row',
@@ -374,8 +388,8 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   buttonContainer: {
-    marginBottom: 48,
     width: '100%',
+    marginVertical: 20,
   },
   button: {
     borderRadius: 50,
@@ -398,8 +412,18 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    // Ensure compatibility across different device densities
+    zIndex: 1,
+  },
+  shimmerGradient: {
+    width: 200,
+    height: '100%',
     transform: [{ skewX: '-20deg' }],
+    borderRadius: 0,
+    position: 'absolute',
+    left: 0,
+    // Ensure smooth rendering on all devices
+    backfaceVisibility: 'hidden',
   },
   buttonText: {
     fontSize: 20,
@@ -414,8 +438,8 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   footer: {
-    marginTop: 32,
     alignItems: 'center',
+    marginTop: 20,
   },
   footerText: {
     fontSize: 16,
