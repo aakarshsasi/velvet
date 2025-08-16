@@ -21,18 +21,100 @@ export default function ProfileResultScreen() {
   const [fadeAnim] = useState(new Animated.Value(0));
   const [slideAnim] = useState(new Animated.Value(50));
   const [userProfile, setUserProfile] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   
   // New animation refs for enhanced effects
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const glowAnim = useRef(new Animated.Value(0)).current;
   const shimmerAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
-  const rotateAnim = useRef(new Animated.Value(0)).current;
+  const progressAnim = useRef(new Animated.Value(0)).current;
+
+  const loadingMessages = [
+    "Processing your responses...",
+    "Calculating compatibility...",
+    "Setting up personalised decks...",
+    "Generating insights...",
+    "Almost ready..."
+  ];
 
   useEffect(() => {
     loadUserProfile();
-    startEnhancedAnimations();
+    startLoadingAnimation();
   }, []);
+
+  const startLoadingAnimation = () => {
+    // Generate random progress steps
+    const generateRandomProgress = (min, max) => {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    const loadingSteps = [
+      { progress: generateRandomProgress(15, 25), messageIndex: 0, delay: 0 },
+      { progress: generateRandomProgress(35, 45), messageIndex: 1, delay: 1600 },
+      { progress: generateRandomProgress(55, 65), messageIndex: 2, delay: 1600 },
+      { progress: generateRandomProgress(75, 85), messageIndex: 3, delay: 1600 },
+      { progress: 99, messageIndex: 4, delay: 1600 },
+      { progress: 100, messageIndex: 4, delay: 1000 }
+    ];
+
+    console.log('Loading steps:', loadingSteps);
+    
+    let currentStep = 0;
+    
+    const animateProgress = () => {
+      if (currentStep < loadingSteps.length) {
+        const step = loadingSteps[currentStep];
+        
+        console.log(`Animating to ${step.progress}%`);
+        
+        // Animate progress bar
+        Animated.timing(progressAnim, {
+          toValue: step.progress,
+          duration: 1600,
+          useNativeDriver: false,
+        }).start();
+        
+        // Update progress
+        setProgress(step.progress);
+        
+        // Fade out current message
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }).start(() => {
+          // Update message
+          setCurrentMessageIndex(step.messageIndex);
+          
+          // Fade in new message
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 400,
+            useNativeDriver: true,
+          }).start();
+        });
+        
+        currentStep++;
+        
+        if (currentStep < loadingSteps.length) {
+          setTimeout(animateProgress, step.delay);
+        } else {
+          // Loading complete, transition to profile
+          setTimeout(() => {
+            console.log('Loading complete, transitioning to profile');
+            setIsLoading(false);
+            startEnhancedAnimations();
+          }, 1000);
+        }
+      }
+    };
+
+    // Start progress animation
+    animateProgress();
+  };
 
   const startEnhancedAnimations = () => {
     // Enhanced entrance animations
@@ -101,15 +183,6 @@ export default function ProfileResultScreen() {
         }),
       ])
     ).start();
-
-    // Subtle rotation for floating elements
-    Animated.loop(
-      Animated.timing(rotateAnim, {
-        toValue: 1,
-        duration: 20000,
-        useNativeDriver: true,
-      })
-    ).start();
   };
 
   const loadUserProfile = async () => {
@@ -127,14 +200,205 @@ export default function ProfileResultScreen() {
     router.replace('/home');
   };
 
-  // Mock profile data for radar chart dimensions
-  const profileDimensions = {
-    desire: 85,
-    satisfaction: 78,
-    openness: 92,
-    communication: 88,
-    trust: 95
+  // Dynamic profile data generation based on quiz answers
+  const generateProfileDimensions = (profile) => {
+    if (!profile) {
+      console.log('No profile found, using default dimensions');
+      return {
+        desire: 75,
+        satisfaction: 70,
+        openness: 80,
+        communication: 75,
+        trust: 80
+      };
+    }
+
+    console.log('Generating dimensions for profile:', profile);
+
+    let dimensions = {
+      desire: 0,
+      satisfaction: 0,
+      openness: 0,
+      communication: 0,
+      trust: 0
+    };
+
+    // 1. DESIRE DIMENSION - Based on desire level and turn-ons
+    if (profile.desireLevel === 'mild') {
+      dimensions.desire = 60 + Math.floor(Math.random() * 20); // 60-80
+    } else if (profile.desireLevel === 'spicy') {
+      dimensions.desire = 75 + Math.floor(Math.random() * 20); // 75-95
+    } else if (profile.desireLevel === 'extreme') {
+      dimensions.desire = 85 + Math.floor(Math.random() * 15); // 85-100
+    }
+
+    // Bonus for adventurous turn-ons
+    if (profile.turnOns?.includes('roleplay')) dimensions.desire += 5;
+    if (profile.turnOns?.includes('power-play')) dimensions.desire += 5;
+    if (profile.turnOns?.includes('public-play')) dimensions.desire += 8;
+    if (profile.turnOns?.includes('bondage')) dimensions.desire += 7;
+
+    // 2. SATISFACTION DIMENSION - Based on experience and personality
+    if (profile.experience === 'beginner') {
+      dimensions.satisfaction = 65 + Math.floor(Math.random() * 20); // 65-85
+    } else if (profile.experience === 'intermediate') {
+      dimensions.satisfaction = 75 + Math.floor(Math.random() * 20); // 75-95
+    } else if (profile.experience === 'advanced') {
+      dimensions.satisfaction = 80 + Math.floor(Math.random() * 20); // 80-100
+    } else if (profile.experience === 'expert') {
+      dimensions.satisfaction = 85 + Math.floor(Math.random() * 15); // 85-100
+    }
+
+    // Bonus for personality types
+    if (profile.personality === 'dominant') dimensions.satisfaction += 5;
+    if (profile.personality === 'switch') dimensions.satisfaction += 8;
+
+    // 3. OPENNESS DIMENSION - Based on fantasy settings and turn-ons
+    dimensions.openness = 70; // Base score
+    
+    // Fantasy settings bonus (multiple choice)
+    if (profile.fantasySettings) {
+      dimensions.openness += profile.fantasySettings.length * 3; // +3 per setting
+      if (profile.fantasySettings.includes('outdoors')) dimensions.openness += 5;
+      if (profile.fantasySettings.includes('public-place')) dimensions.openness += 8;
+      if (profile.fantasySettings.includes('office')) dimensions.openness += 4;
+      if (profile.fantasySettings.includes('car')) dimensions.openness += 6;
+    }
+
+    // Turn-ons bonus (multiple choice)
+    if (profile.turnOns) {
+      dimensions.openness += profile.turnOns.length * 2; // +2 per turn-on
+      if (profile.turnOns.includes('sensory')) dimensions.openness += 5;
+      if (profile.turnOns.includes('teasing')) dimensions.openness += 4;
+    }
+
+    // 4. COMMUNICATION DIMENSION - Based on personality and experience
+    dimensions.communication = 70; // Base score
+    
+    if (profile.personality === 'equal') dimensions.communication += 10;
+    if (profile.personality === 'switch') dimensions.communication += 8;
+    if (profile.personality === 'submissive') dimensions.communication += 5;
+    
+    if (profile.experience === 'intermediate') dimensions.communication += 5;
+    if (profile.experience === 'advanced') dimensions.communication += 8;
+    if (profile.experience === 'expert') dimensions.communication += 10;
+
+    // Bonus for communication-related turn-ons
+    if (profile.turnOns?.includes('dirty-talk')) dimensions.communication += 8;
+    if (profile.turnOns?.includes('roleplay')) dimensions.communication += 6;
+
+    // 5. TRUST DIMENSION - Based on experience and personality
+    dimensions.trust = 75; // Base score
+    
+    if (profile.experience === 'beginner') dimensions.trust += 5;
+    if (profile.experience === 'intermediate') dimensions.trust += 8;
+    if (profile.experience === 'advanced') dimensions.trust += 10;
+    if (profile.experience === 'expert') dimensions.trust += 12;
+    
+    if (profile.personality === 'equal') dimensions.trust += 8;
+    if (profile.personality === 'switch') dimensions.trust += 5;
+
+    // Bonus for trust-building activities
+    if (profile.turnOns?.includes('sensory')) dimensions.trust += 5;
+    if (profile.turnOns?.includes('foreplay')) dimensions.trust += 4;
+
+    // Ensure all dimensions are within 0-100 range
+    Object.keys(dimensions).forEach(key => {
+      dimensions[key] = Math.max(0, Math.min(100, dimensions[key]));
+    });
+
+    console.log('Generated dimensions:', dimensions);
+    return dimensions;
   };
+
+  const profileDimensions = generateProfileDimensions(userProfile);
+
+  // Dynamic insight generation based on profile and dimensions
+  const generatePersonalizedInsight = (profile, dimensions) => {
+    if (!profile) {
+      console.log('No profile found, using default insight');
+      return {
+        title: "A Sex Insight Just for You 😉",
+        text: "Since you highly value Openness and Desire in sex, our Scratch off Bedroom Game 🍌 might be exactly what you're looking for!",
+        icons: ["🔥", "💋", "✨"]
+      };
+    }
+
+    console.log('Generating insight for profile:', profile);
+    console.log('Dimensions:', dimensions);
+
+    // Find highest scoring dimensions
+    const sortedDimensions = Object.entries(dimensions)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 2);
+    
+    const topDimension = sortedDimensions[0];
+    const secondDimension = sortedDimensions[1];
+
+    console.log('Top dimensions:', { top: topDimension, second: secondDimension });
+
+    // Generate insights based on desire level
+    let insightText = "";
+    let gameSuggestion = "";
+    let icons = ["🔥", "💋", "✨"];
+
+    if (profile.desireLevel === 'mild') {
+      gameSuggestion = "Gentle Touch Massage Kit";
+      icons = ["🌸", "💕", "✨"];
+    } else if (profile.desireLevel === 'spicy') {
+      gameSuggestion = "Truth or Dare Intimacy Edition";
+      icons = ["🔥", "🎭", "💋"];
+    } else if (profile.desireLevel === 'extreme') {
+      gameSuggestion = "BDSM Fantasy Roleplay Deck";
+      icons = ["⚡", "🔗", "😈"];
+    }
+
+    // Generate insights based on personality
+    if (profile.personality === 'dominant') {
+      gameSuggestion = "Power Play Command Cards";
+      icons = ["👑", "⚡", "🔥"];
+    } else if (profile.personality === 'submissive') {
+      gameSuggestion = "Surrender & Trust Building Kit";
+      icons = ["💕", "🔒", "✨"];
+    } else if (profile.personality === 'switch') {
+      gameSuggestion = "Versatile Intimacy Game Set";
+      icons = ["🔄", "🎭", "💋"];
+    }
+
+    // Generate insights based on experience
+    if (profile.experience === 'beginner') {
+      gameSuggestion = "Step-by-Step Intimacy Guide";
+      icons = ["📚", "💡", "🌸"];
+    } else if (profile.experience === 'expert') {
+      gameSuggestion = "Advanced Pleasure Mastery Kit";
+      icons = ["👑", "⚡", "💎"];
+    }
+
+    // Create personalized insight text
+    insightText = `Since you highly value ${topDimension[0].charAt(0).toUpperCase() + topDimension[0].slice(1)} (${topDimension[1]}%) and ${secondDimension[0].charAt(0).toUpperCase() + secondDimension[0].slice(1)} (${secondDimension[1]}%), our ${gameSuggestion} might be exactly what you're looking for!`;
+
+    // Add specific insights based on turn-ons
+    if (profile.turnOns?.includes('roleplay')) {
+      insightText += " Your love for roleplay makes you perfect for our immersive scenarios!";
+    }
+    if (profile.turnOns?.includes('sensory')) {
+      insightText += " Your sensory preferences will love our texture and temperature play kits!";
+    }
+    if (profile.fantasySettings?.includes('outdoors')) {
+      insightText += " Your adventurous spirit craves our outdoor exploration guides!";
+    }
+
+    const finalInsight = {
+      title: "A Sex Insight Just for You 😉",
+      text: insightText,
+      icons: icons
+    };
+
+    console.log('Generated insight:', finalInsight);
+    return finalInsight;
+  };
+
+  const personalizedInsight = generatePersonalizedInsight(userProfile, profileDimensions);
 
   const getPersonaIcon = (persona) => {
     const icons = {
@@ -156,6 +420,90 @@ export default function ProfileResultScreen() {
     return colors[level] || '#10B981';
   };
 
+  // Loading screen
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#000000" />
+        
+        {/* Background Gradient */}
+        <LinearGradient
+          colors={['#000000', '#1A0000', '#330000', '#4D0000']}
+          style={styles.background}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        />
+
+        {/* Floating Elements */}
+        <View style={styles.floatingElements}>
+          <View style={[styles.floatingCircle, { top: height * 0.1, left: width * 0.1 }]} />
+          <View style={[styles.floatingCircle, { top: height * 0.3, right: width * 0.15 }]} />
+          <View style={[styles.floatingCircle, { bottom: height * 0.2, left: width * 0.2 }]} />
+          <View style={[styles.floatingCircle, { top: height * 0.6, left: width * 0.7 }]} />
+        </View>
+
+        {/* Loading Content */}
+        <View style={styles.loadingContainer}>
+          {/* Loading Title */}
+          <Text style={styles.loadingTitle}>Analyzing Your Profile</Text>
+          <Text style={styles.loadingSubtitle}>Discovering your unique desires...</Text>
+          
+          {/* Progress Bar */}
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBar}>
+              <Animated.View 
+                style={[
+                  styles.progressFill,
+                  {
+                    width: progressAnim.interpolate({
+                      inputRange: [0, 100],
+                      outputRange: ['0%', '100%']
+                    })
+                  }
+                ]}
+              />
+            </View>
+            <Text style={styles.progressText}>{Math.round(progress)}%</Text>
+          </View>
+
+          {/* Loading Messages */}
+          <Animated.View 
+            style={[
+              styles.loadingMessages,
+              {
+                opacity: fadeAnim
+              }
+            ]}
+          >
+            <Animated.Text 
+              style={[
+                styles.loadingMessage,
+                {
+                  opacity: fadeAnim,
+                  transform: [{
+                    translateY: fadeAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [10, 0]
+                    })
+                  }]
+                }
+              ]}
+            >
+              {loadingMessages[currentMessageIndex]}
+            </Animated.Text>
+          </Animated.View>
+
+          {/* Sparkle Effect */}
+          <View style={styles.sparkleContainer}>
+            <Text style={styles.sparkle}>✨</Text>
+            <Text style={styles.sparkle}>💫</Text>
+            <Text style={styles.sparkle}>🌟</Text>
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
@@ -175,13 +523,7 @@ export default function ProfileResultScreen() {
             styles.floatingCircle, 
             { 
               top: height * 0.1, 
-              left: width * 0.1,
-              transform: [{
-                rotate: rotateAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ['0deg', '360deg']
-                })
-              }]
+              left: width * 0.1
             }
           ]} 
         />
@@ -190,13 +532,7 @@ export default function ProfileResultScreen() {
             styles.floatingCircle, 
             { 
               top: height * 0.3, 
-              right: width * 0.15,
-              transform: [{
-                rotate: rotateAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ['360deg', '0deg']
-                })
-              }]
+              right: width * 0.15
             }
           ]} 
         />
@@ -205,13 +541,7 @@ export default function ProfileResultScreen() {
             styles.floatingCircle, 
             { 
               bottom: height * 0.2, 
-              left: width * 0.2,
-              transform: [{
-                rotate: rotateAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ['0deg', '360deg']
-                })
-              }]
+              left: width * 0.2
             }
           ]} 
         />
@@ -220,13 +550,7 @@ export default function ProfileResultScreen() {
             styles.floatingCircle, 
             { 
               top: height * 0.6, 
-              left: width * 0.7,
-              transform: [{
-                rotate: rotateAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ['360deg', '0deg']
-                })
-              }]
+              left: width * 0.7
             }
           ]} 
         />
@@ -334,7 +658,7 @@ export default function ProfileResultScreen() {
                   transform: [{
                     translateX: slideAnim.interpolate({
                       inputRange: [0, 50],
-                      outputRange: [0, index % 2 === 0 ? 20 : -20]
+                      outputRange: [0, index % 2 === 0 ? 5 : -5]
                     })
                   }]
                 }
@@ -347,8 +671,12 @@ export default function ProfileResultScreen() {
                     styles.dimensionFill, 
                     { 
                       width: `${value}%`,
+                      opacity: fadeAnim,
                       transform: [{
-                        scaleX: scaleAnim
+                        scaleX: fadeAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0, 1]
+                        })
                       }]
                     }
                   ]} 
@@ -358,6 +686,64 @@ export default function ProfileResultScreen() {
             </Animated.View>
           ))}
         </Animated.View>
+
+        {/* Quiz Answers Summary */}
+        {userProfile && (
+          <Animated.View 
+            style={[
+              styles.quizAnswersSection, 
+              { 
+                opacity: fadeAnim, 
+                transform: [{ translateY: slideAnim }] 
+              }
+            ]}
+          >
+            <Text style={styles.sectionTitle}>Your Quiz Answers</Text>
+            
+            <View style={styles.quizAnswerRow}>
+              <Text style={styles.quizAnswerLabel}>Desire Level:</Text>
+              <Text style={styles.quizAnswerValue}>
+                {userProfile.desireLevel?.charAt(0).toUpperCase() + userProfile.desireLevel?.slice(1) || 'Not specified'}
+              </Text>
+            </View>
+            
+            <View style={styles.quizAnswerRow}>
+              <Text style={styles.quizAnswerLabel}>Personality:</Text>
+              <Text style={styles.quizAnswerValue}>
+                {userProfile.personality?.charAt(0).toUpperCase() + userProfile.personality?.slice(1) || 'Not specified'}
+              </Text>
+            </View>
+            
+            <View style={styles.quizAnswerRow}>
+              <Text style={styles.quizAnswerLabel}>Experience:</Text>
+              <Text style={styles.quizAnswerValue}>
+                {userProfile.experience?.charAt(0).toUpperCase() + userProfile.experience?.slice(1) || 'Not specified'}
+              </Text>
+            </View>
+            
+            {userProfile.turnOns && userProfile.turnOns.length > 0 && (
+              <View style={styles.quizAnswerRow}>
+                <Text style={styles.quizAnswerLabel}>Turn-Ons:</Text>
+                <Text style={styles.quizAnswerValue}>
+                  {userProfile.turnOns.map(turnOn => 
+                    turnOn.charAt(0).toUpperCase() + turnOn.slice(1)
+                  ).join(', ')}
+                </Text>
+              </View>
+            )}
+            
+            {userProfile.fantasySettings && userProfile.fantasySettings.length > 0 && (
+              <View style={styles.quizAnswerRow}>
+                <Text style={styles.quizAnswerLabel}>Fantasy Settings:</Text>
+                <Text style={styles.quizAnswerValue}>
+                  {userProfile.fantasySettings.map(setting => 
+                    setting.charAt(0).toUpperCase() + setting.slice(1)
+                  ).join(', ')}
+                </Text>
+              </View>
+            )}
+          </Animated.View>
+        )}
 
         {/* Enhanced Personalized Insight with floating effect */}
         <Animated.View 
@@ -382,16 +768,16 @@ export default function ProfileResultScreen() {
               }
             ]}
           >
-            <Text style={styles.insightTitle}>A Sex Insight Just for You 😉</Text>
+            <Text style={styles.insightTitle}>{personalizedInsight.title}</Text>
             <Text style={styles.insightText}>
-              Since you highly value <Text style={styles.insightHighlight}>Openness</Text> and <Text style={styles.insightHighlight}>Desire</Text> in sex, our <Text style={styles.insightHighlight}>Scratch off Bedroom Game</Text> 🍌 might be exactly what you're looking for!
+              {personalizedInsight.text}
             </Text>
             
             {/* Enhanced visual elements */}
             <View style={styles.insightIcons}>
-              <Text style={styles.insightIcon}>🔥</Text>
-              <Text style={styles.insightIcon}>💋</Text>
-              <Text style={styles.insightIcon}>✨</Text>
+              {personalizedInsight.icons.map((icon, index) => (
+                <Text key={index} style={styles.insightIcon}>{icon}</Text>
+              ))}
             </View>
           </Animated.View>
         </Animated.View>
@@ -400,7 +786,7 @@ export default function ProfileResultScreen() {
         <View style={styles.bottomSpacing} />
       </ScrollView>
 
-      {/* Sticky Explore More Button with enhanced animations */}
+      {/* Sticky Explore More Button with enhanced animations - Positioned above ScrollView */}
       <Animated.View 
         style={[
           styles.stickyButtonContainer,
@@ -603,18 +989,28 @@ const styles = StyleSheet.create({
   },
   dimensionBar: {
     flex: 1,
-    height: 8,
-    backgroundColor: 'rgba(220, 20, 60, 0.2)',
-    borderRadius: 4,
+    height: 10,
+    backgroundColor: 'rgba(220, 20, 60, 0.15)',
+    borderRadius: 5,
     marginHorizontal: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(220, 20, 60, 0.3)',
+    borderColor: 'rgba(220, 20, 60, 0.4)',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 2,
+    shadowOpacity: 0.3,
+    elevation: 3,
   },
   dimensionFill: {
     height: '100%',
     backgroundColor: '#DC143C',
-    borderRadius: 4,
+    borderRadius: 5,
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 3,
+    shadowOpacity: 0.6,
+    elevation: 3,
   },
   dimensionValue: {
     fontSize: 14,
@@ -622,6 +1018,26 @@ const styles = StyleSheet.create({
     color: '#DC143C',
     width: 50,
     textAlign: 'right',
+  },
+  quizAnswersSection: {
+    paddingHorizontal: 20,
+    marginBottom: 30,
+  },
+  quizAnswerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  quizAnswerLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  quizAnswerValue: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#CD5C5C',
   },
   insightSection: {
     paddingHorizontal: 20,
@@ -666,14 +1082,16 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   bottomSpacing: {
-    height: 120, // Increased for sticky button
+    height: 150, // Increased for sticky button to prevent clipping
   },
   stickyButtonContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 30,
     left: 20,
     right: 20,
     alignItems: 'center',
+    zIndex: 1000,
+    elevation: 1000,
   },
   exploreButton: {
     borderRadius: 50,
@@ -721,5 +1139,72 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#FFFFFF',
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  loadingTitle: {
+    fontSize: 36,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 10,
+    textShadowColor: '#DC143C',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 15,
+  },
+  loadingSubtitle: {
+    fontSize: 20,
+    color: '#CD5C5C',
+    fontWeight: '300',
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  progressContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  progressBar: {
+    width: '100%',
+    height: 8,
+    backgroundColor: 'rgba(220, 20, 60, 0.2)',
+    borderRadius: 4,
+    marginBottom: 8,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(220, 20, 60, 0.3)',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    shadowOpacity: 0.3,
+    elevation: 5,
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#DC143C',
+    borderRadius: 4,
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 4,
+    shadowOpacity: 0.8,
+    elevation: 5,
+  },
+  progressText: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#DC143C',
+  },
+  loadingMessages: {
+    marginBottom: 30,
+  },
+  loadingMessage: {
+    fontSize: 18,
+    color: '#CD5C5C',
+    textAlign: 'center',
+    marginBottom: 10,
   },
 });
