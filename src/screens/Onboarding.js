@@ -3,25 +3,29 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    Animated,
-    Dimensions,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
 
 export default function OnboardingScreen() {
-  const router = useRouter();
+    const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0); // 0 = intro, 1+ = quiz steps
   const [progress, setProgress] = useState(0);
   const [answers, setAnswers] = useState({});
   const [fadeAnim] = useState(new Animated.Value(0));
+  const [slideAnim] = useState(new Animated.Value(50));
+  const [glowAnim] = useState(new Animated.Value(0));
   const [showIntro, setShowIntro] = useState(true);
 
   const onboardingSteps = [
@@ -73,7 +77,7 @@ export default function OnboardingScreen() {
       title: "Your Intimate Personality 🎭",
       subtitle: "How do you like to express yourself?",
       type: 'single',
-      options: [
+            options: [
         { value: 'dominant', label: 'Dominant & Take Charge', description: 'You lead the way', color: '#8B5CF6' },
         { value: 'submissive', label: 'Submissive & Surrender', description: 'You follow their lead', color: '#EC4899' },
         { value: 'switch', label: 'Switch & Versatile', description: 'You love both roles', color: '#F59E0B' },
@@ -114,11 +118,35 @@ export default function OnboardingScreen() {
       setProgress(progressValue);
     }
     
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
+    // Animate fade in and slide up
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Continuous glow effect for the header
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(glowAnim, {
+          toValue: 0.3,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
   }, [currentStep, showIntro, answers]);
 
   const handleStartQuiz = () => {
@@ -130,7 +158,7 @@ export default function OnboardingScreen() {
   const handleAnswer = (stepId, value, isMultiple = false) => {
     if (isMultiple) {
       setAnswers(prev => ({
-        ...prev,
+                    ...prev,
         [stepId]: prev[stepId] 
           ? prev[stepId].includes(value)
             ? prev[stepId].filter(v => v !== value)
@@ -146,7 +174,7 @@ export default function OnboardingScreen() {
     if (currentStep < onboardingSteps.length - 1) {
       fadeAnim.setValue(0);
       setCurrentStep(currentStep + 1);
-    } else {
+        } else {
       generateIntimacyProfile();
     }
   };
@@ -240,49 +268,223 @@ export default function OnboardingScreen() {
   if (showIntro) {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor="#0F0F23" />
+        <StatusBar barStyle="light-content" backgroundColor="#000000" />
+        
+        <LinearGradient
+          colors={['#000000', '#1A0000', '#330000', '#4D0000']}
+          style={styles.background}
+        />
         
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.brandTitle}>Velvet</Text>
-            <Text style={styles.brandSubtitle}>Play deeper. Love bolder.</Text>
-          </View>
-
-          {/* Hero Section */}
-          <View style={styles.heroSection}>
-            <Text style={styles.heroTitle}>
-              Let's Spice Things Up! 🔥
-            </Text>
-            <Text style={styles.heroSubtitle}>
-              To personalize your experience, tell us a little about what you're looking for!
-            </Text>
-          </View>
-
-          {/* Info Box */}
-          <View style={styles.infoBox}>
-            <Text style={styles.infoTitle}>Why Take This Quiz?</Text>
-            <View style={styles.infoPoints}>
-              <Text style={styles.infoPoint}>• Be authentic and answer honestly to uncover your wildest dreams!</Text>
-              <Text style={styles.infoPoint}>• Answer with the first thought that comes to mind—adventures await...</Text>
-              <Text style={styles.infoPoint}>• This quiz was developed with care by a professional psychologist.</Text>
+          <Animated.View 
+            style={[
+              styles.content,
+              { 
+                opacity: fadeAnim,
+                transform: [{ translateY: slideAnim }]
+              }
+            ]}
+          >
+            {/* Header with Enticing Illustration */}
+            <View style={styles.header}>
+              {/* Integrated Image Section */}
+              <View style={styles.imageSection}>
+                {/* Background gradient that flows with the page */}
+                <LinearGradient
+                  colors={['rgba(220, 20, 60, 0.05)', 'rgba(178, 34, 34, 0.08)', 'rgba(139, 0, 0, 0.12)']}
+                  style={styles.sectionBackground}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                />
+                
+                {/* Background hearts integrated into the design */}
+                <View style={styles.backgroundHeart1}>
+                  <Svg width="48" height="48" viewBox="0 0 24 24">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="rgba(220, 20, 60, 0.12)"
+                    />
+                  </Svg>
+                </View>
+                <View style={styles.backgroundHeart2}>
+                  <Svg width="22" height="22" viewBox="0 0 24 24">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="rgba(205, 92, 92, 0.15)"
+                    />
+                  </Svg>
+                </View>
+                <View style={styles.backgroundHeart3}>
+                  <Svg width="36" height="36" viewBox="0 0 24 24">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="rgba(178, 34, 34, 0.08)"
+                    />
+                  </Svg>
+                </View>
+                <View style={styles.backgroundHeart4}>
+                  <Svg width="18" height="18" viewBox="0 0 24 24">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="rgba(220, 20, 60, 0.18)"
+                    />
+                  </Svg>
+                </View>
+                <View style={styles.backgroundHeart5}>
+                  <Svg width="44" height="44" viewBox="0 0 24 24">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="rgba(205, 92, 92, 0.06)"
+                    />
+                  </Svg>
+                </View>
+                <View style={styles.backgroundHeart6}>
+                  <Svg width="30" height="30" viewBox="0 0 24 24">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="rgba(178, 34, 34, 0.14)"
+                    />
+                  </Svg>
+                </View>
+                <View style={styles.backgroundHeart7}>
+                  <Svg width="26" height="26" viewBox="0 0 24 24">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="rgba(220, 20, 60, 0.09)"
+                    />
+                  </Svg>
+                </View>
+                <View style={styles.backgroundHeart8}>
+                  <Svg width="40" height="40" viewBox="0 0 24 24">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="rgba(205, 92, 92, 0.11)"
+                    />
+                  </Svg>
+                </View>
+                
+                {/* Hearts positioned around the image container */}
+                <View style={styles.heartAroundTopLeft}>
+                  <Svg width="26" height="26" viewBox="0 0 24 24">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="#DC143C"
+                    />
+                  </Svg>
+                </View>
+                <View style={styles.heartAroundTopRight}>
+                  <Svg width="18" height="18" viewBox="0 0 24 24">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="#CD5C5C"
+                    />
+                  </Svg>
+                </View>
+                <View style={styles.heartAroundBottomLeft}>
+                  <Svg width="28" height="28" viewBox="0 0 24 24">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="#B22222"
+                    />
+                  </Svg>
+                </View>
+                <View style={styles.heartAroundBottomRight}>
+                  <Svg width="20" height="20" viewBox="0 0 24 24">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="#DC143C"
+                    />
+                  </Svg>
+                </View>
+                <View style={styles.heartAroundLeft}>
+                  <Svg width="14" height="14" viewBox="0 0 24 24">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="#CD5C5C"
+                    />
+                  </Svg>
+                </View>
+                <View style={styles.heartAroundRight}>
+                  <Svg width="22" height="22" viewBox="0 0 24 24">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="#B22222"
+                    />
+                  </Svg>
+                </View>
+                
+                {/* Main image integrated into the page flow */}
+                <View style={styles.integratedImageContainer}>
+                  {/* Enhanced glow effect behind image */}
+                  <View style={styles.imageGlowEffect} />
+                  
+                  <Image
+                    source={require('../../assets/images/intimatepose.jpg')}
+                    style={styles.integratedImage}
+                    resizeMode="cover"
+                  />
+                  
+                  {/* Subtle overlay for better text readability */}
+                  <LinearGradient
+                    colors={['transparent', 'rgba(0, 0, 0, 0.1)', 'rgba(0, 0, 0, 0.2)']}
+                    style={styles.imageOverlay}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                  />
+                  
+                  {/* Subtle border glow */}
+                  <View style={styles.imageBorderGlow} />
+                </View>
+              </View>
             </View>
-          </View>
 
-          {/* Start Quiz Button */}
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.startButton} onPress={handleStartQuiz}>
-              <LinearGradient
-                colors={['#8B5CF6', '#7C3AED']}
-                style={styles.startButtonGradient}
-              >
-                <Text style={styles.startButtonText}>Start Quiz</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
+            {/* Hero Section */}
+            <View style={styles.heroSection}>
+              <Text style={styles.heroTitle}>
+                Let's Turn Up the Heat! 🔥
+              </Text>
+              <Text style={styles.heroSubtitle}>
+                Your journey to unforgettable passion starts here, tell us what truly excites you.
+              </Text>
+            </View>
 
-          {/* Bottom Spacing */}
-          <View style={styles.bottomSpacing} />
+            {/* Info Box */}
+            <View style={styles.infoBox}>
+              <Text style={styles.infoTitle}>Why Take This Quiz?</Text>
+              <View style={styles.infoPoints}>
+                <View style={styles.infoPointRow}>
+                  <Text style={styles.bulletPoint}>•</Text>
+                  <Text style={styles.infoPoint}>Uncover Your Desires, discover fantasies that will ignite your wildest dreams</Text>
+                </View>
+                <View style={styles.infoPointRow}>
+                  <Text style={styles.bulletPoint}>•</Text>
+                  <Text style={styles.infoPoint}>Trust Your Instincts, your gut feeling knows what truly excites you</Text>
+                </View>
+                <View style={styles.infoPointRow}>
+                  <Text style={styles.bulletPoint}>•</Text>
+                  <Text style={styles.infoPoint}>Expertly Crafted, designed by intimacy specialists to unlock your full potential</Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Start Quiz Button */}
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.startButton} onPress={handleStartQuiz}>
+                <LinearGradient
+                  colors={['#DC143C', '#B22222', '#8B0000']}
+                  style={styles.startButtonGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                >
+                  <Text style={styles.startButtonText}>Begin the Adventure</Text>
+                  <Text style={styles.startButtonSubtext}>Your fantasy awaits…</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+
+            {/* Bottom Spacing */}
+            <View style={styles.bottomSpacing} />
+          </Animated.View>
         </ScrollView>
       </SafeAreaView>
     );
@@ -293,13 +495,17 @@ export default function OnboardingScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0F0F23" />
+      <StatusBar barStyle="light-content" backgroundColor="#000000" />
+      
+      <LinearGradient
+        colors={['#000000', '#1A0000', '#330000', '#4D0000']}
+        style={styles.background}
+      />
       
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.brandSection}>
-          <Text style={styles.brandSubtitle}>velvet</Text>
-          <Text style={styles.brandTitle}>Velvet</Text>
+          <Animated.Text style={[styles.brandTitle, { opacity: glowAnim }]}>Velvet</Animated.Text>
           <Text style={styles.tagline}>Play deeper. Love bolder.</Text>
         </View>
         <TouchableOpacity style={styles.profileButton}>
@@ -311,8 +517,10 @@ export default function OnboardingScreen() {
       <View style={styles.progressContainer}>
         <View style={styles.progressBar}>
           <LinearGradient
-            colors={['#EC4899', '#8B5CF6']}
+            colors={['#DC143C', '#B22222', '#8B0000']}
             style={[styles.progressFill, { width: `${progress}%` }]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
           />
         </View>
         <Text style={styles.progressText}>{Math.round(progress)}% Complete</Text>
@@ -330,8 +538,8 @@ export default function OnboardingScreen() {
                 ? answers[currentStepData.id]?.includes(option.value)
                 : answers[currentStepData.id] === option.value;
               
-              return (
-                <TouchableOpacity
+                                return (
+                                    <TouchableOpacity
                   key={option.value}
                   style={[
                     styles.option,
@@ -351,7 +559,7 @@ export default function OnboardingScreen() {
                       {option.description && (
                         <Text style={[styles.optionDescription, isSelected && styles.optionDescriptionSelected]}>
                           {option.description}
-                        </Text>
+                                        </Text>
                       )}
                     </View>
                   </View>
@@ -360,12 +568,12 @@ export default function OnboardingScreen() {
                       <Text style={styles.checkmarkText}>✓</Text>
                     </View>
                   )}
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </View>
         </Animated.View>
-      </ScrollView>
+            </ScrollView>
 
       {/* Navigation */}
       <View style={styles.navigation}>
@@ -381,113 +589,269 @@ export default function OnboardingScreen() {
           disabled={!canProceed()}
         >
           <LinearGradient
-            colors={canProceed() ? ['#EC4899', '#DB2777'] : ['#6B7280', '#4B5563']}
+            colors={canProceed() ? ['#DC143C', '#B22222', '#8B0000'] : ['#6B7280', '#4B5563']}
             style={styles.nextButtonGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
           >
             <Text style={styles.nextButtonText}>
               {currentStep === onboardingSteps.length - 1 ? 'Submit' : 'Next'}
-            </Text>
+                </Text>
           </LinearGradient>
-        </TouchableOpacity>
-      </View>
+            </TouchableOpacity>
+        </View>
     </SafeAreaView>
-  );
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0F0F23',
+    container: {
+        flex: 1,
+    backgroundColor: '#000000',
+  },
+  background: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
   },
   scrollView: {
     flex: 1,
   },
+  content: {
+    flex: 1,
+    paddingTop: 20,
+    paddingBottom: 15,
+    paddingHorizontal: 32,
+  },
   header: {
     alignItems: 'center',
-    paddingTop: 20,
-    paddingBottom: 30,
-    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 20,
+        paddingHorizontal: 20,
+    },
+  imageSection: {
+    width: '100%',
+    height: 160,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 15,
+    position: 'relative',
+    borderRadius: 15,
+    overflow: 'hidden',
+  },
+  sectionBackground: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    borderRadius: 0,
+  },
+  integratedImageContainer: {
+    width: '90%',
+    height: 140,
+    position: 'relative',
+    borderRadius: 15,
+    overflow: 'hidden',
+  },
+  integratedImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 15,
+  },
+  imageOverlay: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    borderRadius: 15,
+  },
+  imageGlowEffect: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    borderRadius: 15,
+  },
+  imageBorderGlow: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    borderRadius: 15,
+  },
+  backgroundHeart1: {
+    position: 'absolute',
+    top: 15,
+    left: '3%',
+    zIndex: 1,
+  },
+  backgroundHeart2: {
+    position: 'absolute',
+    top: 95,
+    right: '5%',
+    zIndex: 1,
+  },
+  backgroundHeart3: {
+    position: 'absolute',
+    top: 165,
+    left: '8%',
+    zIndex: 1,
+  },
+  backgroundHeart4: {
+    position: 'absolute',
+    top: 45,
+    right: '25%',
+    zIndex: 1,
+  },
+  backgroundHeart5: {
+    position: 'absolute',
+    top: 125,
+    left: '18%',
+    zIndex: 1,
+  },
+  backgroundHeart6: {
+    position: 'absolute',
+    top: 200,
+    right: '12%',
+    zIndex: 1,
+  },
+  backgroundHeart7: {
+    position: 'absolute',
+    top: 75,
+    left: '30%',
+    zIndex: 1,
+  },
+  backgroundHeart8: {
+    position: 'absolute',
+    top: 185,
+    right: '22%',
+    zIndex: 1,
+  },
+  heartAroundTopLeft: {
+    position: 'absolute',
+    top: 15,
+    left: '2%',
+    zIndex: 5,
+  },
+  heartAroundTopRight: {
+    position: 'absolute',
+    top: 20,
+    right: '2%',
+    zIndex: 5,
+  },
+  heartAroundBottomLeft: {
+    position: 'absolute',
+    bottom: 15,
+    left: '2%',
+    zIndex: 5,
+  },
+  heartAroundBottomRight: {
+    position: 'absolute',
+    bottom: 20,
+    right: '2%',
+    zIndex: 5,
+  },
+  heartAroundLeft: {
+    position: 'absolute',
+    top: '50%',
+    left: '0.5%',
+    marginTop: -8,
+    zIndex: 5,
+  },
+  heartAroundRight: {
+    position: 'absolute',
+    top: '50%',
+    right: '0.5%',
+    marginTop: -9.5,
+    zIndex: 5,
   },
   brandSection: {
     flex: 1,
   },
-  brandTitle: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: '#EC4899',
-    marginBottom: 8,
-  },
-  brandSubtitle: {
-    fontSize: 16,
-    color: '#D1D5DB',
-    fontStyle: 'italic',
-  },
+
   tagline: {
-    fontSize: 14,
-    color: '#D1D5DB',
-    fontFamily: 'System',
-    fontStyle: 'italic',
+    fontSize: 16,
+    color: '#CD5C5C',
+    fontWeight: '400',
+    textAlign: 'center',
+    letterSpacing: 0.5,
   },
   profileButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#1F2937',
+    backgroundColor: 'rgba(220, 20, 60, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#374151',
+    borderColor: 'rgba(220, 20, 60, 0.5)',
   },
   profileIcon: {
     fontSize: 20,
+    color: '#CD5C5C',
   },
-  heroSection: {
+    heroSection: {
     paddingHorizontal: 20,
-    paddingBottom: 30,
+    paddingBottom: 15,
     alignItems: 'center',
+    marginTop: 5,
+    marginBottom: 10,
   },
   heroTitle: {
-    fontSize: 32,
+    fontSize: 26,
     fontWeight: '800',
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 16,
-    lineHeight: 38,
+    marginBottom: 10,
+    lineHeight: 32,
+    letterSpacing: 0.5,
   },
   heroSubtitle: {
-    fontSize: 18,
-    color: '#D1D5DB',
+    fontSize: 15,
+    color: '#CD5C5C',
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: 20,
     maxWidth: 320,
+    fontWeight: '400',
   },
-  infoBox: {
-    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+    infoBox: {
+    backgroundColor: 'rgba(220, 20, 60, 0.1)',
     borderRadius: 20,
-    padding: 24,
+    padding: 16,
     marginHorizontal: 20,
-    marginBottom: 30,
+    marginBottom: 15,
     borderWidth: 1,
-    borderColor: 'rgba(139, 92, 246, 0.3)',
+    borderColor: 'rgba(220, 20, 60, 0.3)',
   },
   infoTitle: {
-    fontSize: 20,
+    fontSize: 17,
     fontWeight: '700',
     color: '#FFFFFF',
-    marginBottom: 16,
+    marginBottom: 10,
     textAlign: 'center',
   },
   infoPoints: {
-    gap: 12,
+    gap: 8,
+  },
+  infoPointRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+  },
+  bulletPoint: {
+    fontSize: 16,
+    color: '#DC143C',
+    fontWeight: 'bold',
+    marginTop: 2,
   },
   infoPoint: {
-    fontSize: 16,
-    color: '#D1D5DB',
-    lineHeight: 22,
+    fontSize: 14,
+    color: '#CD5C5C',
+    lineHeight: 20,
+    fontWeight: '400',
+    flex: 1,
   },
   buttonContainer: {
     paddingHorizontal: 20,
-    marginBottom: 30,
+    marginBottom: 15,
   },
   startButton: {
     borderRadius: 30,
@@ -499,18 +863,25 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   startButtonGradient: {
-    paddingVertical: 20,
+    paddingVertical: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
   startButtonText: {
-    fontSize: 20,
+    fontSize: 18,
     color: '#FFFFFF',
     fontWeight: '700',
     letterSpacing: 0.5,
+    marginBottom: 4,
   },
+  startButtonSubtext: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontWeight: '400',
+  },
+
   bottomSpacing: {
-    height: 50,
+    height: 20,
   },
   progressContainer: {
     paddingHorizontal: 20,
@@ -518,7 +889,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 8,
-    backgroundColor: '#374151',
+    backgroundColor: 'rgba(220, 20, 60, 0.2)',
     borderRadius: 4,
     overflow: 'hidden',
     marginBottom: 12,
@@ -529,8 +900,9 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: 14,
-    color: '#9CA3AF',
+    color: '#CD5C5C',
     textAlign: 'center',
+    fontWeight: '500',
   },
   content: {
     flex: 1,
@@ -549,27 +921,28 @@ const styles = StyleSheet.create({
   },
   stepSubtitle: {
     fontSize: 16,
-    color: '#D1D5DB',
+    color: '#CD5C5C',
     textAlign: 'center',
     marginBottom: 30,
     lineHeight: 22,
+    fontWeight: '400',
   },
   optionsContainer: {
     gap: 16,
   },
   option: {
-    backgroundColor: 'rgba(31, 41, 55, 0.8)',
+    backgroundColor: 'rgba(220, 20, 60, 0.1)',
     borderRadius: 16,
     padding: 20,
     borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: 'rgba(220, 20, 60, 0.3)',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  optionSelected: {
-    backgroundColor: 'rgba(31, 41, 55, 0.95)',
-    borderColor: '#EC4899',
+    },
+    optionSelected: {
+    backgroundColor: 'rgba(220, 20, 60, 0.2)',
+    borderColor: '#DC143C',
   },
   optionContent: {
     flexDirection: 'row',
@@ -590,15 +963,16 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   optionLabelSelected: {
-    color: '#EC4899',
+    color: '#DC143C',
   },
   optionDescription: {
     fontSize: 14,
-    color: '#9CA3AF',
+    color: '#CD5C5C',
     lineHeight: 20,
+    fontWeight: '400',
   },
   optionDescriptionSelected: {
-    color: '#D1D5DB',
+    color: '#FFFFFF',
   },
   checkmark: {
     width: 24,
@@ -625,16 +999,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 25,
     borderWidth: 1,
-    borderColor: '#6B7280',
+    borderColor: '#CD5C5C',
+    backgroundColor: 'rgba(220, 20, 60, 0.1)',
   },
   backButtonText: {
-    color: '#9CA3AF',
+    color: '#CD5C5C',
     fontSize: 16,
     fontWeight: '600',
-  },
-  nextButton: {
+    },
+    nextButton: {
     flex: 1,
-    borderRadius: 25,
+        borderRadius: 25,
     overflow: 'hidden',
   },
   nextButtonDisabled: {
@@ -648,7 +1023,7 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+        fontSize: 16,
     fontWeight: '600',
-  },
+    },
 });
