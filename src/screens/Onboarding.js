@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -136,7 +137,7 @@ export default function OnboardingScreen() {
       type: 'slider',
       minValue: 0,
       maxValue: 100,
-      defaultValue: 50,
+      defaultValue: 0,
       labels: {
         min: "Not at all",
         max: "Extremely"
@@ -624,41 +625,31 @@ export default function OnboardingScreen() {
                 <Text style={styles.toggleLabel}>Yes</Text>
               </View>
             ) : currentStepData.type === 'slider' ? (
-              // Slider component for slider type questions
+              // Massive slider layout - everything on one page
               <View style={styles.sliderContainer}>
-                <Text style={styles.sliderMinLabel}>{currentStepData.labels.min}</Text>
-                <View style={styles.sliderTrack}>
-                  <TouchableOpacity
-                    style={styles.sliderTouchOverlay}
-                    onPress={(evt) => {
-                      const { locationX } = evt.nativeEvent;
-                      const percentage = (locationX / 250) * 100;
-                      const value = Math.max(0, Math.min(100, percentage));
-                      handleAnswer(currentStepData.id, value);
-                    }}
-                    activeOpacity={1}
+                {/* Percentage just above slider */}
+                <Text style={styles.sliderCurrentValue}>
+                  {Math.round(answers[currentStepData.id] || currentStepData.defaultValue || 0)}%
+                </Text>
+                
+                {/* Massive slider */}
+                <View style={styles.sliderWrapper}>
+                  <Text style={styles.sliderMinLabel}>{currentStepData.labels.min}</Text>
+                  <Slider
+                    style={styles.slider}
+                    minimumValue={0}
+                    maximumValue={100}
+                    step={1}
+                    value={answers[currentStepData.id] || currentStepData.defaultValue || 0}
+                    onValueChange={(value) => handleAnswer(currentStepData.id, value)}
+                    onSlidingComplete={(value) => handleAnswer(currentStepData.id, value)}
+                    minimumTrackTintColor="#DC143C"
+                    maximumTrackTintColor="rgba(220, 20, 60, 0.3)"
+                    thumbStyle={styles.sliderThumbStyle}
+                    trackStyle={styles.sliderTrackStyle}
+                    thumbTintColor="#FFFFFF"
                   />
-                  <View 
-                    style={[
-                      styles.sliderFill, 
-                      { width: `${answers[currentStepData.id] || currentStepData.defaultValue}%` }
-                    ]} 
-                  />
-                  <View 
-                    style={[
-                      styles.sliderThumb, 
-                      { left: `${answers[currentStepData.id] || currentStepData.defaultValue}%` }
-                    ]} 
-                  />
-                </View>
-                <Text style={styles.sliderMaxLabel}>{currentStepData.labels.max}</Text>
-                <View style={styles.sliderValueContainer}>
-                  <Text style={styles.sliderValue}>
-                    {Math.round(answers[currentStepData.id] || currentStepData.defaultValue)}%
-                  </Text>
-                  <Text style={styles.sliderValueLabel}>
-                    Enhancement Level
-                  </Text>
+                  <Text style={styles.sliderMaxLabel}>{currentStepData.labels.max}</Text>
                 </View>
               </View>
             ) : currentStepData.id === 'fantasy' ? (
@@ -1224,7 +1215,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#E5E7EB',
     textAlign: 'center',
-    marginBottom: 35,
+    marginBottom: 0,
     lineHeight: 24,
     fontWeight: '500',
     letterSpacing: 0.5,
@@ -1732,75 +1723,22 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     alignItems: 'center',
-    paddingVertical: 25,
-    gap: 24,
+    paddingVertical: 0,
+    gap: 0,
   },
-  sliderMinLabel: {
-    fontSize: 20,
-    fontWeight: '700',
+  sliderTitle: {
+    fontSize: 16,
+    fontWeight: '600',
     color: '#E5E7EB',
-    marginBottom: 12,
-    letterSpacing: 0.5,
+    marginBottom: 2,
+    textAlign: 'center',
   },
-  sliderTrack: {
-    width: 280,
-    height: 24,
-    backgroundColor: 'rgba(139, 92, 246, 0.15)',
-    borderRadius: 12,
-    position: 'relative',
-    borderWidth: 2,
-    borderColor: 'rgba(139, 92, 246, 0.3)',
-    overflow: 'visible',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  sliderFill: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    height: '100%',
-    backgroundColor: '#8B5CF6',
-    borderRadius: 12,
-    minWidth: 0,
-  },
-  sliderThumb: {
-    position: 'absolute',
-    width: 28,
-    height: 28,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    borderWidth: 3,
-    borderColor: '#8B5CF6',
-    shadowColor: '#8B5CF6',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 8,
-    top: '50%',
-    marginTop: -14,
-  },
-  sliderMaxLabel: {
-    fontSize: 20,
+  sliderCurrentValue: {
+    fontSize: 22,
     fontWeight: '700',
-    color: '#E5E7EB',
-    marginTop: 12,
-    letterSpacing: 0.5,
-  },
-  sliderValue: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#8B5CF6',
-    marginTop: 12,
-    textShadowColor: 'rgba(139, 92, 246, 0.3)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-  sliderValueContainer: {
-    alignItems: 'center',
-    marginTop: 18,
+    color: '#DC143C',
+    marginBottom: 0,
+    marginTop: 0,
   },
   sliderValueLabel: {
     fontSize: 16,
@@ -1809,14 +1747,56 @@ const styles = StyleSheet.create({
     marginTop: 6,
     opacity: 0.8,
   },
-  sliderTouchOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'transparent',
-    zIndex: 1,
+  sliderWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 8,
+    marginTop: 0,
+  },
+  slider: {
+    flex: 1,
+    height: 300,
+    marginHorizontal: 4,
+    marginVertical: 0,
+  },
+  sliderMinLabel: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#6B7280',
+    letterSpacing: 0.2,
+    minWidth: 45,
+    textAlign: 'center',
+  },
+  sliderMaxLabel: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#6B7280',
+    letterSpacing: 0.2,
+    minWidth: 45,
+    textAlign: 'center',
+  },
+  sliderThumbStyle: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 10,
+    borderColor: '#DC143C',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 18 },
+    shadowOpacity: 0.9,
+    shadowRadius: 36,
+    elevation: 22,
+  },
+  sliderTrackStyle: {
+    height: 56,
+    borderRadius: 28,
+  },
+  sliderValueContainer: {
+    alignItems: 'center',
+    marginTop: 0,
   },
   optionLabelSelected: {
     color: '#FFFFFF',
