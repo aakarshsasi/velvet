@@ -30,6 +30,39 @@ export default function OnboardingScreen() {
 
   const onboardingSteps = [
     {
+      id: 'gender',
+      title: "What's Your Gender? 🎭",
+      subtitle: "Help us personalize your experience",
+      type: 'single',
+      options: [
+        { value: 'male', label: 'Male', color: '#10B981' },
+        { value: 'female', label: 'Female', color: '#EC4899' },
+        { value: 'non-binary', label: 'Non-binary', color: '#8B5CF6' },
+        { value: 'prefer-not-to-say', label: 'Prefer not to say', color: '#6B7280' }
+      ]
+    },
+    {
+      id: 'sexualOrientation',
+      title: "What's Your Sexual Orientation? 💕",
+      subtitle: "Select all that apply to you",
+      type: 'multiple',
+      options: [
+        { value: 'heterosexual', label: 'Heterosexual', color: '#10B981' },
+        { value: 'homosexual', label: 'Homosexual', color: '#EC4899' },
+        { value: 'bisexual', label: 'Bisexual', color: '#8B5CF6' },
+        { value: 'pansexual', label: 'Pansexual', color: '#F59E0B' },
+        { value: 'queer', label: 'Queer', color: '#EF4444' },
+        { value: 'other', label: 'Other', color: '#06B6D4' }
+      ]
+    },
+    {
+      id: 'experimenting',
+      title: "Do you enjoy experimenting in bed? 🔬",
+      subtitle: "Help us understand your adventurous side",
+      type: 'toggle',
+      defaultValue: false
+    },
+    {
       id: 'desire',
       title: "What's Your Desire Level? 🔥",
       subtitle: "Help us understand your comfort zone",
@@ -91,10 +124,23 @@ export default function OnboardingScreen() {
       type: 'single',
       options: [
         { value: 'beginner', label: 'Beginner', description: 'New to exploration', color: '#10B981' },
-        { value: 'intermediate', label: 'Intermediate', description: 'Some experience', color: '#F59E0B' },
+        { value: 'intermediate', label: 'Intermediate', description: 'Some experience', color: '#F59E0C' },
         { value: 'advanced', label: 'Advanced', description: 'Experienced explorer', color: '#EF4444' },
         { value: 'expert', label: 'Expert', description: 'Master of pleasure', color: '#8B5CF6' }
       ]
+    },
+    {
+      id: 'enhancement',
+      title: "How much do you want to enhance your sex life? 🔥",
+      subtitle: "One last step",
+      type: 'slider',
+      minValue: 0,
+      maxValue: 100,
+      defaultValue: 50,
+      labels: {
+        min: "Not at all",
+        max: "Extremely"
+      }
     }
   ];
 
@@ -106,10 +152,10 @@ export default function OnboardingScreen() {
       // Calculate progress based on quiz steps and answers
       let answeredSteps = 0;
       onboardingSteps.forEach(step => {
-        if (answers[step.id]) {
+        if (answers[step.id] !== undefined) {
           if (step.type === 'multiple' && answers[step.id].length > 0) {
             answeredSteps++;
-          } else if (step.type === 'single') {
+          } else if (step.type === 'single' || step.type === 'toggle' || step.type === 'slider') {
             answeredSteps++;
           }
         }
@@ -147,7 +193,7 @@ export default function OnboardingScreen() {
         }),
       ])
     ).start();
-  }, [currentStep, showIntro, answers]);
+  }, [currentStep, showIntro, answers, onboardingSteps.length]);
 
   const handleStartQuiz = () => {
     setShowIntro(false);
@@ -158,13 +204,19 @@ export default function OnboardingScreen() {
   const handleAnswer = (stepId, value, isMultiple = false) => {
     if (isMultiple) {
       setAnswers(prev => ({
-                    ...prev,
+        ...prev,
         [stepId]: prev[stepId] 
           ? prev[stepId].includes(value)
             ? prev[stepId].filter(v => v !== value)
             : [...prev[stepId], value]
           : [value]
       }));
+    } else if (typeof value === 'boolean') {
+      // Handle toggle type questions
+      setAnswers(prev => ({ ...prev, [stepId]: value }));
+    } else if (typeof value === 'number') {
+      // Handle slider type questions
+      setAnswers(prev => ({ ...prev, [stepId]: value }));
     } else {
       setAnswers(prev => ({ ...prev, [stepId]: value }));
     }
@@ -192,6 +244,10 @@ export default function OnboardingScreen() {
     const currentStepData = onboardingSteps[currentStep];
     if (currentStepData.type === 'multiple') {
       return answers[currentStepData.id] && answers[currentStepData.id].length > 0;
+    } else if (currentStepData.type === 'toggle') {
+      return answers[currentStepData.id] !== undefined;
+    } else if (currentStepData.type === 'slider') {
+      return answers[currentStepData.id] !== undefined;
     }
     return answers[currentStepData.id];
   };
@@ -200,11 +256,15 @@ export default function OnboardingScreen() {
     try {
       // Generate profile based on answers
       const profile = {
+        gender: answers.gender || 'prefer-not-to-say',
+        sexualOrientation: answers.sexualOrientation || [],
+        experimenting: answers.experimenting !== undefined ? answers.experimenting : false,
         desireLevel: answers.desire || 'mild',
         turnOns: answers.turnOns || [],
         fantasySettings: answers.fantasy || [],
         personality: answers.personality || 'equal',
         experience: answers.experience || 'beginner',
+        enhancement: answers.enhancement !== undefined ? answers.enhancement : 50,
         persona: generatePersona(answers),
         premiumSuggestions: generatePremiumSuggestions(answers)
       };
@@ -508,22 +568,34 @@ export default function OnboardingScreen() {
           <Animated.Text style={[styles.brandTitle, { opacity: glowAnim }]}>Velvet</Animated.Text>
           <Text style={styles.tagline}>Play deeper. Love bolder.</Text>
         </View>
-        <TouchableOpacity style={styles.profileButton}>
-          <Text style={styles.profileIcon}>👤</Text>
-        </TouchableOpacity>
       </View>
 
       {/* Progress Bar */}
       <View style={styles.progressContainer}>
-        <View style={styles.progressBar}>
-          <LinearGradient
-            colors={['#DC143C', '#B22222', '#8B0000']}
-            style={[styles.progressFill, { width: `${progress}%` }]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-          />
-        </View>
-        <Text style={styles.progressText}>{Math.round(progress)}% Complete</Text>
+        <LinearGradient
+          colors={['rgba(220, 20, 60, 0.12)', 'rgba(178, 34, 34, 0.08)', 'rgba(139, 0, 0, 0.15)']}
+          style={styles.progressBox}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={styles.progressHeader}>
+            <Text style={styles.progressPercentage}>{Math.round(progress)}%</Text>
+            <Text style={styles.progressLabel}>Complete</Text>
+          </View>
+          <View style={styles.progressBarContainer}>
+            <View style={styles.progressBar}>
+              <LinearGradient
+                colors={['#DC143C', '#B22222', '#8B0000']}
+                style={[styles.progressFill, { width: `${progress}%` }]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              />
+              <View style={styles.progressGlow} />
+            </View>
+            <View style={styles.progressTrack} />
+          </View>
+          <Text style={styles.progressSubtext}>Processing your results...</Text>
+        </LinearGradient>
       </View>
 
       {/* Content */}
@@ -533,45 +605,199 @@ export default function OnboardingScreen() {
           <Text style={styles.stepSubtitle}>{currentStepData.subtitle}</Text>
           
           <View style={styles.optionsContainer}>
-            {currentStepData.options.map((option, index) => {
-              const isSelected = currentStepData.type === 'multiple'
-                ? answers[currentStepData.id]?.includes(option.value)
-                : answers[currentStepData.id] === option.value;
-              
-                                return (
-                                    <TouchableOpacity
-                  key={option.value}
+            {currentStepData.type === 'toggle' ? (
+              // Toggle component for toggle type questions
+              <View style={styles.toggleContainer}>
+                <Text style={styles.toggleLabel}>No</Text>
+                <TouchableOpacity
                   style={[
-                    styles.option,
-                    isSelected && styles.optionSelected,
-                    { borderColor: option.color }
+                    styles.toggleSwitch,
+                    answers[currentStepData.id] && styles.toggleSwitchActive
                   ]}
-                  onPress={() => handleAnswer(currentStepData.id, option.value, currentStepData.type === 'multiple')}
+                  onPress={() => handleAnswer(currentStepData.id, !answers[currentStepData.id])}
                 >
-                  <View style={styles.optionContent}>
-                    {option.icon && (
-                      <Text style={styles.optionIcon}>{option.icon}</Text>
-                    )}
-                    <View style={styles.optionTextContainer}>
-                      <Text style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
-                        {option.label}
-                      </Text>
-                      {option.description && (
-                        <Text style={[styles.optionDescription, isSelected && styles.optionDescriptionSelected]}>
-                          {option.description}
-                                        </Text>
-                      )}
-                    </View>
-                  </View>
-                  {isSelected && (
-                    <View style={[styles.checkmark, { backgroundColor: option.color }]}>
-                      <Text style={styles.checkmarkText}>✓</Text>
-                    </View>
-                  )}
-                                    </TouchableOpacity>
-                                );
-                            })}
+                  <View style={[
+                    styles.toggleThumb,
+                    answers[currentStepData.id] && styles.toggleThumbActive
+                  ]} />
+                </TouchableOpacity>
+                <Text style={styles.toggleLabel}>Yes</Text>
+              </View>
+            ) : currentStepData.type === 'slider' ? (
+              // Slider component for slider type questions
+              <View style={styles.sliderContainer}>
+                <Text style={styles.sliderMinLabel}>{currentStepData.labels.min}</Text>
+                <View style={styles.sliderTrack}>
+                  <TouchableOpacity
+                    style={styles.sliderTouchOverlay}
+                    onPress={(evt) => {
+                      const { locationX } = evt.nativeEvent;
+                      const percentage = (locationX / 250) * 100;
+                      const value = Math.max(0, Math.min(100, percentage));
+                      handleAnswer(currentStepData.id, value);
+                    }}
+                    activeOpacity={1}
+                  />
+                  <View 
+                    style={[
+                      styles.sliderFill, 
+                      { width: `${answers[currentStepData.id] || currentStepData.defaultValue}%` }
+                    ]} 
+                  />
+                  <View 
+                    style={[
+                      styles.sliderThumb, 
+                      { left: `${answers[currentStepData.id] || currentStepData.defaultValue}%` }
+                    ]} 
+                  />
+                </View>
+                <Text style={styles.sliderMaxLabel}>{currentStepData.labels.max}</Text>
+                <View style={styles.sliderValueContainer}>
+                  <Text style={styles.sliderValue}>
+                    {Math.round(answers[currentStepData.id] || currentStepData.defaultValue)}%
+                  </Text>
+                  <Text style={styles.sliderValueLabel}>
+                    Enhancement Level
+                  </Text>
+                </View>
+              </View>
+            ) : currentStepData.id === 'fantasy' ? (
+              // Special grid layout for fantasy settings
+              <View style={styles.fantasyGrid}>
+                {currentStepData.options.map((option, index) => {
+                  const isSelected = answers[currentStepData.id]?.includes(option.value);
+                  
+                  return (
+                    <TouchableOpacity
+                      key={option.value}
+                      style={[
+                        styles.fantasyCard,
+                        isSelected && styles.fantasyCardSelected,
+                        { borderColor: option.color }
+                      ]}
+                      onPress={() => handleAnswer(currentStepData.id, option.value, true)}
+                    >
+                      <View style={styles.fantasyCardContent}>
+                        <View style={styles.fantasyCardHeader}>
+                          <Text style={styles.fantasyCardIcon}>{option.icon}</Text>
+                          <View style={styles.fantasyCardBadge}>
+                            <Text style={styles.fantasyCardBadgeText}>
+                              {isSelected ? 'Selected' : 'Tap'}
+                            </Text>
+                          </View>
                         </View>
+                        <View style={styles.fantasyCardBody}>
+                          <Text style={[styles.fantasyCardLabel, isSelected && styles.fantasyCardLabelSelected]}>
+                            {option.label}
+                          </Text>
+                        </View>
+                        <View style={styles.fantasyCardFooter}>
+                          {isSelected ? (
+                            <View style={[styles.fantasyCardCheckmark, { backgroundColor: option.color }]}>
+                              <Text style={styles.fantasyCardCheckmarkText}>✓</Text>
+                            </View>
+                          ) : (
+                            <View style={styles.fantasyCardIndicator}>
+                              <Text style={styles.fantasyCardIndicatorText}>+</Text>
+                            </View>
+                          )}
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            ) : currentStepData.id === 'experience' ? (
+              // Compact experience level layout
+              <View style={styles.experienceCompactContainer}>
+                {currentStepData.options.map((option, index) => {
+                  const isSelected = answers[currentStepData.id] === option.value;
+                  
+                  return (
+                    <TouchableOpacity
+                      key={option.value}
+                      style={[
+                        styles.experienceCompactCard,
+                        isSelected && styles.experienceCompactCardSelected,
+                        { borderColor: option.color }
+                      ]}
+                      onPress={() => handleAnswer(currentStepData.id, option.value)}
+                    >
+                      <View style={styles.experienceCompactContent}>
+                        <View style={styles.experienceCompactLeft}>
+                          <View style={styles.experienceCompactLevel}>
+                            <Text style={styles.experienceCompactLevelText}>{index + 1}</Text>
+                          </View>
+                          <Text style={styles.experienceCompactIcon}>{option.icon}</Text>
+                        </View>
+                        <View style={styles.experienceCompactCenter}>
+                          <Text style={[styles.experienceCompactLabel, isSelected && styles.experienceCompactLabelSelected]}>
+                            {option.label}
+                          </Text>
+                          {option.description && (
+                            <Text style={[styles.experienceCompactDescription, isSelected && styles.experienceCompactDescriptionSelected]}>
+                              {option.description}
+                            </Text>
+                          )}
+                        </View>
+                        <View style={styles.experienceCompactRight}>
+                          {isSelected ? (
+                            <View style={[styles.experienceCompactCheckmark, { backgroundColor: option.color }]}>
+                              <Text style={styles.experienceCompactCheckmarkText}>✓</Text>
+                            </View>
+                          ) : (
+                            <View style={styles.experienceCompactIndicator}>
+                              <Text style={styles.experienceCompactIndicatorText}>•</Text>
+                            </View>
+                          )}
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            ) : (
+              // Regular layout for other questions
+              currentStepData.options.map((option, index) => {
+                const isSelected = currentStepData.type === 'multiple'
+                  ? answers[currentStepData.id]?.includes(option.value)
+                  : answers[currentStepData.id] === option.value;
+                
+                return (
+                  <TouchableOpacity
+                    key={option.value}
+                    style={[
+                      styles.option,
+                      isSelected && styles.optionSelected,
+                      { borderColor: option.color }
+                    ]}
+                    onPress={() => handleAnswer(currentStepData.id, option.value, currentStepData.type === 'multiple')}
+                  >
+                    <View style={styles.optionContent}>
+                      {option.icon && (
+                        <Text style={styles.optionIcon}>{option.icon}</Text>
+                      )}
+                      <View style={styles.optionTextContainer}>
+                        <Text style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
+                          {option.label}
+                        </Text>
+                        {option.description && (
+                          <Text style={styles.optionDescription}>
+                            {option.description}
+                          </Text>
+                        )}
+                      </View>
+                    </View>
+                    {isSelected && (
+                      <View style={[styles.checkmark, { backgroundColor: option.color }]}>
+                        <Text style={styles.checkmarkText}>✓</Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                );
+              })
+            )}
+          </View>
         </Animated.View>
             </ScrollView>
 
@@ -764,7 +990,7 @@ const styles = StyleSheet.create({
     zIndex: 5,
   },
   brandSection: {
-    flex: 1,
+    alignItems: 'center',
   },
 
   tagline: {
@@ -887,22 +1113,93 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 30,
   },
+  progressBox: {
+    padding: 20,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: 'rgba(220, 20, 60, 0.4)',
+    alignItems: 'center',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 10,
+  },
+  progressHeader: {
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  progressPercentage: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    textShadowColor: 'rgba(220, 20, 60, 0.5)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    marginBottom: 2,
+  },
+  progressLabel: {
+    fontSize: 16,
+    color: '#E5E7EB',
+    textAlign: 'center',
+    fontWeight: '600',
+    letterSpacing: 0.5,
+    opacity: 0.9,
+  },
+  progressBarContainer: {
+    width: '100%',
+    marginBottom: 16,
+    position: 'relative',
+  },
   progressBar: {
-    height: 8,
-    backgroundColor: 'rgba(220, 20, 60, 0.2)',
-    borderRadius: 4,
-    overflow: 'hidden',
-    marginBottom: 12,
+    height: 10,
+    backgroundColor: 'transparent',
+    borderRadius: 5,
+    overflow: 'visible',
+    width: '100%',
+    position: 'relative',
   },
   progressFill: {
     height: '100%',
-    borderRadius: 4,
+    borderRadius: 5,
+    position: 'relative',
+    zIndex: 2,
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.9,
+    shadowRadius: 6,
+    elevation: 6,
   },
-  progressText: {
+  progressTrack: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 10,
+    backgroundColor: 'rgba(220, 20, 60, 0.2)',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: 'rgba(220, 20, 60, 0.3)',
+  },
+  progressGlow: {
+    position: 'absolute',
+    top: -2,
+    left: -2,
+    right: -2,
+    bottom: -2,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    borderRadius: 7,
+    zIndex: 1,
+  },
+  progressSubtext: {
     fontSize: 14,
-    color: '#CD5C5C',
+    color: '#D1D5DB',
     textAlign: 'center',
     fontWeight: '500',
+    letterSpacing: 0.5,
+    opacity: 0.8,
+    fontStyle: 'italic',
   },
   content: {
     flex: 1,
@@ -912,79 +1209,656 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   stepTitle: {
-    fontSize: 28,
-    fontWeight: '700',
+    fontSize: 32,
+    fontWeight: '900',
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 12,
-    lineHeight: 34,
+    marginBottom: 16,
+    lineHeight: 38,
+    letterSpacing: 1,
+    textShadowColor: 'rgba(220, 20, 60, 0.6)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
   },
   stepSubtitle: {
-    fontSize: 16,
-    color: '#CD5C5C',
+    fontSize: 18,
+    color: '#E5E7EB',
     textAlign: 'center',
-    marginBottom: 30,
-    lineHeight: 22,
-    fontWeight: '400',
+    marginBottom: 35,
+    lineHeight: 24,
+    fontWeight: '500',
+    letterSpacing: 0.5,
+    opacity: 0.9,
   },
   optionsContainer: {
+    gap: 20,
+  },
+  fantasyGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  experienceContainer: {
     gap: 16,
   },
-  option: {
-    backgroundColor: 'rgba(220, 20, 60, 0.1)',
-    borderRadius: 16,
-    padding: 20,
+  experienceCompactContainer: {
+    gap: 12,
+  },
+    option: {
+    backgroundColor: 'rgba(220, 20, 60, 0.08)',
+    borderRadius: 20,
+    padding: 24,
     borderWidth: 2,
-    borderColor: 'rgba(220, 20, 60, 0.3)',
+    borderColor: 'rgba(220, 20, 60, 0.25)',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    },
-    optionSelected: {
-    backgroundColor: 'rgba(220, 20, 60, 0.2)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  fantasyCard: {
+    width: '48%',
+    backgroundColor: 'rgba(220, 20, 60, 0.08)',
+    borderRadius: 20,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: 'rgba(220, 20, 60, 0.2)',
+    minHeight: 140,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  experienceCard: {
+    backgroundColor: 'rgba(220, 20, 60, 0.08)',
+    borderRadius: 24,
+    padding: 20,
+    borderWidth: 2,
+    borderColor: 'rgba(220, 20, 60, 0.25)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  experienceCompactCard: {
+    backgroundColor: 'rgba(220, 20, 60, 0.08)',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: 'rgba(220, 20, 60, 0.25)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  fantasyCardSelected: {
+    backgroundColor: 'rgba(220, 20, 60, 0.12)',
     borderColor: '#DC143C',
+    borderWidth: 3,
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 10,
+    transform: [{ scale: 1.02 }],
+  },
+  experienceCardSelected: {
+    backgroundColor: 'rgba(220, 20, 60, 0.12)',
+    borderColor: '#DC143C',
+    borderWidth: 3,
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 10,
+    transform: [{ scale: 1.02 }],
+  },
+  experienceCompactCardSelected: {
+    backgroundColor: 'rgba(220, 20, 60, 0.12)',
+    borderColor: '#DC143C',
+    borderWidth: 3,
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+    transform: [{ scale: 1.01 }],
+  },
+    optionSelected: {
+    backgroundColor: 'rgba(220, 20, 60, 0.12)',
+    borderColor: '#DC143C',
+    borderWidth: 3,
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 10,
+    transform: [{ scale: 1.02 }],
   },
   optionContent: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
   },
-  optionIcon: {
+  fantasyCardContent: {
+    flex: 1,
+    justifyContent: 'space-between',
+    height: '100%',
+  },
+  experienceCardContent: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  experienceCompactContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  fantasyCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  experienceCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  fantasyCardIcon: {
+    fontSize: 28,
+    opacity: 0.9,
+  },
+  experienceLevel: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(220, 20, 60, 0.2)',
+    borderWidth: 2,
+    borderColor: 'rgba(220, 20, 60, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  experienceCompactLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    minWidth: 80,
+  },
+  experienceCompactLevel: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(220, 20, 60, 0.2)',
+    borderWidth: 1,
+    borderColor: 'rgba(220, 20, 60, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  experienceCompactLevelText: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  experienceCompactIcon: {
+    fontSize: 20,
+    opacity: 0.9,
+  },
+  experienceLevelText: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  experienceIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(220, 20, 60, 0.15)',
+    borderWidth: 2,
+    borderColor: 'rgba(220, 20, 60, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  experienceIcon: {
     fontSize: 24,
-    marginRight: 16,
+    opacity: 0.9,
+  },
+  fantasyCardBadge: {
+    backgroundColor: 'rgba(220, 20, 60, 0.2)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(220, 20, 60, 0.3)',
+  },
+  fantasyCardBadgeText: {
+    fontSize: 10,
+    color: '#CD5C5C',
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  optionIcon: {
+    fontSize: 28,
+    marginRight: 20,
+    opacity: 0.9,
   },
   optionTextContainer: {
     flex: 1,
   },
   optionLabel: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 6,
+    letterSpacing: 0.3,
+  },
+  fantasyCardBody: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  experienceCardBody: {
+    marginBottom: 16,
+  },
+  experienceCompactCenter: {
+    flex: 1,
+    marginHorizontal: 16,
+  },
+  fantasyCardLabel: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  experienceCardLabel: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 8,
+    letterSpacing: 0.3,
+  },
+  experienceCompactLabel: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#FFFFFF',
     marginBottom: 4,
+    letterSpacing: 0.3,
   },
-  optionLabelSelected: {
-    color: '#DC143C',
-  },
-  optionDescription: {
-    fontSize: 14,
-    color: '#CD5C5C',
-    lineHeight: 20,
-    fontWeight: '400',
-  },
-  optionDescriptionSelected: {
+  experienceCompactLabelSelected: {
     color: '#FFFFFF',
+    textShadowColor: 'rgba(220, 20, 60, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    fontWeight: '800',
   },
-  checkmark: {
+  experienceCompactDescription: {
+    fontSize: 14,
+    color: '#D1D5DB',
+    lineHeight: 20,
+    fontWeight: '500',
+    opacity: 0.8,
+  },
+  experienceCompactDescriptionSelected: {
+    color: '#E5E7EB',
+    opacity: 1,
+    fontWeight: '600',
+  },
+  experienceCardLabelSelected: {
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(220, 20, 60, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    fontWeight: '800',
+  },
+  experienceCardDescription: {
+    fontSize: 15,
+    color: '#D1D5DB',
+    textAlign: 'center',
+    lineHeight: 22,
+    fontWeight: '500',
+    opacity: 0.8,
+  },
+  experienceCardDescriptionSelected: {
+    color: '#E5E7EB',
+    opacity: 1,
+    fontWeight: '600',
+  },
+  fantasyCardLabelSelected: {
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(220, 20, 60, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    fontWeight: '800',
+  },
+  fantasyCardFooter: {
+    alignItems: 'center',
+  },
+  experienceCardFooter: {
+    alignItems: 'center',
+  },
+  experienceCompactRight: {
+    alignItems: 'center',
+    minWidth: 40,
+  },
+  fantasyCardCheckmark: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.6,
+    shadowRadius: 8,
+    elevation: 6,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  experienceCardCheckmark: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.6,
+    shadowRadius: 8,
+    elevation: 6,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  experienceCompactCheckmark: {
     width: 24,
     height: 24,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  experienceCompactCheckmarkText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '900',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  experienceCompactIndicator: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(220, 20, 60, 0.2)',
+    borderWidth: 1,
+    borderColor: 'rgba(220, 20, 60, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  experienceCompactIndicatorText: {
+    color: '#CD5C5C',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  experienceCardCheckmarkText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '900',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  experienceCardIndicator: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(220, 20, 60, 0.2)',
+    borderWidth: 2,
+    borderColor: 'rgba(220, 20, 60, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  experienceCardIndicatorText: {
+    color: '#CD5C5C',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  fantasyCardCheckmarkText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '900',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  fantasyCardIndicator: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(220, 20, 60, 0.2)',
+    borderWidth: 1,
+    borderColor: 'rgba(220, 20, 60, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fantasyCardIndicatorText: {
+    color: '#CD5C5C',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 24,
+    paddingVertical: 25,
+  },
+  toggleLabel: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#E5E7EB',
+    letterSpacing: 0.5,
+  },
+  toggleSwitch: {
+    width: 64,
+    height: 36,
+    backgroundColor: 'rgba(139, 92, 246, 0.15)',
+    borderRadius: 18,
+    padding: 2,
+    borderWidth: 2,
+    borderColor: 'rgba(139, 92, 246, 0.3)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  toggleSwitchActive: {
+    backgroundColor: '#8B5CF6',
+    borderColor: '#8B5CF6',
+    shadowColor: '#8B5CF6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  toggleThumb: {
+    width: 28,
+    height: 28,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+    transform: [{ translateX: 0 }],
+  },
+  toggleThumbActive: {
+    transform: [{ translateX: 28 }],
+  },
+  sliderContainer: {
+    alignItems: 'center',
+    paddingVertical: 25,
+    gap: 24,
+  },
+  sliderMinLabel: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#E5E7EB',
+    marginBottom: 12,
+    letterSpacing: 0.5,
+  },
+  sliderTrack: {
+    width: 280,
+    height: 24,
+    backgroundColor: 'rgba(139, 92, 246, 0.15)',
+    borderRadius: 12,
+    position: 'relative',
+    borderWidth: 2,
+    borderColor: 'rgba(139, 92, 246, 0.3)',
+    overflow: 'visible',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  sliderFill: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    height: '100%',
+    backgroundColor: '#8B5CF6',
+    borderRadius: 12,
+    minWidth: 0,
+  },
+  sliderThumb: {
+    position: 'absolute',
+    width: 28,
+    height: 28,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    borderWidth: 3,
+    borderColor: '#8B5CF6',
+    shadowColor: '#8B5CF6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 8,
+    top: '50%',
+    marginTop: -14,
+  },
+  sliderMaxLabel: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#E5E7EB',
+    marginTop: 12,
+    letterSpacing: 0.5,
+  },
+  sliderValue: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#8B5CF6',
+    marginTop: 12,
+    textShadowColor: 'rgba(139, 92, 246, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  sliderValueContainer: {
+    alignItems: 'center',
+    marginTop: 18,
+  },
+  sliderValueLabel: {
+    fontSize: 16,
+    color: '#D1D5DB',
+    fontWeight: '500',
+    marginTop: 6,
+    opacity: 0.8,
+  },
+  sliderTouchOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'transparent',
+    zIndex: 1,
+  },
+  optionLabelSelected: {
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(220, 20, 60, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  optionDescription: {
+    fontSize: 15,
+    color: '#D1D5DB',
+    lineHeight: 22,
+    fontWeight: '500',
+    opacity: 0.8,
+  },
+  optionDescriptionSelected: {
+    color: '#E5E7EB',
+    opacity: 1,
+    fontWeight: '600',
+  },
+  checkmark: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 6,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   checkmarkText: {
     color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '900',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   navigation: {
     flexDirection: 'row',
@@ -992,21 +1866,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingBottom: 30,
-    gap: 16,
+    gap: 20,
   },
   backButton: {
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: '#CD5C5C',
-    backgroundColor: 'rgba(220, 20, 60, 0.1)',
+    paddingVertical: 18,
+    paddingHorizontal: 28,
+    borderRadius: 28,
+    borderWidth: 2,
+    borderColor: 'rgba(220, 20, 60, 0.4)',
+    backgroundColor: 'rgba(220, 20, 60, 0.08)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  backButtonText: {
-    color: '#CD5C5C',
+    backButtonText: {
+    color: '#E5E7EB',
     fontSize: 16,
     fontWeight: '600',
-    },
+    letterSpacing: 0.5,
+  },
     nextButton: {
     flex: 1,
         borderRadius: 25,
