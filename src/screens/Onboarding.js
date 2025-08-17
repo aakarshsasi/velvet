@@ -28,6 +28,8 @@ export default function OnboardingScreen() {
   const [slideAnim] = useState(new Animated.Value(50));
   const [glowAnim] = useState(new Animated.Value(0));
   const [showIntro, setShowIntro] = useState(true);
+  const [progressAnim] = useState(new Animated.Value(0));
+  const [progressGlowAnim] = useState(new Animated.Value(0));
 
   const onboardingSteps = [
     {
@@ -153,16 +155,29 @@ export default function OnboardingScreen() {
       // Calculate progress based on quiz steps and answers
       let answeredSteps = 0;
       onboardingSteps.forEach(step => {
-        if (answers[step.id] !== undefined) {
+        if (step.type === 'toggle' && currentStep >= onboardingSteps.indexOf(step)) {
+          // Count toggle questions only when user reaches that page
+          answeredSteps++;
+        } else if (step.type === 'slider' && currentStep >= onboardingSteps.indexOf(step)) {
+          // Count slider questions when user reaches that page
+          answeredSteps++;
+        } else if (answers[step.id] !== undefined) {
           if (step.type === 'multiple' && answers[step.id].length > 0) {
             answeredSteps++;
-          } else if (step.type === 'single' || step.type === 'toggle' || step.type === 'slider') {
+          } else if (step.type === 'single') {
             answeredSteps++;
           }
         }
       });
       const progressValue = (answeredSteps / onboardingSteps.length) * 100;
       setProgress(progressValue);
+      
+      // Animate progress bar update
+      Animated.timing(progressAnim, {
+        toValue: progressValue,
+        duration: 800,
+        useNativeDriver: false,
+      }).start();
     }
     
     // Animate fade in and slide up
@@ -246,7 +261,7 @@ export default function OnboardingScreen() {
     if (currentStepData.type === 'multiple') {
       return answers[currentStepData.id] && answers[currentStepData.id].length > 0;
     } else if (currentStepData.type === 'toggle') {
-      return answers[currentStepData.id] !== undefined;
+      return true; // Toggle questions are always considered answered (defaults to Yes)
     } else if (currentStepData.type === 'slider') {
       return answers[currentStepData.id] !== undefined;
     }
@@ -259,7 +274,7 @@ export default function OnboardingScreen() {
       const profile = {
         gender: answers.gender || 'prefer-not-to-say',
         sexualOrientation: answers.sexualOrientation || [],
-        experimenting: answers.experimenting !== undefined ? answers.experimenting : false,
+        experimenting: answers.experimenting !== undefined ? answers.experimenting : true,
         desireLevel: answers.desire || 'mild',
         turnOns: answers.turnOns || [],
         fantasySettings: answers.fantasy || [],
@@ -567,7 +582,9 @@ export default function OnboardingScreen() {
       <View style={styles.header}>
         <View style={styles.brandSection}>
           <Animated.Text style={[styles.brandTitle, { opacity: glowAnim }]}>Velvet</Animated.Text>
-          <Text style={styles.tagline}>Play deeper. Love bolder.</Text>
+          <Text style={styles.tagline}>
+            Play deeper. Love <Text style={styles.boldText}>bolder</Text>.
+          </Text>
         </View>
       </View>
 
@@ -580,22 +597,41 @@ export default function OnboardingScreen() {
           end={{ x: 1, y: 1 }}
         >
           <View style={styles.progressHeader}>
-            <Text style={styles.progressPercentage}>{Math.round(progress)}%</Text>
+            <Animated.Text style={[
+              styles.progressPercentage,
+              {
+                transform: [{
+                  scale: progressGlowAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [1, 1.05]
+                  })
+                }]
+              }
+            ]}>
+              {Math.round(progress)}%
+            </Animated.Text>
             <Text style={styles.progressLabel}>Complete</Text>
           </View>
           <View style={styles.progressBarContainer}>
             <View style={styles.progressBar}>
-              <LinearGradient
-                colors={['#DC143C', '#B22222', '#8B0000']}
-                style={[styles.progressFill, { width: `${progress}%` }]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-              />
-              <View style={styles.progressGlow} />
+              <Animated.View style={[styles.progressFill, { 
+                width: progressAnim.interpolate({
+                  inputRange: [0, 100],
+                  outputRange: ['0%', '100%']
+                })
+              }]}>
+                <LinearGradient
+                  colors={['#DC143C', '#B22222', '#8B0000']}
+                  style={styles.progressFillGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                />
+              </Animated.View>
+
             </View>
             <View style={styles.progressTrack} />
           </View>
-          <Text style={styles.progressSubtext}>Processing your results...</Text>
+
         </LinearGradient>
       </View>
 
@@ -613,26 +649,21 @@ export default function OnboardingScreen() {
                 <TouchableOpacity
                   style={[
                     styles.toggleSwitch,
-                    answers[currentStepData.id] && styles.toggleSwitchActive
+                    (answers[currentStepData.id] !== false) && styles.toggleSwitchActive
                   ]}
-                  onPress={() => handleAnswer(currentStepData.id, !answers[currentStepData.id])}
+                  onPress={() => handleAnswer(currentStepData.id, !(answers[currentStepData.id] !== false))}
                 >
                   <View style={[
                     styles.toggleThumb,
-                    answers[currentStepData.id] && styles.toggleThumbActive
+                    (answers[currentStepData.id] !== false) && styles.toggleThumbActive
                   ]} />
                 </TouchableOpacity>
                 <Text style={styles.toggleLabel}>Yes</Text>
               </View>
             ) : currentStepData.type === 'slider' ? (
-              // Massive slider layout - everything on one page
+              // Layout matching reference image
               <View style={styles.sliderContainer}>
-                {/* Percentage just above slider */}
-                <Text style={styles.sliderCurrentValue}>
-                  {Math.round(answers[currentStepData.id] || currentStepData.defaultValue || 0)}%
-                </Text>
-                
-                {/* Massive slider */}
+                {/* Massive slider with enhanced theme */}
                 <View style={styles.sliderWrapper}>
                   <Text style={styles.sliderMinLabel}>{currentStepData.labels.min}</Text>
                   <Slider
@@ -643,8 +674,8 @@ export default function OnboardingScreen() {
                     value={answers[currentStepData.id] || currentStepData.defaultValue || 0}
                     onValueChange={(value) => handleAnswer(currentStepData.id, value)}
                     onSlidingComplete={(value) => handleAnswer(currentStepData.id, value)}
-                    minimumTrackTintColor="#DC143C"
-                    maximumTrackTintColor="rgba(220, 20, 60, 0.3)"
+                    minimumTrackTintColor="#FF6B9D"
+                    maximumTrackTintColor="rgba(255, 107, 157, 0.15)"
                     thumbStyle={styles.sliderThumbStyle}
                     trackStyle={styles.sliderTrackStyle}
                     thumbTintColor="#FFFFFF"
@@ -792,6 +823,15 @@ export default function OnboardingScreen() {
         </Animated.View>
             </ScrollView>
 
+      {/* Percentage Display Above Navigation */}
+      {currentStepData.type === 'slider' && (
+        <View style={styles.percentageDisplay}>
+          <Text style={styles.percentageText}>
+            {Math.round(answers[currentStepData.id] || currentStepData.defaultValue || 0)}%
+          </Text>
+        </View>
+      )}
+      
       {/* Navigation */}
       <View style={styles.navigation}>
         {currentStep > 0 && (
@@ -991,6 +1031,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 0.5,
   },
+  boldText: {
+    fontWeight: '800',
+    color: '#CD5C5C',
+  },
   profileButton: {
     width: 40,
     height: 40,
@@ -1118,20 +1162,20 @@ const styles = StyleSheet.create({
   },
   progressHeader: {
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 10,
   },
   progressPercentage: {
-    fontSize: 32,
-    fontWeight: '900',
+    fontSize: 24,
+    fontWeight: '800',
     color: '#FFFFFF',
     textAlign: 'center',
     textShadowColor: 'rgba(220, 20, 60, 0.5)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
-    marginBottom: 2,
+    marginBottom: 1,
   },
   progressLabel: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#E5E7EB',
     textAlign: 'center',
     fontWeight: '600',
@@ -1162,6 +1206,11 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 6,
   },
+  progressFillGradient: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 5,
+  },
   progressTrack: {
     position: 'absolute',
     top: 0,
@@ -1175,13 +1224,14 @@ const styles = StyleSheet.create({
   },
   progressGlow: {
     position: 'absolute',
-    top: -2,
-    left: -2,
-    right: -2,
-    bottom: -2,
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
-    borderRadius: 7,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(220, 20, 60, 0.3)',
+    borderRadius: 5,
     zIndex: 1,
+    overflow: 'hidden',
   },
   progressSubtext: {
     fontSize: 14,
@@ -1197,19 +1247,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   stepContainer: {
-    marginBottom: 40,
+    marginBottom: 25,
   },
   stepTitle: {
-    fontSize: 32,
-    fontWeight: '900',
+    fontSize: 26,
+    fontWeight: '800',
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 16,
-    lineHeight: 38,
-    letterSpacing: 1,
+    marginBottom: 12,
+    lineHeight: 32,
+    letterSpacing: 0.8,
     textShadowColor: 'rgba(220, 20, 60, 0.6)',
     textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 8,
+    textShadowRadius: 6,
   },
   stepSubtitle: {
     fontSize: 18,
@@ -1723,8 +1773,9 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     alignItems: 'center',
-    paddingVertical: 0,
+    paddingVertical: 20,
     gap: 0,
+    marginTop: 0,
   },
   sliderTitle: {
     fontSize: 16,
@@ -1734,9 +1785,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   sliderCurrentValue: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#DC143C',
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#FF6B6B',
     marginBottom: 0,
     marginTop: 0,
   },
@@ -1752,29 +1803,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    paddingHorizontal: 8,
+    paddingHorizontal: 16,
     marginTop: 0,
+    marginBottom: 0,
   },
   slider: {
     flex: 1,
-    height: 300,
-    marginHorizontal: 4,
+    height: 240,
+    marginHorizontal: 8,
     marginVertical: 0,
   },
   sliderMinLabel: {
-    fontSize: 11,
-    fontWeight: '500',
-    color: '#6B7280',
-    letterSpacing: 0.2,
-    minWidth: 45,
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#E5B8D1',
+    letterSpacing: 0.3,
+    minWidth: 50,
     textAlign: 'center',
   },
   sliderMaxLabel: {
-    fontSize: 11,
-    fontWeight: '500',
-    color: '#6B7280',
-    letterSpacing: 0.2,
-    minWidth: 45,
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#E5B8D1',
+    letterSpacing: 0.3,
+    minWidth: 50,
     textAlign: 'center',
   },
   sliderThumbStyle: {
@@ -1782,17 +1834,17 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     backgroundColor: '#FFFFFF',
-    borderWidth: 10,
-    borderColor: '#DC143C',
-    shadowColor: '#DC143C',
-    shadowOffset: { width: 0, height: 18 },
-    shadowOpacity: 0.9,
-    shadowRadius: 36,
-    elevation: 22,
+    borderWidth: 8,
+    borderColor: '#FF6B9D',
+    shadowColor: '#FF6B9D',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.8,
+    shadowRadius: 24,
+    elevation: 20,
   },
   sliderTrackStyle: {
-    height: 56,
-    borderRadius: 28,
+    height: 48,
+    borderRadius: 24,
   },
   sliderValueContainer: {
     alignItems: 'center',
@@ -1839,6 +1891,17 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+  },
+  percentageDisplay: {
+    alignItems: 'center',
+    marginBottom: 5,
+    paddingHorizontal: 20,
+  },
+  percentageText: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#FF6B9D',
+    textAlign: 'center',
   },
   navigation: {
     flexDirection: 'row',
