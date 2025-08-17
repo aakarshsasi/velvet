@@ -3,15 +3,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  Animated,
-  Dimensions,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Animated,
+    Dimensions,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
@@ -574,7 +574,7 @@ export default function ProfileResultScreen() {
               />
             </View>
           </View>
-          
+
           <View style={styles.summaryGrid}>
             <View style={styles.summaryItem}>
               <Text style={styles.summaryLabel}>Desire Level</Text>
@@ -595,8 +595,8 @@ export default function ProfileResultScreen() {
               <Text style={styles.summaryValue}>
                 {userProfile?.experience?.charAt(0).toUpperCase() + userProfile?.experience?.slice(1) || 'Not specified'}
               </Text>
-            </View>
-            
+          </View>
+
             <View style={styles.summaryItem}>
               <Text style={styles.summaryLabel}>Enhancement</Text>
               <Text style={styles.answerValue}>
@@ -629,7 +629,7 @@ export default function ProfileResultScreen() {
               />
             </View>
           </View>
-          
+
           <View style={styles.dimensionsGrid}>
             {Object.entries(profileDimensions).map(([key, value], index) => (
               <Animated.View 
@@ -652,7 +652,7 @@ export default function ProfileResultScreen() {
                   <Text style={styles.dimensionValue}>{Math.round(value)}%</Text>
                 </View>
                 
-                <View style={styles.dimensionBar}>
+            <View style={styles.dimensionBar}>
                   <Animated.View 
                     style={[
                       styles.dimensionFill, 
@@ -670,7 +670,7 @@ export default function ProfileResultScreen() {
                      value >= 70 ? 'Good' : 
                      value >= 60 ? 'Fair' : 'Developing'}
                   </Text>
-                </View>
+            </View>
               </Animated.View>
             ))}
           </View>
@@ -827,8 +827,8 @@ export default function ProfileResultScreen() {
               {personalizedInsight.icons.map((icon, index) => (
                 <Text key={index} style={styles.insightIcon}>{icon}</Text>
               ))}
-            </View>
-          </Animated.View>
+          </View>
+        </Animated.View>
         </Animated.View>
 
         {/* Bottom Spacing */}
