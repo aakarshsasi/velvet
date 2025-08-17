@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -27,6 +28,8 @@ export default function OnboardingScreen() {
   const [slideAnim] = useState(new Animated.Value(50));
   const [glowAnim] = useState(new Animated.Value(0));
   const [showIntro, setShowIntro] = useState(true);
+  const [progressAnim] = useState(new Animated.Value(0));
+  const [progressGlowAnim] = useState(new Animated.Value(0));
 
   const onboardingSteps = [
     {
@@ -136,7 +139,7 @@ export default function OnboardingScreen() {
       type: 'slider',
       minValue: 0,
       maxValue: 100,
-      defaultValue: 50,
+      defaultValue: 0,
       labels: {
         min: "Not at all",
         max: "Extremely"
@@ -152,16 +155,29 @@ export default function OnboardingScreen() {
       // Calculate progress based on quiz steps and answers
       let answeredSteps = 0;
       onboardingSteps.forEach(step => {
-        if (answers[step.id] !== undefined) {
+        if (step.type === 'toggle' && currentStep >= onboardingSteps.indexOf(step)) {
+          // Count toggle questions only when user reaches that page
+          answeredSteps++;
+        } else if (step.type === 'slider' && currentStep >= onboardingSteps.indexOf(step)) {
+          // Count slider questions when user reaches that page
+          answeredSteps++;
+        } else if (answers[step.id] !== undefined) {
           if (step.type === 'multiple' && answers[step.id].length > 0) {
             answeredSteps++;
-          } else if (step.type === 'single' || step.type === 'toggle' || step.type === 'slider') {
+          } else if (step.type === 'single') {
             answeredSteps++;
           }
         }
       });
       const progressValue = (answeredSteps / onboardingSteps.length) * 100;
       setProgress(progressValue);
+      
+      // Animate progress bar update
+      Animated.timing(progressAnim, {
+        toValue: progressValue,
+        duration: 800,
+        useNativeDriver: false,
+      }).start();
     }
     
     // Animate fade in and slide up
@@ -245,7 +261,7 @@ export default function OnboardingScreen() {
     if (currentStepData.type === 'multiple') {
       return answers[currentStepData.id] && answers[currentStepData.id].length > 0;
     } else if (currentStepData.type === 'toggle') {
-      return answers[currentStepData.id] !== undefined;
+      return true; // Toggle questions are always considered answered (defaults to Yes)
     } else if (currentStepData.type === 'slider') {
       return answers[currentStepData.id] !== undefined;
     }
@@ -258,7 +274,7 @@ export default function OnboardingScreen() {
       const profile = {
         gender: answers.gender || 'prefer-not-to-say',
         sexualOrientation: answers.sexualOrientation || [],
-        experimenting: answers.experimenting !== undefined ? answers.experimenting : false,
+        experimenting: answers.experimenting !== undefined ? answers.experimenting : true,
         desireLevel: answers.desire || 'mild',
         turnOns: answers.turnOns || [],
         fantasySettings: answers.fantasy || [],
@@ -566,7 +582,9 @@ export default function OnboardingScreen() {
       <View style={styles.header}>
         <View style={styles.brandSection}>
           <Animated.Text style={[styles.brandTitle, { opacity: glowAnim }]}>Velvet</Animated.Text>
-          <Text style={styles.tagline}>Play deeper. Love bolder.</Text>
+          <Text style={styles.tagline}>
+            Play deeper. Love <Text style={styles.boldText}>bolder</Text>.
+          </Text>
         </View>
       </View>
 
@@ -579,22 +597,41 @@ export default function OnboardingScreen() {
           end={{ x: 1, y: 1 }}
         >
           <View style={styles.progressHeader}>
-            <Text style={styles.progressPercentage}>{Math.round(progress)}%</Text>
+            <Animated.Text style={[
+              styles.progressPercentage,
+              {
+                transform: [{
+                  scale: progressGlowAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [1, 1.05]
+                  })
+                }]
+              }
+            ]}>
+              {Math.round(progress)}%
+            </Animated.Text>
             <Text style={styles.progressLabel}>Complete</Text>
           </View>
           <View style={styles.progressBarContainer}>
             <View style={styles.progressBar}>
-              <LinearGradient
-                colors={['#DC143C', '#B22222', '#8B0000']}
-                style={[styles.progressFill, { width: `${progress}%` }]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-              />
-              <View style={styles.progressGlow} />
+              <Animated.View style={[styles.progressFill, { 
+                width: progressAnim.interpolate({
+                  inputRange: [0, 100],
+                  outputRange: ['0%', '100%']
+                })
+              }]}>
+                <LinearGradient
+                  colors={['#DC143C', '#B22222', '#8B0000']}
+                  style={styles.progressFillGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                />
+              </Animated.View>
+
             </View>
             <View style={styles.progressTrack} />
           </View>
-          <Text style={styles.progressSubtext}>Processing your results...</Text>
+
         </LinearGradient>
       </View>
 
@@ -612,53 +649,38 @@ export default function OnboardingScreen() {
                 <TouchableOpacity
                   style={[
                     styles.toggleSwitch,
-                    answers[currentStepData.id] && styles.toggleSwitchActive
+                    (answers[currentStepData.id] !== false) && styles.toggleSwitchActive
                   ]}
-                  onPress={() => handleAnswer(currentStepData.id, !answers[currentStepData.id])}
+                  onPress={() => handleAnswer(currentStepData.id, !(answers[currentStepData.id] !== false))}
                 >
                   <View style={[
                     styles.toggleThumb,
-                    answers[currentStepData.id] && styles.toggleThumbActive
+                    (answers[currentStepData.id] !== false) && styles.toggleThumbActive
                   ]} />
                 </TouchableOpacity>
                 <Text style={styles.toggleLabel}>Yes</Text>
               </View>
             ) : currentStepData.type === 'slider' ? (
-              // Slider component for slider type questions
+              // Layout matching reference image
               <View style={styles.sliderContainer}>
-                <Text style={styles.sliderMinLabel}>{currentStepData.labels.min}</Text>
-                <View style={styles.sliderTrack}>
-                  <TouchableOpacity
-                    style={styles.sliderTouchOverlay}
-                    onPress={(evt) => {
-                      const { locationX } = evt.nativeEvent;
-                      const percentage = (locationX / 250) * 100;
-                      const value = Math.max(0, Math.min(100, percentage));
-                      handleAnswer(currentStepData.id, value);
-                    }}
-                    activeOpacity={1}
+                {/* Massive slider with enhanced theme */}
+                <View style={styles.sliderWrapper}>
+                  <Text style={styles.sliderMinLabel}>{currentStepData.labels.min}</Text>
+                  <Slider
+                    style={styles.slider}
+                    minimumValue={0}
+                    maximumValue={100}
+                    step={1}
+                    value={answers[currentStepData.id] || currentStepData.defaultValue || 0}
+                    onValueChange={(value) => handleAnswer(currentStepData.id, value)}
+                    onSlidingComplete={(value) => handleAnswer(currentStepData.id, value)}
+                    minimumTrackTintColor="#FF6B9D"
+                    maximumTrackTintColor="rgba(255, 107, 157, 0.15)"
+                    thumbStyle={styles.sliderThumbStyle}
+                    trackStyle={styles.sliderTrackStyle}
+                    thumbTintColor="#FFFFFF"
                   />
-                  <View 
-                    style={[
-                      styles.sliderFill, 
-                      { width: `${answers[currentStepData.id] || currentStepData.defaultValue}%` }
-                    ]} 
-                  />
-                  <View 
-                    style={[
-                      styles.sliderThumb, 
-                      { left: `${answers[currentStepData.id] || currentStepData.defaultValue}%` }
-                    ]} 
-                  />
-                </View>
-                <Text style={styles.sliderMaxLabel}>{currentStepData.labels.max}</Text>
-                <View style={styles.sliderValueContainer}>
-                  <Text style={styles.sliderValue}>
-                    {Math.round(answers[currentStepData.id] || currentStepData.defaultValue)}%
-                  </Text>
-                  <Text style={styles.sliderValueLabel}>
-                    Enhancement Level
-                  </Text>
+                  <Text style={styles.sliderMaxLabel}>{currentStepData.labels.max}</Text>
                 </View>
               </View>
             ) : currentStepData.id === 'fantasy' ? (
@@ -801,6 +823,15 @@ export default function OnboardingScreen() {
         </Animated.View>
             </ScrollView>
 
+      {/* Percentage Display Above Navigation */}
+      {currentStepData.type === 'slider' && (
+        <View style={styles.percentageDisplay}>
+          <Text style={styles.percentageText}>
+            {Math.round(answers[currentStepData.id] || currentStepData.defaultValue || 0)}%
+          </Text>
+        </View>
+      )}
+      
       {/* Navigation */}
       <View style={styles.navigation}>
         {currentStep > 0 && (
@@ -1000,6 +1031,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 0.5,
   },
+  boldText: {
+    fontWeight: '800',
+    color: '#CD5C5C',
+  },
   profileButton: {
     width: 40,
     height: 40,
@@ -1127,20 +1162,20 @@ const styles = StyleSheet.create({
   },
   progressHeader: {
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 10,
   },
   progressPercentage: {
-    fontSize: 32,
-    fontWeight: '900',
+    fontSize: 24,
+    fontWeight: '800',
     color: '#FFFFFF',
     textAlign: 'center',
     textShadowColor: 'rgba(220, 20, 60, 0.5)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
-    marginBottom: 2,
+    marginBottom: 1,
   },
   progressLabel: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#E5E7EB',
     textAlign: 'center',
     fontWeight: '600',
@@ -1171,6 +1206,11 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 6,
   },
+  progressFillGradient: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 5,
+  },
   progressTrack: {
     position: 'absolute',
     top: 0,
@@ -1184,13 +1224,14 @@ const styles = StyleSheet.create({
   },
   progressGlow: {
     position: 'absolute',
-    top: -2,
-    left: -2,
-    right: -2,
-    bottom: -2,
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
-    borderRadius: 7,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(220, 20, 60, 0.3)',
+    borderRadius: 5,
     zIndex: 1,
+    overflow: 'hidden',
   },
   progressSubtext: {
     fontSize: 14,
@@ -1206,25 +1247,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   stepContainer: {
-    marginBottom: 40,
+    marginBottom: 25,
   },
   stepTitle: {
-    fontSize: 32,
-    fontWeight: '900',
+    fontSize: 26,
+    fontWeight: '800',
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 16,
-    lineHeight: 38,
-    letterSpacing: 1,
+    marginBottom: 12,
+    lineHeight: 32,
+    letterSpacing: 0.8,
     textShadowColor: 'rgba(220, 20, 60, 0.6)',
     textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 8,
+    textShadowRadius: 6,
   },
   stepSubtitle: {
     fontSize: 18,
     color: '#E5E7EB',
     textAlign: 'center',
-    marginBottom: 35,
+    marginBottom: 0,
     lineHeight: 24,
     fontWeight: '500',
     letterSpacing: 0.5,
@@ -1732,75 +1773,23 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     alignItems: 'center',
-    paddingVertical: 25,
-    gap: 24,
+    paddingVertical: 20,
+    gap: 0,
+    marginTop: 0,
   },
-  sliderMinLabel: {
-    fontSize: 20,
-    fontWeight: '700',
+  sliderTitle: {
+    fontSize: 16,
+    fontWeight: '600',
     color: '#E5E7EB',
-    marginBottom: 12,
-    letterSpacing: 0.5,
+    marginBottom: 2,
+    textAlign: 'center',
   },
-  sliderTrack: {
-    width: 280,
-    height: 24,
-    backgroundColor: 'rgba(139, 92, 246, 0.15)',
-    borderRadius: 12,
-    position: 'relative',
-    borderWidth: 2,
-    borderColor: 'rgba(139, 92, 246, 0.3)',
-    overflow: 'visible',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  sliderFill: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    height: '100%',
-    backgroundColor: '#8B5CF6',
-    borderRadius: 12,
-    minWidth: 0,
-  },
-  sliderThumb: {
-    position: 'absolute',
-    width: 28,
-    height: 28,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    borderWidth: 3,
-    borderColor: '#8B5CF6',
-    shadowColor: '#8B5CF6',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 8,
-    top: '50%',
-    marginTop: -14,
-  },
-  sliderMaxLabel: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#E5E7EB',
-    marginTop: 12,
-    letterSpacing: 0.5,
-  },
-  sliderValue: {
-    fontSize: 28,
+  sliderCurrentValue: {
+    fontSize: 24,
     fontWeight: '800',
-    color: '#8B5CF6',
-    marginTop: 12,
-    textShadowColor: 'rgba(139, 92, 246, 0.3)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-  sliderValueContainer: {
-    alignItems: 'center',
-    marginTop: 18,
+    color: '#FF6B6B',
+    marginBottom: 0,
+    marginTop: 0,
   },
   sliderValueLabel: {
     fontSize: 16,
@@ -1809,14 +1798,57 @@ const styles = StyleSheet.create({
     marginTop: 6,
     opacity: 0.8,
   },
-  sliderTouchOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'transparent',
-    zIndex: 1,
+  sliderWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 16,
+    marginTop: 0,
+    marginBottom: 0,
+  },
+  slider: {
+    flex: 1,
+    height: 240,
+    marginHorizontal: 8,
+    marginVertical: 0,
+  },
+  sliderMinLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#E5B8D1',
+    letterSpacing: 0.3,
+    minWidth: 50,
+    textAlign: 'center',
+  },
+  sliderMaxLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#E5B8D1',
+    letterSpacing: 0.3,
+    minWidth: 50,
+    textAlign: 'center',
+  },
+  sliderThumbStyle: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 8,
+    borderColor: '#FF6B9D',
+    shadowColor: '#FF6B9D',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.8,
+    shadowRadius: 24,
+    elevation: 20,
+  },
+  sliderTrackStyle: {
+    height: 48,
+    borderRadius: 24,
+  },
+  sliderValueContainer: {
+    alignItems: 'center',
+    marginTop: 0,
   },
   optionLabelSelected: {
     color: '#FFFFFF',
@@ -1859,6 +1891,17 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+  },
+  percentageDisplay: {
+    alignItems: 'center',
+    marginBottom: 5,
+    paddingHorizontal: 20,
+  },
+  percentageText: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#FF6B9D',
+    textAlign: 'center',
   },
   navigation: {
     flexDirection: 'row',
