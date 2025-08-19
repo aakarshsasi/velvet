@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   Animated,
@@ -14,6 +15,7 @@ import {
 import { Path, Svg } from 'react-native-svg';
 
 export default function HomeScreen() {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [userProfile, setUserProfile] = useState(null);
   const [revealedCards, setRevealedCards] = useState(new Set());
@@ -101,6 +103,8 @@ export default function HomeScreen() {
 
 
   const categories = [
+    { id: 'mild-seduction', name: 'Mild Seduction', icon: '💕', color: '#FBBF24' },
+    { id: 'foreplay', name: 'Foreplay', icon: '💋', color: '#F472B6' },
     { id: 'soft-domination', name: 'Soft Domination', icon: '👑', color: '#8B5CF6' },
     { id: 'light-restraints', name: 'Light Restraints', icon: '🔗', color: '#EC4899' },
     { id: 'roleplay', name: 'Roleplay', icon: '🎭', color: '#F59E0B' },
@@ -139,7 +143,7 @@ export default function HomeScreen() {
     <TouchableOpacity
       key={category.id}
       style={styles.categoryCard}
-      onPress={() => setSelectedCategory(category.id)}
+      onPress={() => router.push({ pathname: '/deck', params: { category: category.id } })}
     >
       <LinearGradient
         colors={[category.color, category.color + 'DD', category.color + '99']}
