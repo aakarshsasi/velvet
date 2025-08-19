@@ -1,7 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
+  Animated,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -10,14 +12,70 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { Path, Svg } from 'react-native-svg';
 
 export default function HomeScreen() {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [userProfile, setUserProfile] = useState(null);
+  const [revealedCards, setRevealedCards] = useState(new Set());
+  const [fadeAnim] = useState(new Animated.Value(0));
+  const [slideAnim] = useState(new Animated.Value(30));
+  const [glowAnim] = useState(new Animated.Value(0.3));
+  const [pulseAnim] = useState(new Animated.Value(1));
 
   useEffect(() => {
     loadUserProfile();
+    startAnimations();
   }, []);
+
+  const startAnimations = () => {
+    // Fade in and slide up
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 1200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Continuous glow effect
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(glowAnim, {
+          toValue: 0.3,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    // Subtle pulse effect
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.05,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  };
 
   const loadUserProfile = async () => {
     try {
@@ -30,7 +88,23 @@ export default function HomeScreen() {
     }
   };
 
+  const toggleCardReveal = (cardId) => {
+    setRevealedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(cardId)) {
+        newSet.delete(cardId);
+      } else {
+        newSet.add(cardId);
+      }
+      return newSet;
+    });
+  };
+
+
+
   const categories = [
+    { id: 'mild-seduction', name: 'Mild Seduction', icon: '💕', color: '#FBBF24' },
+    { id: 'foreplay', name: 'Foreplay', icon: '💋', color: '#F472B6' },
     { id: 'soft-domination', name: 'Soft Domination', icon: '👑', color: '#8B5CF6' },
     { id: 'light-restraints', name: 'Light Restraints', icon: '🔗', color: '#EC4899' },
     { id: 'roleplay', name: 'Roleplay', icon: '🎭', color: '#F59E0B' },
@@ -68,33 +142,70 @@ export default function HomeScreen() {
   const renderCategoryCard = (category) => (
     <TouchableOpacity
       key={category.id}
-      style={[styles.categoryCard, { backgroundColor: category.color }]}
-      onPress={() => setSelectedCategory(category.id)}
+      style={styles.categoryCard}
+      onPress={() => router.push({ pathname: '/deck', params: { category: category.id } })}
     >
-      <Text style={styles.categoryIcon}>{category.icon}</Text>
-      <Text style={styles.categoryName}>{category.name}</Text>
+      <LinearGradient
+        colors={[category.color, category.color + 'DD', category.color + '99']}
+        style={styles.categoryGradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <View style={styles.categoryGlow} />
+        <Text style={styles.categoryIcon}>{category.icon}</Text>
+        <Text style={styles.categoryName}>{category.name}</Text>
+        <View style={styles.categoryShine} />
+      </LinearGradient>
     </TouchableOpacity>
   );
 
-  const renderFeaturedCard = (card) => (
-    <View key={card.id} style={styles.featuredCard}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.cardTitle}>{card.title}</Text>
-        <View style={[styles.intensityBadge, { backgroundColor: getIntensityColor(card.intensity) }]}>
-          <Text style={styles.intensityText}>{card.intensity.toUpperCase()}</Text>
+  const renderFeaturedCard = (card) => {
+    // Different color schemes for each card type
+    const getCardColors = (category) => {
+      switch (category) {
+        case 'lingerie-play':
+          return ['rgba(236, 72, 153, 0.8)', 'rgba(219, 39, 119, 0.7)', 'rgba(190, 24, 93, 0.6)']; // Hot Pink
+        case 'sensory-play':
+          return ['rgba(6, 182, 212, 0.8)', 'rgba(8, 145, 178, 0.7)', 'rgba(14, 116, 144, 0.6)']; // Bright Cyan
+        case 'soft-domination':
+          return ['rgba(139, 92, 246, 0.8)', 'rgba(124, 58, 237, 0.7)', 'rgba(109, 40, 217, 0.6)']; // Rich Purple
+        default:
+          return ['rgba(220, 20, 60, 0.8)', 'rgba(178, 34, 34, 0.7)', 'rgba(139, 0, 0, 0.6)']; // Crimson
+      }
+    };
+
+    return (
+      <View key={card.id} style={styles.featuredCard}>
+        <LinearGradient
+          colors={getCardColors(card.category)}
+          style={styles.featuredCardGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        />
+        <View style={styles.cardHeader}>
+          <Text style={styles.cardTitle}>{card.title}</Text>
+          <View style={[styles.intensityBadge, { backgroundColor: getIntensityColor(card.intensity) }]}>
+            <Text style={styles.intensityText}>{card.intensity.toUpperCase()}</Text>
+          </View>
         </View>
+        {revealedCards.has(card.id) ? (
+          <Text style={styles.cardDescription}>{card.description}</Text>
+        ) : (
+          <View style={styles.cardPlaceholder}>
+            <Text style={styles.cardPlaceholderText}>Click Reveal to see content</Text>
+          </View>
+        )}
+        <LinearGradient
+          colors={['#DC143C', '#B22222', '#8B0000']}
+          style={styles.revealButton}
+        >
+          <TouchableOpacity style={styles.gradientButtonContent} onPress={() => toggleCardReveal(card.id)}>
+            <Text style={styles.revealButtonText}>{revealedCards.has(card.id) ? 'Hide' : 'Reveal'}</Text>
+          </TouchableOpacity>
+        </LinearGradient>
       </View>
-      <Text style={styles.cardDescription}>{card.description}</Text>
-      <LinearGradient
-        colors={['#EC4899', '#DB2777']}
-        style={styles.revealButton}
-      >
-        <TouchableOpacity style={styles.gradientButtonContent}>
-          <Text style={styles.revealButtonText}>Reveal</Text>
-        </TouchableOpacity>
-      </LinearGradient>
-    </View>
-  );
+    );
+  };
 
   const getIntensityColor = (intensity) => {
     switch (intensity) {
@@ -107,39 +218,174 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0F0F23" />
+      <StatusBar barStyle="light-content" backgroundColor="#000000" />
+      
+      {/* Background Gradient */}
+      <LinearGradient
+        colors={['#000000', '#1A0000', '#330000', '#4D0000', '#660000']}
+        style={styles.background}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      />
+
+      {/* Floating Elements */}
+      <View style={styles.floatingElements}>
+        <Animated.View 
+          style={[
+            styles.floatingCircle, 
+            { 
+              top: 100, 
+              left: 50,
+              opacity: glowAnim,
+              transform: [{ scale: pulseAnim }]
+            }
+          ]} 
+        />
+        <Animated.View 
+          style={[
+            styles.floatingCircle, 
+            { 
+              top: 300, 
+              right: 60,
+              opacity: glowAnim.interpolate({
+                inputRange: [0.3, 1],
+                outputRange: [0.2, 0.6]
+              }),
+              transform: [{ scale: pulseAnim.interpolate({
+                inputRange: [1, 1.05],
+                outputRange: [0.8, 1.2]
+              })}]
+            }
+          ]} 
+        />
+        <Animated.View 
+          style={[
+            styles.floatingCircle, 
+            { 
+              bottom: 200, 
+              left: 80,
+              opacity: glowAnim.interpolate({
+                inputRange: [0.3, 1],
+                outputRange: [0.3, 0.7]
+              }),
+              transform: [{ scale: pulseAnim.interpolate({
+                inputRange: [1, 1.05],
+                outputRange: [0.9, 1.1]
+              })}]
+            }
+          ]} 
+        />
+      </View>
       
       {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.brandSection}>
-          <Text style={styles.brandSubtitle}>velvet</Text>
-          <Text style={styles.brandTitle}>Velvet</Text>
-          {userProfile ? (
-            <Text style={styles.personaText}>Welcome back, {userProfile.persona} ✨</Text>
-          ) : (
-            <Text style={styles.tagline}>Play deeper. Love bolder.</Text>
-          )}
+      <LinearGradient
+        colors={['rgba(220, 20, 60, 0.15)', 'rgba(139, 0, 0, 0.08)', 'rgba(0, 0, 0, 0.2)']}
+        style={styles.headerGradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <View style={styles.header}>
+          <View style={styles.brandSection}>
+            {/* Brand Title with Heart V */}
+            <Animated.View 
+              style={[
+                styles.brandTitleContainer,
+                {
+                  opacity: fadeAnim,
+                  transform: [{ translateY: slideAnim }]
+                }
+              ]}
+            >
+              <View style={styles.brandTitleRow}>
+                {/* Heart V Symbol */}
+                <Animated.View 
+                  style={[
+                    styles.heartV,
+                    {
+                      transform: [{ scale: pulseAnim }]
+                    }
+                  ]}
+                >
+                  <Svg width="40" height="55" viewBox="0 0 24 24" fill="none">
+                    <Path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="none"
+                      stroke="#DC143C"
+                      strokeWidth="2.5"
+                    />
+                  </Svg>
+                </Animated.View>
+                
+                {/* Rest of the text */}
+                <Text style={styles.brandTitleRest}>elvet</Text>
+              </View>
+            </Animated.View>
+            
+            
+          </View>
+          <TouchableOpacity style={styles.profileButton}>
+            <Text style={styles.profileIcon}>👤</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.profileButton}>
-          <Text style={styles.profileIcon}>👤</Text>
-        </TouchableOpacity>
-      </View>
+      </LinearGradient>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.scrollView} 
+        showsVerticalScrollIndicator={false}
+        scrollEnabled={true}
+        bounces={true}
+        alwaysBounceVertical={false}
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
         {/* Hero Section */}
-        <View style={styles.heroSection}>
-          <Text style={styles.heroTitle}>
-            <Text style={styles.heroTitleMain}>Play Deeper.</Text>{'\n'}
-            <Text style={styles.heroTitleAccent}>Love Bolder.</Text>
-          </Text>
-          <Text style={styles.heroSubtitle}>
-            Intimate experiences designed for connection
-          </Text>
-        </View>
+        <Animated.View 
+          style={[
+            styles.heroSection,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }]
+            }
+          ]}
+        >
+                      <LinearGradient
+              colors={['rgba(220, 20, 60, 0.25)', 'rgba(178, 34, 34, 0.15)', 'rgba(139, 0, 0, 0.12)', 'rgba(0, 0, 0, 0.2)']}
+              style={styles.heroGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+            <Text style={styles.heroTitle}>
+              <Text style={styles.heroTitleMain}>Play Deeper.</Text>{'\n'}
+              <Text style={styles.heroTitleAccent}>Love Bolder.</Text>
+            </Text>
+            <Text style={styles.heroSubtitle}>
+              Intimate experiences designed for connection
+            </Text>
+            {userProfile ? (
+              <View style={styles.heroBadge}>
+                <Text style={styles.heroBadgeText}>Welcome back, {userProfile.persona} ✨</Text>
+              </View>
+            ) : (
+              <View style={styles.heroBadge}>
+                <Text style={styles.heroBadgeText}>🔥 Premium Content</Text>
+              </View>
+            )}
+          </LinearGradient>
+        </Animated.View>
 
         {/* Categories Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Spice Up Your Sex Life!</Text>
+        <Animated.View 
+          style={[
+            styles.section,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }]
+            }
+          ]}
+        >
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Spice Up Your Sex Life! 🔥</Text>
+            <Text style={styles.sectionSubtitle}>Choose your adventure</Text>
+          </View>
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false}
@@ -147,20 +393,48 @@ export default function HomeScreen() {
           >
             {categories.map(renderCategoryCard)}
           </ScrollView>
-        </View>
+        </Animated.View>
 
         {/* Featured Cards Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Today's Picks</Text>
+        <Animated.View 
+          style={[
+            styles.section,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }]
+            }
+          ]}
+        >
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Today's Picks 💋</Text>
+            <Text style={styles.sectionSubtitle}>Curated for your pleasure</Text>
+          </View>
           {featuredCards.map(renderFeaturedCard)}
-        </View>
+        </Animated.View>
 
         {/* Games Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick Games</Text>
+        <Animated.View 
+          style={[
+            styles.section,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }]
+            }
+          ]}
+        >
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Quick Games 🎲</Text>
+            <Text style={styles.sectionSubtitle}>Instant excitement</Text>
+          </View>
           
           {/* Sexy Dice Game */}
           <View style={styles.gameCard}>
+            <LinearGradient
+              colors={['rgba(59, 130, 246, 0.8)', 'rgba(37, 99, 235, 0.7)', 'rgba(29, 78, 216, 0.6)']}
+              style={styles.gameCardGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            />
             <View style={styles.gameContent}>
               <View style={styles.gameInfo}>
                 <Text style={styles.gameTitle}>Sexy Dice Game</Text>
@@ -171,11 +445,17 @@ export default function HomeScreen() {
                 </View>
               </View>
               <View style={styles.diceContainer}>
+                <LinearGradient
+                  colors={['rgba(59, 130, 246, 0.95)', 'rgba(37, 99, 235, 0.9)', 'rgba(29, 78, 216, 0.8)']}
+                  style={styles.diceGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                />
                 <Text style={styles.diceIcon}>🎲</Text>
               </View>
             </View>
             <LinearGradient
-              colors={['#F97316', '#EA580C']}
+              colors={['#DC143C', '#B22222', '#8B0000']}
               style={styles.rollButton}
             >
               <TouchableOpacity style={styles.gradientButtonContent}>
@@ -186,6 +466,12 @@ export default function HomeScreen() {
 
           {/* Fantasy Builder */}
           <View style={styles.gameCard}>
+            <LinearGradient
+              colors={['rgba(168, 85, 247, 0.8)', 'rgba(147, 51, 234, 0.7)', 'rgba(126, 34, 206, 0.6)']}
+              style={styles.gameCardGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            />
             <View style={styles.gameContent}>
               <View style={styles.gameInfo}>
                 <Text style={styles.gameTitle}>The Ultimate Fantasy Builder</Text>
@@ -193,7 +479,7 @@ export default function HomeScreen() {
               </View>
             </View>
             <LinearGradient
-              colors={['#8B5CF6', '#7C3AED']}
+              colors={['#DC143C', '#B22222', '#8B0000']}
               style={styles.createButton}
             >
               <TouchableOpacity style={styles.gradientButtonContent}>
@@ -204,12 +490,24 @@ export default function HomeScreen() {
 
           {/* Spin the Wheel */}
           <View style={styles.gameCard}>
+            <LinearGradient
+              colors={['rgba(236, 72, 153, 0.8)', 'rgba(219, 39, 119, 0.7)', 'rgba(190, 24, 93, 0.6)']}
+              style={styles.gameCardGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            />
             <View style={styles.gameContent}>
               <View style={styles.gameInfo}>
                 <Text style={styles.gameTitle}>Spin the Wheel</Text>
                 <Text style={styles.gameDescription}>Discover new positions & challenges</Text>
               </View>
               <View style={styles.wheelContainer}>
+                <LinearGradient
+                  colors={['rgba(236, 72, 153, 0.95)', 'rgba(219, 39, 119, 0.9)', 'rgba(190, 24, 93, 0.8)']}
+                  style={styles.wheelGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                />
                 <Text style={styles.wheelIcon}>🎡</Text>
               </View>
             </View>
@@ -222,7 +520,7 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </LinearGradient>
           </View>
-        </View>
+        </Animated.View>
 
         {/* Bottom Spacing */}
         <View style={styles.bottomSpacing} />
@@ -234,10 +532,42 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F0F23',
+    backgroundColor: '#000000',
+  },
+  background: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: -1,
+  },
+  floatingElements: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 0,
+    pointerEvents: 'none',
+  },
+  floatingCircle: {
+    position: 'absolute',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: 'rgba(220, 20, 60, 0.12)',
+    borderWidth: 2,
+    borderColor: 'rgba(220, 20, 60, 0.4)',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
   },
   scrollView: {
     flex: 1,
+    zIndex: 1,
   },
   header: {
     flexDirection: 'row',
@@ -246,52 +576,97 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 10,
     paddingBottom: 20,
+    zIndex: 2,
   },
   brandSection: {
     flex: 1,
   },
-  brandSubtitle: {
-    fontSize: 12,
-    color: '#9CA3AF',
-    fontFamily: 'System',
-    letterSpacing: 1,
-    marginBottom: 4,
-  },
-  brandTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#EC4899',
-    fontFamily: 'System',
+  brandTitleContainer: {
+    alignItems: 'center',
     marginBottom: 8,
   },
+  brandTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heartV: {
+    marginRight: 2,
+  },
+  brandTitleRest: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#DC143C',
+    fontFamily: 'System',
+    letterSpacing: 0.5,
+  },
+
   tagline: {
     fontSize: 14,
     color: '#D1D5DB',
     fontFamily: 'System',
     fontStyle: 'italic',
   },
+  boldText: {
+    fontWeight: '800',
+    color: '#DC143C',
+  },
   personaText: {
     fontSize: 16,
-    color: '#EC4899',
+    color: '#DC143C',
     fontFamily: 'System',
     fontWeight: '600',
   },
   profileButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#1F2937',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(220, 20, 60, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#374151',
+    borderColor: 'rgba(220, 20, 60, 0.3)',
   },
   profileIcon: {
-    fontSize: 20,
+    fontSize: 14,
   },
   heroSection: {
     paddingHorizontal: 20,
     paddingBottom: 30,
+  },
+  heroGradient: {
+    borderRadius: 24,
+    padding: 24,
+    position: 'relative',
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: 'rgba(220, 20, 60, 0.5)',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.4,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  heroBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(220, 20, 60, 0.95)',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 18,
+    marginTop: 16,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.6,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  heroBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   heroTitle: {
     fontSize: 32,
@@ -304,7 +679,7 @@ const styles = StyleSheet.create({
     fontFamily: 'System',
   },
   heroTitleAccent: {
-    color: '#EC4899',
+    color: '#DC143C',
     fontFamily: 'System',
   },
   heroSubtitle: {
@@ -317,58 +692,118 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 30,
   },
+  sectionHeader: {
+    marginBottom: 24,
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    color: '#9CA3AF',
+    fontFamily: 'System',
+    fontWeight: '500',
+    letterSpacing: 0.3,
+    marginTop: 4,
+  },
   sectionTitle: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: 26,
+    fontWeight: '800',
     color: '#FFFFFF',
     fontFamily: 'System',
     marginBottom: 20,
+    textShadowColor: 'rgba(220, 20, 60, 0.8)',
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 8,
+    letterSpacing: 0.5,
   },
   categoriesContainer: {
     paddingRight: 20,
   },
   categoryCard: {
-    width: 100,
-    height: 120,
-    borderRadius: 16,
+    width: 110,
+    height: 130,
+    borderRadius: 20,
     marginRight: 16,
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 15,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(220, 20, 60, 0.3)',
+  },
+  categoryGradient: {
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
+    position: 'relative',
+  },
+  categoryGlow: {
+    position: 'absolute',
+    top: -20,
+    right: -20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    opacity: 0.9,
+    shadowColor: '#FFFFFF',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.6,
     shadowRadius: 8,
-    elevation: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    elevation: 4,
+  },
+  categoryShine: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 20,
   },
   categoryIcon: {
-    fontSize: 32,
-    marginBottom: 8,
+    fontSize: 36,
+    marginBottom: 10,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   categoryName: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '700',
     color: '#FFFFFF',
     fontFamily: 'System',
     textAlign: 'center',
-    lineHeight: 16,
+    lineHeight: 18,
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+    letterSpacing: 0.3,
   },
   featuredCard: {
-    backgroundColor: '#1F2937',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#374151',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    backgroundColor: 'rgba(220, 20, 60, 0.08)',
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: 'rgba(220, 20, 60, 0.25)',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8,
     position: 'relative',
     overflow: 'hidden',
-    backgroundColor: 'rgba(31, 41, 55, 0.95)',
+  },
+  featuredCardGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 20,
+    opacity: 0.4,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -403,6 +838,19 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 16,
   },
+  cardPlaceholder: {
+    paddingVertical: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  cardPlaceholderText: {
+    fontSize: 14,
+    color: '#9CA3AF',
+    fontFamily: 'System',
+    fontStyle: 'italic',
+    textAlign: 'center',
+  },
   revealButton: {
     alignSelf: 'flex-start',
     borderRadius: 20,
@@ -415,19 +863,28 @@ const styles = StyleSheet.create({
     fontFamily: 'System',
   },
   gameCard: {
-    backgroundColor: 'rgba(31, 41, 55, 0.95)',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#374151',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    backgroundColor: 'rgba(220, 20, 60, 0.08)',
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: 'rgba(220, 20, 60, 0.25)',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8,
     position: 'relative',
     overflow: 'hidden',
+  },
+  gameCardGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 20,
+    opacity: 0.5,
   },
   gameContent: {
     flexDirection: 'row',
@@ -460,34 +917,73 @@ const styles = StyleSheet.create({
   gameTag: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#EC4899',
+    color: '#DC143C',
     fontFamily: 'System',
-    backgroundColor: '#1E1B4B',
+    backgroundColor: 'rgba(220, 20, 60, 0.15)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
   },
   diceContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#374151',
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: 'rgba(59, 130, 246, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 0,
+    shadowColor: 'rgba(59, 130, 246, 0.4)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+    overflow: 'hidden',
+  },
+  diceGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 35,
+    opacity: 0.8,
   },
   diceIcon: {
-    fontSize: 32,
+    fontSize: 36,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   wheelContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#374151',
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: 'rgba(220, 20, 60, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(220, 20, 60, 0.4)',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+    overflow: 'hidden',
+  },
+  wheelGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 35,
+    opacity: 0.3,
   },
   wheelIcon: {
-    fontSize: 32,
+    fontSize: 36,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   rollButton: {
     borderRadius: 25,
