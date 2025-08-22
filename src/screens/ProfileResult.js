@@ -3,15 +3,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-    Animated,
-    Dimensions,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
@@ -186,232 +186,269 @@ export default function ProfileResultScreen() {
     router.replace('/home');
   };
 
-  // Dynamic profile data generation based on quiz answers
+  // Realistic scoring algorithm based on quiz answers
   const generateProfileDimensions = (profile) => {
     if (!profile) {
       console.log('No profile found, using default dimensions');
       return {
-        desire: 75,
+        desire: 65,
         satisfaction: 70,
-        openness: 80,
-        communication: 75,
-        trust: 80
+        openness: 60,
+        communication: 55,
+        trust: 75
       };
     }
 
-    console.log('Generating dimensions for profile:', profile);
+    console.log('Generating realistic dimensions for profile:', profile);
 
     let dimensions = {
-      desire: 0,
-      satisfaction: 0,
-      openness: 0,
-      communication: 0,
-      trust: 0
+      desire: 50,      // Base score - can be low or high
+      satisfaction: 50, // Base score - can be low or high  
+      openness: 50,    // Base score - can be low or high
+      communication: 50, // Base score - can be low or high
+      trust: 50        // Base score - can be low or high
     };
 
-    // 1. DESIRE DIMENSION - Based on desire level, experimenting, and enhancement
+    // 1. DESIRE DIMENSION - Based on desire level, intimacy frequency, and enhancement
     if (profile.desireLevel === 'mild') {
-      dimensions.desire = 60 + Math.floor(Math.random() * 20);
+      dimensions.desire = 35 + Math.floor(Math.random() * 20); // 35-55 range
     } else if (profile.desireLevel === 'spicy') {
-      dimensions.desire = 75 + Math.floor(Math.random() * 20);
+      dimensions.desire = 60 + Math.floor(Math.random() * 25); // 60-85 range
     } else if (profile.desireLevel === 'extreme') {
-      dimensions.desire = 85 + Math.floor(Math.random() * 15);
+      dimensions.desire = 75 + Math.floor(Math.random() * 20); // 75-95 range
     }
 
-    if (profile.experimenting === true) dimensions.desire += 8;
-    if (profile.enhancement >= 80) dimensions.desire += 10;
-    else if (profile.enhancement >= 60) dimensions.desire += 6;
-    else if (profile.enhancement >= 40) dimensions.desire += 3;
+    // Intimacy frequency impact
+    if (profile.intimacyFrequency === 'rarely') dimensions.desire -= 10;
+    else if (profile.intimacyFrequency === 'daily') dimensions.desire += 15;
+    else if (profile.intimacyFrequency === 'weekly') dimensions.desire += 8;
+    else if (profile.intimacyFrequency === 'monthly') dimensions.desire += 2;
 
-    if (profile.turnOns?.includes('roleplay')) dimensions.desire += 5;
-    if (profile.turnOns?.includes('power-play')) dimensions.desire += 5;
-    if (profile.turnOns?.includes('public-play')) dimensions.desire += 8;
-    if (profile.turnOns?.includes('bondage')) dimensions.desire += 7;
+    // Enhancement commitment impact
+    if (profile.enhancement >= 80) dimensions.desire += 12;
+    else if (profile.enhancement >= 60) dimensions.desire += 8;
+    else if (profile.enhancement >= 40) dimensions.desire += 4;
+    else if (profile.enhancement < 40) dimensions.desire -= 5;
 
-    // 2. SATISFACTION DIMENSION
-    if (profile.experience === 'beginner') {
-      dimensions.satisfaction = 65 + Math.floor(Math.random() * 20);
-    } else if (profile.experience === 'intermediate') {
-      dimensions.satisfaction = 75 + Math.floor(Math.random() * 20);
-    } else if (profile.experience === 'advanced') {
-      dimensions.satisfaction = 80 + Math.floor(Math.random() * 20);
-    } else if (profile.experience === 'expert') {
-      dimensions.satisfaction = 85 + Math.floor(Math.random() * 15);
+    // 2. SATISFACTION DIMENSION - Based on relationship status and improvement goals
+    if (profile.relationshipStatus === 'dating') {
+      dimensions.satisfaction = 45 + Math.floor(Math.random() * 20); // 45-65 range
+    } else if (profile.relationshipStatus === 'committed') {
+      dimensions.satisfaction = 55 + Math.floor(Math.random() * 20); // 55-75 range
+    } else if (profile.relationshipStatus === 'engaged') {
+      dimensions.satisfaction = 65 + Math.floor(Math.random() * 20); // 65-85 range
+    } else if (profile.relationshipStatus === 'married') {
+      dimensions.satisfaction = 60 + Math.floor(Math.random() * 25); // 60-85 range
+    } else if (profile.relationshipStatus === 'long-term') {
+      dimensions.satisfaction = 70 + Math.floor(Math.random() * 20); // 70-90 range
     }
 
-    if (profile.personality === 'dominant') dimensions.satisfaction += 5;
-    if (profile.personality === 'switch') dimensions.satisfaction += 8;
+    // Improvement goals impact
+    if (profile.improvementGoal === 'quality') dimensions.satisfaction += 10;
+    else if (profile.improvementGoal === 'frequency') dimensions.satisfaction += 8;
+    else if (profile.improvementGoal === 'variety') dimensions.satisfaction += 12;
+    else if (profile.improvementGoal === 'communication') dimensions.satisfaction += 6;
+    else if (profile.improvementGoal === 'emotional-connection') dimensions.satisfaction += 8;
 
-    if (profile.enhancement >= 80) dimensions.satisfaction += 8;
-    else if (profile.enhancement >= 60) dimensions.satisfaction += 5;
-
-    // 3. OPENNESS DIMENSION
-    dimensions.openness = 70;
+    // 3. OPENNESS DIMENSION - Based on fantasy settings, turn-ons, and comfort level
+    dimensions.openness = 40; // Lower base score
     
     if (profile.fantasySettings) {
-      dimensions.openness += profile.fantasySettings.length * 3;
-      if (profile.fantasySettings.includes('outdoors')) dimensions.openness += 5;
-      if (profile.fantasySettings.includes('public-place')) dimensions.openness += 8;
-      if (profile.fantasySettings.includes('office')) dimensions.openness += 4;
-      if (profile.fantasySettings.includes('car')) dimensions.openness += 6;
+      dimensions.openness += profile.fantasySettings.length * 4;
+      if (profile.fantasySettings.includes('outdoors')) dimensions.openness += 8;
+      if (profile.fantasySettings.includes('public-place')) dimensions.openness += 12;
+      if (profile.fantasySettings.includes('office')) dimensions.openness += 6;
+      if (profile.fantasySettings.includes('car')) dimensions.openness += 8;
+      if (profile.fantasySettings.includes('shower')) dimensions.openness += 5;
     }
 
     if (profile.turnOns) {
-      dimensions.openness += profile.turnOns.length * 2;
-      if (profile.turnOns.includes('sensory')) dimensions.openness += 5;
-      if (profile.turnOns.includes('teasing')) dimensions.openness += 4;
+      dimensions.openness += profile.turnOns.length * 3;
+      if (profile.turnOns.includes('sensory')) dimensions.openness += 6;
+      if (profile.turnOns.includes('teasing')) dimensions.openness += 5;
+      if (profile.turnOns.includes('roleplay')) dimensions.openness += 8;
+      if (profile.turnOns.includes('power-play')) dimensions.openness += 10;
+      if (profile.turnOns.includes('public-play')) dimensions.openness += 12;
+      if (profile.turnOns.includes('bondage')) dimensions.openness += 9;
+      if (profile.turnOns.includes('dirty-talk')) dimensions.openness += 7;
     }
 
-    if (profile.experimenting === true) dimensions.openness += 12;
+    // Comfort level impact
+    if (profile.comfortLevel >= 8) dimensions.openness += 15;
+    else if (profile.comfortLevel >= 6) dimensions.openness += 10;
+    else if (profile.comfortLevel >= 4) dimensions.openness += 5;
+    else if (profile.comfortLevel < 4) dimensions.openness -= 8;
 
-    if (profile.sexualOrientation && profile.sexualOrientation.length > 1) {
-      dimensions.openness += 8;
-    }
-
-    // 4. COMMUNICATION DIMENSION
-    dimensions.communication = 70;
+    // 4. COMMUNICATION DIMENSION - Based on comfort level and improvement goals
+    dimensions.communication = 45; // Lower base score
     
-    if (profile.personality === 'equal') dimensions.communication += 10;
-    if (profile.personality === 'switch') dimensions.communication += 8;
-    if (profile.personality === 'submissive') dimensions.communication += 5;
+    if (profile.comfortLevel >= 8) dimensions.communication += 20;
+    else if (profile.comfortLevel >= 6) dimensions.communication += 15;
+    else if (profile.comfortLevel >= 4) dimensions.communication += 8;
+    else if (profile.comfortLevel < 4) dimensions.communication -= 10;
     
-    if (profile.experience === 'intermediate') dimensions.communication += 5;
-    if (profile.experience === 'advanced') dimensions.communication += 8;
-    if (profile.experience === 'expert') dimensions.communication += 10;
-
-    if (profile.turnOns?.includes('dirty-talk')) dimensions.communication += 8;
-    if (profile.turnOns?.includes('roleplay')) dimensions.communication += 6;
-
-    if (profile.enhancement >= 80) dimensions.communication += 6;
-
-    // 5. TRUST DIMENSION
-    dimensions.trust = 75;
+    if (profile.improvementGoal === 'communication') dimensions.communication += 15;
+    if (profile.improvementGoal === 'emotional-connection') dimensions.communication += 12;
     
-    if (profile.experience === 'beginner') dimensions.trust += 5;
-    if (profile.experience === 'intermediate') dimensions.trust += 8;
-    if (profile.experience === 'advanced') dimensions.trust += 10;
-    if (profile.experience === 'expert') dimensions.trust += 12;
+    if (profile.turnOns?.includes('dirty-talk')) dimensions.communication += 10;
+    if (profile.turnOns?.includes('roleplay')) dimensions.communication += 8;
+
+    // 5. TRUST DIMENSION - Based on relationship status and biggest challenge
+    dimensions.trust = 60; // Moderate base score
     
-    if (profile.personality === 'equal') dimensions.trust += 8;
-    if (profile.personality === 'switch') dimensions.trust += 5;
+    if (profile.relationshipStatus === 'dating') dimensions.trust += 5;
+    else if (profile.relationshipStatus === 'committed') dimensions.trust += 10;
+    else if (profile.relationshipStatus === 'engaged') dimensions.trust += 15;
+    else if (profile.relationshipStatus === 'married') dimensions.trust += 20;
+    else if (profile.relationshipStatus === 'long-term') dimensions.trust += 18;
 
-    if (profile.turnOns?.includes('sensory')) dimensions.trust += 5;
-    if (profile.turnOns?.includes('foreplay')) dimensions.trust += 4;
+    // Biggest challenge impact
+    if (profile.biggestChallenge === 'communication') dimensions.trust -= 8;
+    else if (profile.biggestChallenge === 'time') dimensions.trust -= 3;
+    else if (profile.biggestChallenge === 'desire-mismatch') dimensions.trust -= 5;
+    else if (profile.biggestChallenge === 'routine') dimensions.trust -= 2;
+    else if (profile.biggestChallenge === 'emotional-connection') dimensions.trust -= 6;
 
-    if (profile.experimenting === true) dimensions.trust += 6;
-
+    // Cap all dimensions between 20-95 for realism
     Object.keys(dimensions).forEach(key => {
-      dimensions[key] = Math.max(0, Math.min(100, dimensions[key]));
+      dimensions[key] = Math.max(20, Math.min(95, dimensions[key]));
     });
 
-    console.log('Generated dimensions:', dimensions);
+    console.log('Generated realistic dimensions:', dimensions);
     return dimensions;
   };
 
   const profileDimensions = generateProfileDimensions(userProfile);
 
-  // Dynamic insight generation based on profile and dimensions
+  // Personalized insight generation based on actual app content
   const generatePersonalizedInsight = (profile, dimensions) => {
     if (!profile) {
-      console.log('No profile found, using default insight');
       return {
-        title: "A Sex Insight Just for You 😉",
-        text: "Since you highly value Openness and Desire in sex, our Scratch off Bedroom Game 🍌 might be exactly what you're looking for!",
-        icons: ["🔥", "💋", "✨"]
+        title: "Your Personalized Velvet Experience ✨",
+        text: "Based on your profile, we recommend starting with our Mild Seduction category and the Sexy Dice Game for a gentle introduction to new experiences.",
+        icons: ["💕", "🎲", "✨"],
+        recommendations: ["Mild Seduction", "Sexy Dice Game", "Today's Picks"]
       };
     }
 
-    console.log('Generating insight for profile:', profile);
+    console.log('Generating personalized insight for profile:', profile);
     console.log('Dimensions:', dimensions);
 
+    // Find top and lowest dimensions
     const sortedDimensions = Object.entries(dimensions)
-      .sort(([,a], [,b]) => b - a)
-      .slice(0, 2);
+      .sort(([,a], [,b]) => b - a);
     
     const topDimension = sortedDimensions[0];
-    const secondDimension = sortedDimensions[1];
+    const lowestDimension = sortedDimensions[sortedDimensions.length - 1];
 
-    console.log('Top dimensions:', { top: topDimension, second: secondDimension });
-
+    let insightTitle = "Your Personalized Velvet Experience ✨";
     let insightText = "";
-    let gameSuggestion = "";
-    let icons = ["🔥", "💋", "✨"];
+    let icons = ["✨", "💋", "🔥"];
+    let recommendations = [];
 
+    // Base recommendations on actual app content
+    const baseRecommendations = [
+      "Today's Picks 💋",
+      "Sexy Dice Game 🎲", 
+      "Spin the Wheel 🎡",
+      "Fantasy Builder 🏗️"
+    ];
+
+    // 1. Desire-based recommendations
     if (profile.desireLevel === 'mild') {
-      gameSuggestion = "Gentle Touch Massage Kit";
+      recommendations.push("Mild Seduction 💕", "Foreplay 💋");
       icons = ["🌸", "💕", "✨"];
+      insightText += "Your gentle approach to intimacy is perfect for our Mild Seduction and Foreplay categories. ";
     } else if (profile.desireLevel === 'spicy') {
-      gameSuggestion = "Truth or Dare Intimacy Edition";
+      recommendations.push("Soft Domination 👑", "Roleplay 🎭");
       icons = ["🔥", "🎭", "💋"];
+      insightText += "Your adventurous spirit will love our Soft Domination and Roleplay experiences. ";
     } else if (profile.desireLevel === 'extreme') {
-      gameSuggestion = "BDSM Fantasy Roleplay Deck";
+      recommendations.push("Fantasy Extreme ⚡", "Light Restraints 🔗");
       icons = ["⚡", "🔗", "😈"];
+      insightText += "Your extreme desires are perfect for our Fantasy Extreme and Light Restraints categories. ";
     }
 
-    if (profile.personality === 'dominant') {
-      gameSuggestion = "Power Play Command Cards";
-      icons = ["👑", "⚡", "🔥"];
-    } else if (profile.personality === 'submissive') {
-      gameSuggestion = "Surrender & Trust Building Kit";
-      icons = ["💕", "🔒", "✨"];
-    } else if (profile.personality === 'switch') {
-      gameSuggestion = "Versatile Intimacy Game Set";
-      icons = ["🔄", "🎭", "💋"];
+    // 2. Frequency-based recommendations
+    if (profile.intimacyFrequency === 'rarely') {
+      recommendations.push("Sensory Play ✨");
+      insightText += "Since you're in a dry spell, our Sensory Play cards can help rekindle the spark. ";
+    } else if (profile.intimacyFrequency === 'daily') {
+      recommendations.push("Teasing & Denial 🔥");
+      insightText += "Your daily intimacy makes you perfect for our Teasing & Denial challenges. ";
     }
 
-    if (profile.experience === 'beginner') {
-      gameSuggestion = "Step-by-Step Intimacy Guide";
-      icons = ["📚", "💡", "🌸"];
-    } else if (profile.experience === 'expert') {
-      gameSuggestion = "Advanced Pleasure Mastery Kit";
-      icons = ["👑", "⚡", "💎"];
+    // 3. Challenge-based recommendations
+    if (profile.biggestChallenge === 'communication') {
+      recommendations.push("Communication Cards 💬");
+      insightText += "Our communication-focused cards will help you express your needs better. ";
+    } else if (profile.biggestChallenge === 'routine') {
+      recommendations.push("Variety Packs 🎭");
+      insightText += "Break out of routine with our variety packs and random position generators. ";
+    } else if (profile.biggestChallenge === 'emotional-connection') {
+      recommendations.push("Emotional Intimacy 💝");
+      insightText += "Focus on emotional connection with our gentle, bonding experiences. ";
     }
 
-    if (profile.experimenting === true) {
-      gameSuggestion = "Adventure Explorer Kit";
-      icons = ["🔬", "⚡", "🌟"];
+    // 4. Comfort level recommendations
+    if (profile.comfortLevel < 5) {
+      recommendations.push("Gentle Start 🌸");
+      insightText += "Start gently with our beginner-friendly experiences to build confidence. ";
+    } else if (profile.comfortLevel >= 8) {
+      recommendations.push("Advanced Challenges 🚀");
+      insightText += "Your high comfort level makes you perfect for our advanced challenges. ";
     }
 
-    if (profile.enhancement >= 80) {
-      gameSuggestion = "Ultimate Transformation Kit";
-      icons = ["🚀", "💎", "👑"];
-    } else if (profile.enhancement >= 60) {
-      gameSuggestion = "Progressive Enhancement Pack";
-      icons = ["📈", "🔥", "✨"];
-    }
-
-    insightText = `Since you highly value ${topDimension[0].charAt(0).toUpperCase() + topDimension[0].slice(1)} (${topDimension[1]}%) and ${secondDimension[0].charAt(0).toUpperCase() + secondDimension[0].slice(1)} (${secondDimension[1]}%), our ${gameSuggestion} might be exactly what you're looking for!`;
-
-    if (profile.experimenting === true) {
-      insightText += " Your adventurous spirit makes you perfect for our experimental kits!";
-    }
-    
-    if (profile.enhancement >= 80) {
-      insightText += " Your high motivation for enhancement will love our advanced programs!";
-    }
-    
-    if (profile.sexualOrientation && profile.sexualOrientation.length > 1) {
-      insightText += " Your diverse orientation opens up amazing possibilities with our inclusive content!";
-    }
-
-    if (profile.turnOns?.includes('roleplay')) {
-      insightText += " Your love for roleplay makes you perfect for our immersive scenarios!";
-    }
-    if (profile.turnOns?.includes('sensory')) {
-      insightText += " Your sensory preferences will love our texture and temperature play kits!";
-    }
+    // 5. Fantasy settings recommendations
     if (profile.fantasySettings?.includes('outdoors')) {
-      insightText += " Your adventurous spirit craves our outdoor exploration guides!";
+      recommendations.push("Outdoor Adventure 🌲");
+      insightText += "Your love for outdoor play will enjoy our adventure-themed cards. ";
+    }
+    if (profile.fantasySettings?.includes('public-place')) {
+      recommendations.push("Public Play 🌆");
+      insightText += "Explore our public play scenarios for thrilling experiences. ";
     }
 
-    const finalInsight = {
-      title: "A Sex Insight Just for You 😉",
-      text: insightText,
-      icons: icons
-    };
+    // 6. Turn-ons based recommendations
+    if (profile.turnOns?.includes('sensory')) {
+      recommendations.push("Sensory Experience 🎵");
+      insightText += "Our sensory play cards will heighten your pleasure. ";
+    }
+    if (profile.turnOns?.includes('roleplay')) {
+      recommendations.push("Roleplay Collection 🎭");
+      insightText += "Dive into our extensive roleplay scenarios. ";
+    }
 
-    console.log('Generated insight:', finalInsight);
-    return finalInsight;
+    // 7. Enhancement commitment recommendations
+    if (profile.enhancement >= 80) {
+      recommendations.push("Premium Content 💎");
+      insightText += "Your high commitment to improvement makes you perfect for our premium content. ";
+    }
+
+    // Remove duplicates and limit to 6 recommendations
+    recommendations = [...new Set([...baseRecommendations, ...recommendations])].slice(0, 6);
+
+    // Create personalized message based on dimensions
+    if (topDimension[1] >= 80) {
+      insightText += `Your ${topDimension[0]} score of ${Math.round(topDimension[1])}% shows you're ready for advanced experiences! `;
+    } else if (topDimension[1] >= 60) {
+      insightText += `Your ${topDimension[0]} score of ${Math.round(topDimension[1])}% indicates good potential for growth. `;
+    } else {
+      insightText += `Your ${topDimension[0]} score of ${Math.round(topDimension[1])}% suggests starting with foundational experiences. `;
+    }
+
+    if (lowestDimension[1] < 40) {
+      insightText += `Focus on improving your ${lowestDimension[0]} through our targeted exercises and guidance.`;
+    } else {
+      insightText += `All areas show balanced development, perfect for comprehensive growth.`;
+    }
+
+    return {
+      title: insightTitle,
+      text: insightText,
+      icons: icons,
+      recommendations: recommendations
+    };
   };
 
   const personalizedInsight = generatePersonalizedInsight(userProfile, profileDimensions);
@@ -584,22 +621,22 @@ export default function ProfileResultScreen() {
             </View>
             
             <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Personality</Text>
+              <Text style={styles.summaryLabel}>Relationship</Text>
               <Text style={styles.summaryValue}>
-                {userProfile?.personality?.charAt(0).toUpperCase() + userProfile?.personality?.slice(1) || 'Not specified'}
+                {userProfile?.relationshipStatus?.charAt(0).toUpperCase() + userProfile?.relationshipStatus?.slice(1) || 'Not specified'}
               </Text>
             </View>
             
             <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Experience</Text>
+              <Text style={styles.summaryLabel}>Frequency</Text>
               <Text style={styles.summaryValue}>
-                {userProfile?.experience?.charAt(0).toUpperCase() + userProfile?.experience?.slice(1) || 'Not specified'}
+                {userProfile?.intimacyFrequency?.charAt(0).toUpperCase() + userProfile?.intimacyFrequency?.slice(1) || 'Not specified'}
               </Text>
-          </View>
+            </View>
 
             <View style={styles.summaryItem}>
               <Text style={styles.summaryLabel}>Enhancement</Text>
-              <Text style={styles.answerValue}>
+              <Text style={styles.summaryValue}>
                 {userProfile?.enhancement ? `${Math.round(userProfile.enhancement)}%` : 'Not specified'}
               </Text>
             </View>
@@ -670,117 +707,65 @@ export default function ProfileResultScreen() {
                      value >= 70 ? 'Good' : 
                      value >= 60 ? 'Fair' : 'Developing'}
                   </Text>
-            </View>
+                  <Text style={styles.dimensionReason}>
+                    {key === 'desire' && 'Based on your desire level, frequency, and enhancement commitment'}
+                    {key === 'satisfaction' && 'Based on your relationship status and improvement goals'}
+                    {key === 'openness' && 'Based on your fantasy settings, turn-ons, and comfort level'}
+                    {key === 'communication' && 'Based on your comfort level and improvement goals'}
+                    {key === 'trust' && 'Based on your relationship status and biggest challenges'}
+                  </Text>
+                </View>
               </Animated.View>
             ))}
           </View>
         </Animated.View>
 
-        {/* Quiz Answers Summary */}
-        {userProfile && (
-          <Animated.View 
-            style={[
-              styles.quizAnswersSection, 
-              { 
-                opacity: fadeAnim, 
-                transform: [{ translateY: slideAnim }] 
-              }
-            ]}
-          >
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Your Quiz Answers</Text>
-              
-              {/* Section SVG Decoration */}
-              <View style={styles.sectionSvgContainer}>
-                <SvgXml
-                  xml={sexualPositionSvg}
-                  width="60"
-                  height="30"
-                  style={styles.sectionSvg}
-                />
-              </View>
-            </View>
+                {/* Personalized Recommendations */}
+        <Animated.View 
+          style={[
+            styles.recommendationsSection, 
+            { 
+              opacity: fadeAnim, 
+              transform: [{ translateY: slideAnim }] 
+            }
+          ]}
+        >
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Recommended for You ✨</Text>
             
-            <View style={styles.answersGrid}>
-              <View style={styles.answerRow}>
-                <Text style={styles.answerLabel}>Gender:</Text>
-                <Text style={styles.answerValue}>
-                  {userProfile.gender?.charAt(0).toUpperCase() + userProfile.gender?.slice(1) || 'Not specified'}
-                </Text>
-              </View>
-              
-              {userProfile.sexualOrientation && userProfile.sexualOrientation.length > 0 && (
-                <View style={styles.answerRow}>
-                  <Text style={styles.answerLabel}>Sexual Orientation:</Text>
-                  <Text style={styles.answerValue}>
-                    {userProfile.sexualOrientation.map(orientation => 
-                      orientation.charAt(0).toUpperCase() + orientation.slice(1)
-                    ).join(', ')}
-                  </Text>
-                </View>
-              )}
-              
-              <View style={styles.answerRow}>
-                <Text style={styles.answerLabel}>Experimenting:</Text>
-                <Text style={styles.answerValue}>
-                  {userProfile.experimenting ? 'Yes' : 'No'}
-                </Text>
-              </View>
-              
-              <View style={styles.answerRow}>
-                <Text style={styles.answerLabel}>Desire Level:</Text>
-                <Text style={styles.answerValue}>
-                  {userProfile.desireLevel?.charAt(0).toUpperCase() + userProfile.desireLevel?.slice(1) || 'Not specified'}
-                </Text>
-              </View>
-              
-              <View style={styles.answerRow}>
-                <Text style={styles.answerLabel}>Personality:</Text>
-                <Text style={styles.answerValue}>
-                  {userProfile.personality?.charAt(0).toUpperCase() + userProfile.personality?.slice(1) || 'Not specified'}
-                </Text>
-              </View>
-              
-              <View style={styles.answerRow}>
-                <Text style={styles.answerLabel}>Experience:</Text>
-                <Text style={styles.answerValue}>
-                  {userProfile.experience?.charAt(0).toUpperCase() + userProfile.experience?.slice(1) || 'Not specified'}
-                </Text>
-              </View>
-              
-              {userProfile.enhancement !== undefined && (
-                <View style={styles.answerRow}>
-                  <Text style={styles.answerLabel}>Enhancement Level:</Text>
-                  <Text style={styles.answerValue}>
-                    {Math.round(userProfile.enhancement)}%
-                  </Text>
-                </View>
-              )}
-              
-              {userProfile.turnOns && userProfile.turnOns.length > 0 && (
-                <View style={styles.answerRow}>
-                  <Text style={styles.answerLabel}>Turn-Ons:</Text>
-                  <Text style={styles.answerValue}>
-                    {userProfile.turnOns.map(turnOn => 
-                      turnOn.charAt(0).toUpperCase() + turnOn.slice(1)
-                    ).join(', ')}
-                  </Text>
-                </View>
-              )}
-              
-              {userProfile.fantasySettings && userProfile.fantasySettings.length > 0 && (
-                <View style={styles.answerRow}>
-                  <Text style={styles.answerLabel}>Fantasy Settings:</Text>
-                  <Text style={styles.answerValue}>
-                    {userProfile.fantasySettings.map(setting => 
-                      setting.charAt(0).toUpperCase() + setting.slice(1)
-                    ).join(', ')}
-                  </Text>
-                </View>
-              )}
+            {/* Section SVG Decoration */}
+            <View style={styles.sectionSvgContainer}>
+              <SvgXml
+                xml={sexualPositionSvg}
+                width="60"
+                height="30"
+                style={styles.sectionSvg}
+              />
             </View>
-          </Animated.View>
-        )}
+          </View>
+
+          <View style={styles.recommendationsGrid}>
+            {personalizedInsight.recommendations.map((recommendation, index) => (
+              <Animated.View 
+                key={index}
+                style={[
+                  styles.recommendationCard,
+                  {
+                    opacity: fadeAnim,
+                    transform: [{
+                      translateX: slideAnim.interpolate({
+                        inputRange: [0, 50],
+                        outputRange: [0, index % 2 === 0 ? 15 : -15]
+                      })
+                    }]
+                  }
+                ]}
+              >
+                <Text style={styles.recommendationText}>{recommendation}</Text>
+              </Animated.View>
+            ))}
+          </View>
+        </Animated.View>
 
         {/* Personalized Insight */}
         <Animated.View 
@@ -827,8 +812,8 @@ export default function ProfileResultScreen() {
               {personalizedInsight.icons.map((icon, index) => (
                 <Text key={index} style={styles.insightIcon}>{icon}</Text>
               ))}
-          </View>
-        </Animated.View>
+            </View>
+          </Animated.View>
         </Animated.View>
 
         {/* Bottom Spacing */}
@@ -1101,38 +1086,49 @@ const styles = StyleSheet.create({
     color: '#CD5C5C',
     fontWeight: '500',
   },
+  dimensionReason: {
+    fontSize: 11,
+    fontWeight: '400',
+    color: '#CD5C5C',
+    textAlign: 'center',
+    marginTop: 4,
+    opacity: 0.8,
+    lineHeight: 14,
+  },
 
-  // Quiz Answers Section
-  quizAnswersSection: {
+  // Recommendations Section
+  recommendationsSection: {
     paddingHorizontal: 20,
     marginBottom: 30,
   },
-  answersGrid: {
+  recommendationsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
     gap: 12,
   },
-  answerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: 'rgba(220, 20, 60, 0.05)',
-    borderRadius: 12,
+  recommendationCard: {
+    width: '48%',
+    padding: 16,
+    backgroundColor: 'rgba(220, 20, 60, 0.15)',
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(220, 20, 60, 0.15)',
+    borderColor: 'rgba(220, 20, 60, 0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 80,
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    shadowOpacity: 0.3,
+    elevation: 6,
   },
-  answerLabel: {
+  recommendationText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#FFFFFF',
-  },
-  answerValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#CD5C5C',
-    textAlign: 'right',
-    flex: 1,
-    marginLeft: 16,
+    textAlign: 'center',
+    lineHeight: 20,
   },
 
   // Insight Section

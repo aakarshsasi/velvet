@@ -4,16 +4,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  Animated,
-  Dimensions,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Animated,
+    Dimensions,
+    Image,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -33,37 +33,55 @@ export default function OnboardingScreen() {
 
   const onboardingSteps = [
     {
-      id: 'gender',
-      title: "What's Your Gender? 🎭",
-      subtitle: "Help us personalize your experience",
+      id: 'relationshipStatus',
+      title: "What's Your Relationship Status? 💕",
+      subtitle: "Help us understand your partnership journey",
       type: 'single',
       options: [
-        { value: 'male', label: 'Male', color: '#10B981' },
-        { value: 'female', label: 'Female', color: '#EC4899' },
-        { value: 'non-binary', label: 'Non-binary', color: '#8B5CF6' },
-        { value: 'prefer-not-to-say', label: 'Prefer not to say', color: '#6B7280' }
+        { value: 'dating', label: 'Dating', description: 'Getting to know each other', color: '#10B981' },
+        { value: 'committed', label: 'Committed', description: 'Exclusive relationship', color: '#EC4899' },
+        { value: 'engaged', label: 'Engaged', description: 'Planning our future', color: '#8B5CF6' },
+        { value: 'married', label: 'Married', description: 'Long-term partnership', color: '#F59E0B' },
+        { value: 'long-term', label: 'Long-term Partners', description: 'Established relationship', color: '#EF4444' }
       ]
     },
     {
-      id: 'sexualOrientation',
-      title: "What's Your Sexual Orientation? 💕",
-      subtitle: "Select all that apply to you",
-      type: 'multiple',
+      id: 'intimacyFrequency',
+      title: "How Often Are You Intimate? 🔥",
+      subtitle: "Be honest about your current rhythm",
+      type: 'single',
       options: [
-        { value: 'heterosexual', label: 'Heterosexual', color: '#10B981' },
-        { value: 'homosexual', label: 'Homosexual', color: '#EC4899' },
-        { value: 'bisexual', label: 'Bisexual', color: '#8B5CF6' },
-        { value: 'pansexual', label: 'Pansexual', color: '#F59E0B' },
-        { value: 'queer', label: 'Queer', color: '#EF4444' },
-        { value: 'other', label: 'Other', color: '#06B6D4' }
+        { value: 'daily', label: 'Daily', description: 'Very active', color: '#EF4444' },
+        { value: 'weekly', label: 'Weekly', description: 'Regular connection', color: '#F59E0B' },
+        { value: 'monthly', label: 'Monthly', description: 'Occasional', color: '#8B5CF6' },
+        { value: 'rarely', label: 'Rarely', description: 'In a dry spell', color: '#6B7280' }
       ]
     },
     {
-      id: 'experimenting',
-      title: "Do you enjoy experimenting in bed? 🔬",
-      subtitle: "Help us understand your adventurous side",
-      type: 'toggle',
-      defaultValue: false
+      id: 'biggestChallenge',
+      title: "What's Your Biggest Intimacy Challenge? 🎯",
+      subtitle: "We're here to help you overcome it",
+      type: 'single',
+      options: [
+        { value: 'communication', label: 'Communication', description: 'Hard to talk about needs', color: '#10B981' },
+        { value: 'time', label: 'Time & Stress', description: 'Life gets in the way', color: '#F59E0B' },
+        { value: 'desire-mismatch', label: 'Desire Mismatch', description: 'Different libidos', color: '#EC4899' },
+        { value: 'routine', label: 'Getting Stuck in Routine', description: 'Need more variety', color: '#8B5CF6' },
+        { value: 'emotional-connection', label: 'Emotional Connection', description: 'Missing intimacy', color: '#06B6D4' }
+      ]
+    },
+    {
+      id: 'comfortLevel',
+      title: "How Comfortable Are You Discussing Intimate Needs? 💬",
+      subtitle: "Rate your communication comfort",
+      type: 'slider',
+      minValue: 0,
+      maxValue: 10,
+      defaultValue: 5,
+      labels: {
+        min: "Very Uncomfortable",
+        max: "Very Comfortable"
+      }
     },
     {
       id: 'desire',
@@ -78,8 +96,8 @@ export default function OnboardingScreen() {
     },
     {
       id: 'turnOns',
-      title: "What Turns You On? 💋",
-      subtitle: "Select all that excite you",
+      title: "What Turns You Both On? 💋",
+      subtitle: "Select all that excite you as a couple",
       type: 'multiple',
       options: [
         { value: 'dirty-talk', label: 'Dirty Talk', icon: '💬', color: '#EC4899' },
@@ -94,7 +112,7 @@ export default function OnboardingScreen() {
     },
     {
       id: 'fantasy',
-      title: "Your Fantasy Settings 🌟",
+      title: "Your Fantasy Settings Together 🌟",
       subtitle: "Where do your wildest dreams take place?",
       type: 'multiple',
       options: [
@@ -109,40 +127,29 @@ export default function OnboardingScreen() {
       ]
     },
     {
-      id: 'personality',
-      title: "Your Intimate Personality 🎭",
-      subtitle: "How do you like to express yourself?",
-      type: 'single',
-            options: [
-        { value: 'dominant', label: 'Dominant & Take Charge', description: 'You lead the way', color: '#8B5CF6' },
-        { value: 'submissive', label: 'Submissive & Surrender', description: 'You follow their lead', color: '#EC4899' },
-        { value: 'switch', label: 'Switch & Versatile', description: 'You love both roles', color: '#F59E0B' },
-        { value: 'equal', label: 'Equal Partnership', description: 'You share control equally', color: '#10B981' }
-      ]
-    },
-    {
-      id: 'experience',
-      title: "Your Experience Level 🌈",
-      subtitle: "Be honest - we're here to help you grow",
+      id: 'improvementGoal',
+      title: "What Would You Like to Improve Most? 🎯",
+      subtitle: "Your main goal for better intimacy",
       type: 'single',
       options: [
-        { value: 'beginner', label: 'Beginner', description: 'New to exploration', color: '#10B981' },
-        { value: 'intermediate', label: 'Intermediate', description: 'Some experience', color: '#F59E0C' },
-        { value: 'advanced', label: 'Advanced', description: 'Experienced explorer', color: '#EF4444' },
-        { value: 'expert', label: 'Expert', description: 'Master of pleasure', color: '#8B5CF6' }
+        { value: 'communication', label: 'Better Communication', description: 'Talk openly about needs', color: '#10B981' },
+        { value: 'variety', label: 'More Variety', description: 'Break out of routine', color: '#F59E0B' },
+        { value: 'emotional-connection', label: 'Emotional Connection', description: 'Deeper intimacy', color: '#EC4899' },
+        { value: 'frequency', label: 'Increase Frequency', description: 'More intimate time', color: '#8B5CF6' },
+        { value: 'quality', label: 'Better Quality', description: 'More satisfying experiences', color: '#EF4444' }
       ]
     },
     {
       id: 'enhancement',
-      title: "How much do you want to enhance your sex life? 🔥",
-      subtitle: "One last step",
+      title: "How Much Do You Want to Enhance Your Intimacy? 🔥",
+      subtitle: "Your commitment to improvement",
       type: 'slider',
       minValue: 0,
       maxValue: 100,
-      defaultValue: 0,
+      defaultValue: 50,
       labels: {
-        min: "Not at all",
-        max: "Extremely"
+        min: "Just a Little",
+        max: "Completely Transform"
       }
     }
   ];
@@ -272,14 +279,14 @@ export default function OnboardingScreen() {
     try {
       // Generate profile based on answers
       const profile = {
-        gender: answers.gender || 'prefer-not-to-say',
-        sexualOrientation: answers.sexualOrientation || [],
-        experimenting: answers.experimenting !== undefined ? answers.experimenting : true,
+        relationshipStatus: answers.relationshipStatus || 'dating',
+        intimacyFrequency: answers.intimacyFrequency || 'daily',
+        biggestChallenge: answers.biggestChallenge || 'communication',
+        comfortLevel: answers.comfortLevel || 5,
         desireLevel: answers.desire || 'mild',
         turnOns: answers.turnOns || [],
         fantasySettings: answers.fantasy || [],
-        personality: answers.personality || 'equal',
-        experience: answers.experience || 'beginner',
+        improvementGoal: answers.improvementGoal || 'communication',
         enhancement: answers.enhancement !== undefined ? answers.enhancement : 50,
         persona: generatePersona(answers),
         premiumSuggestions: generatePremiumSuggestions(answers)
@@ -308,7 +315,7 @@ export default function OnboardingScreen() {
     };
     
     // Logic to determine persona based on answers
-    if (answers.desire === 'extreme' && answers.personality === 'dominant') {
+    if (answers.desire === 'extreme' && answers.relationshipStatus === 'married') {
       return personas['wild-dreamer'];
     } else if (answers.desire === 'spicy' && answers.turnOns?.includes('roleplay')) {
       return personas['passionate-adventurer'];
@@ -332,9 +339,9 @@ export default function OnboardingScreen() {
       suggestions.push('Professional Scripts');
     }
     
-    if (answers.experience === 'beginner') {
-      suggestions.push('Step-by-Step Guides');
-      suggestions.push('Video Tutorials');
+    if (answers.relationshipStatus === 'married') {
+      suggestions.push("Couples' Intimacy Workbook");
+      suggestions.push("Advanced Couples' Communication Techniques");
     }
     
     return suggestions;
@@ -591,26 +598,28 @@ export default function OnboardingScreen() {
       {/* Progress Bar */}
       <View style={styles.progressContainer}>
         <LinearGradient
-          colors={['rgba(220, 20, 60, 0.12)', 'rgba(178, 34, 34, 0.08)', 'rgba(139, 0, 0, 0.15)']}
+          colors={['rgba(220, 20, 60, 0.08)', 'rgba(178, 34, 34, 0.06)', 'rgba(139, 0, 0, 0.12)']}
           style={styles.progressBox}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
           <View style={styles.progressHeader}>
-            <Animated.Text style={[
-              styles.progressPercentage,
-              {
-                transform: [{
-                  scale: progressGlowAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [1, 1.05]
-                  })
-                }]
-              }
-            ]}>
-              {Math.round(progress)}%
-            </Animated.Text>
-            <Text style={styles.progressLabel}>Complete</Text>
+            <View style={styles.progressInline}>
+              <Animated.Text style={[
+                styles.progressPercentage,
+                {
+                  transform: [{
+                    scale: progressGlowAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1, 1.02]
+                    })
+                  }]
+                }
+              ]}>
+                {Math.round(progress)}%
+              </Animated.Text>
+              <Text style={styles.progressLabel}>Complete</Text>
+            </View>
           </View>
           <View style={styles.progressBarContainer}>
             <View style={styles.progressBar}>
@@ -627,11 +636,8 @@ export default function OnboardingScreen() {
                   end={{ x: 1, y: 0 }}
                 />
               </Animated.View>
-
             </View>
-            <View style={styles.progressTrack} />
           </View>
-
         </LinearGradient>
       </View>
 
@@ -663,9 +669,21 @@ export default function OnboardingScreen() {
             ) : currentStepData.type === 'slider' ? (
               // Layout matching reference image
               <View style={styles.sliderContainer}>
+                {/* Current value displayed prominently above */}
+                <View style={styles.sliderValueDisplay}>
+                  <Text style={styles.sliderCurrentValue}>
+                    {Math.round(answers[currentStepData.id] || currentStepData.defaultValue || 0)}%
+                  </Text>
+                </View>
+                
+                {/* Labels positioned above the slider */}
+                <View style={styles.sliderLabelsContainer}>
+                  <Text style={styles.sliderMinLabel}>{currentStepData.labels.min}</Text>
+                  <Text style={styles.sliderMaxLabel}>{currentStepData.labels.max}</Text>
+                </View>
+                
                 {/* Massive slider with enhanced theme */}
                 <View style={styles.sliderWrapper}>
-                  <Text style={styles.sliderMinLabel}>{currentStepData.labels.min}</Text>
                   <Slider
                     style={styles.slider}
                     minimumValue={0}
@@ -680,7 +698,6 @@ export default function OnboardingScreen() {
                     trackStyle={styles.sliderTrackStyle}
                     thumbTintColor="#FFFFFF"
                   />
-                  <Text style={styles.sliderMaxLabel}>{currentStepData.labels.max}</Text>
                 </View>
               </View>
             ) : currentStepData.id === 'fantasy' ? (
@@ -823,15 +840,6 @@ export default function OnboardingScreen() {
         </Animated.View>
             </ScrollView>
 
-      {/* Percentage Display Above Navigation */}
-      {currentStepData.type === 'slider' && (
-        <View style={styles.percentageDisplay}>
-          <Text style={styles.percentageText}>
-            {Math.round(answers[currentStepData.id] || currentStepData.defaultValue || 0)}%
-          </Text>
-        </View>
-      )}
-      
       {/* Navigation */}
       <View style={styles.navigation}>
         {currentStep > 0 && (
@@ -1146,65 +1154,70 @@ const styles = StyleSheet.create({
   },
   progressContainer: {
     paddingHorizontal: 20,
-    marginBottom: 30,
+    marginBottom: 20,
   },
   progressBox: {
-    padding: 20,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: 'rgba(220, 20, 60, 0.4)',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: 'rgba(220, 20, 60, 0.3)',
     alignItems: 'center',
     shadowColor: '#DC143C',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
   },
   progressHeader: {
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
+  },
+  progressInline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   progressPercentage: {
-    fontSize: 24,
-    fontWeight: '800',
+    fontSize: 20,
+    fontWeight: '700',
     color: '#FFFFFF',
     textAlign: 'center',
-    textShadowColor: 'rgba(220, 20, 60, 0.5)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-    marginBottom: 1,
+    textShadowColor: 'rgba(220, 20, 60, 0.4)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+    marginBottom: 0,
   },
   progressLabel: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#E5E7EB',
     textAlign: 'center',
-    fontWeight: '600',
-    letterSpacing: 0.5,
-    opacity: 0.9,
+    fontWeight: '500',
+    letterSpacing: 0.3,
+    opacity: 0.8,
   },
   progressBarContainer: {
     width: '100%',
-    marginBottom: 16,
+    marginBottom: 8,
     position: 'relative',
   },
   progressBar: {
-    height: 10,
+    height: 6,
     backgroundColor: 'transparent',
-    borderRadius: 5,
+    borderRadius: 3,
     overflow: 'visible',
     width: '100%',
     position: 'relative',
   },
   progressFill: {
     height: '100%',
-    borderRadius: 5,
+    borderRadius: 3,
     position: 'relative',
     zIndex: 2,
     shadowColor: '#DC143C',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.9,
-    shadowRadius: 6,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.7,
+    shadowRadius: 4,
+    elevation: 4,
   },
   progressFillGradient: {
     width: '100%',
@@ -1265,7 +1278,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#E5E7EB',
     textAlign: 'center',
-    marginBottom: 0,
+    marginBottom: 20,
     lineHeight: 24,
     fontWeight: '500',
     letterSpacing: 0.5,
@@ -1776,58 +1789,40 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     gap: 0,
     marginTop: 0,
+    width: '100%',
   },
-  sliderTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#E5E7EB',
-    marginBottom: 2,
-    textAlign: 'center',
-  },
-  sliderCurrentValue: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: '#FF6B6B',
-    marginBottom: 0,
-    marginTop: 0,
-  },
-  sliderValueLabel: {
-    fontSize: 16,
-    color: '#D1D5DB',
-    fontWeight: '500',
-    marginTop: 6,
-    opacity: 0.8,
-  },
-  sliderWrapper: {
+  sliderLabelsContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
+    marginBottom: 12,
+  },
+  sliderWrapper: {
+    width: '100%',
+    paddingHorizontal: 20,
     marginTop: 0,
     marginBottom: 0,
   },
   slider: {
-    flex: 1,
-    height: 240,
-    marginHorizontal: 8,
+    width: '100%',
+    height: 40,
+    marginHorizontal: 0,
     marginVertical: 0,
   },
   sliderMinLabel: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     color: '#E5B8D1',
     letterSpacing: 0.3,
-    minWidth: 50,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   sliderMaxLabel: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     color: '#E5B8D1',
     letterSpacing: 0.3,
-    minWidth: 50,
-    textAlign: 'center',
+    textAlign: 'right',
   },
   sliderThumbStyle: {
     width: 120,
@@ -1846,10 +1841,7 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 24,
   },
-  sliderValueContainer: {
-    alignItems: 'center',
-    marginTop: 0,
-  },
+
   optionLabelSelected: {
     color: '#FFFFFF',
     textShadowColor: 'rgba(220, 20, 60, 0.8)',
@@ -1892,17 +1884,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
-  percentageDisplay: {
-    alignItems: 'center',
-    marginBottom: 5,
-    paddingHorizontal: 20,
-  },
-  percentageText: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#FF6B9D',
-    textAlign: 'center',
-  },
+
   navigation: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -1949,4 +1931,15 @@ const styles = StyleSheet.create({
         fontSize: 16,
     fontWeight: '600',
     },
+  sliderValueDisplay: {
+    alignItems: 'center',
+    marginBottom: 10,
+    paddingHorizontal: 20,
+  },
+  sliderCurrentValue: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#FF6B9D',
+    textAlign: 'center',
+  },
 });
