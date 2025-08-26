@@ -458,7 +458,10 @@ export default function HomeScreen() {
               colors={['#DC143C', '#B22222', '#8B0000']}
               style={styles.rollButton}
             >
-              <TouchableOpacity style={styles.gradientButtonContent}>
+              <TouchableOpacity 
+                style={styles.gradientButtonContent}
+                onPress={() => router.push('/dice-game')}
+              >
                 <Text style={styles.rollButtonText}>Roll</Text>
               </TouchableOpacity>
             </LinearGradient>
@@ -482,7 +485,10 @@ export default function HomeScreen() {
               colors={['#DC143C', '#B22222', '#8B0000']}
               style={styles.createButton}
             >
-              <TouchableOpacity style={styles.gradientButtonContent}>
+              <TouchableOpacity 
+                style={styles.gradientButtonContent}
+                onPress={() => router.push('/deck')}
+              >
                 <Text style={styles.createButtonText}>Create</Text>
               </TouchableOpacity>
             </LinearGradient>
@@ -515,7 +521,10 @@ export default function HomeScreen() {
               colors={['#10B981', '#059669']}
               style={styles.spinButton}
             >
-              <TouchableOpacity style={styles.gradientButtonContent}>
+              <TouchableOpacity 
+                style={styles.gradientButtonContent}
+                onPress={() => router.push('/spin-wheel')}
+              >
                 <Text style={styles.spinButtonText}>Spin</Text>
               </TouchableOpacity>
             </LinearGradient>
