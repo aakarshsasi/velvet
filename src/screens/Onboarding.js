@@ -4,16 +4,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  Animated,
-  Dimensions,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Animated,
+    Dimensions,
+    Image,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -295,15 +295,16 @@ export default function OnboardingScreen() {
         premiumSuggestions: generatePremiumSuggestions(answers)
       };
       
-      // Store profile and mark onboarding as completed
+      // Store profile in AsyncStorage (will be saved to Firebase after sign up)
       await AsyncStorage.setItem('userProfile', JSON.stringify(profile));
-      await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
-      
-      // Mark onboarding as completed in Firestore
-      await markOnboardingCompleted();
+      await AsyncStorage.setItem('onboardingAnswers', JSON.stringify(answers));
+      await AsyncStorage.setItem('hasCompletedOnboarding', 'false'); // Will be true after sign up
       
       console.log('Generated Profile:', profile);
-      router.replace('/profile-result');
+      console.log('Profile saved to AsyncStorage. User needs to sign up to save to Firebase.');
+      
+      // Navigate to sign up screen instead of profile result
+      router.replace('/signup');
     } catch (error) {
       console.error('Error saving profile:', error);
       // Still navigate to profile result even if saving fails

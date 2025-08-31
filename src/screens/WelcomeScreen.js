@@ -31,21 +31,13 @@ export default function WelcomeScreen() {
   // Smart routing effect - redirect based on auth state
   useEffect(() => {
     if (!loading) {
-      if (user) {
-        // Add a delay so users can see the welcome screen briefly
-        const timer = setTimeout(() => {
-          if (hasCompletedOnboarding) {
-            // User has completed onboarding, go to home
-            router.replace('/home');
-          } else {
-            // User hasn't completed onboarding, go to onboarding
-            router.replace('/onboarding');
-          }
-        }, 2000); // 2 second delay
-        
-        return () => clearTimeout(timer);
+      if (user && hasCompletedOnboarding) {
+        // Only redirect if user is signed in AND has completed onboarding
+        // Redirect immediately without delay
+        router.replace('/home');
       }
-      // If no user, stay on welcome screen (user will click "Get Started")
+      // If no user OR user hasn't completed onboarding, stay on welcome screen
+      // User will click "Get Started" to start onboarding
     }
   }, [user, loading, hasCompletedOnboarding, router]);
 
@@ -114,6 +106,10 @@ export default function WelcomeScreen() {
   };
 
   const handleGetStarted = () => {
+    router.push('/onboarding');
+  };
+
+  const handleSignIn = () => {
     router.push('/login');
   };
 
@@ -281,6 +277,14 @@ export default function WelcomeScreen() {
         {/* Elegant Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>Your intimate adventure starts here</Text>
+        </View>
+
+        {/* Existing Member Sign In */}
+        <View style={styles.signInContainer}>
+          <TouchableOpacity onPress={handleSignIn} style={styles.signInButton}>
+            <Text style={styles.signInText}>Existing Member? </Text>
+            <Text style={styles.signInLink}>Sign in</Text>
+          </TouchableOpacity>
         </View>
       </Animated.View>
     </SafeAreaView>
@@ -470,5 +474,28 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     letterSpacing: 0.5,
     textAlign: 'center',
+  },
+  signInContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 30,
+  },
+  signInButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  signInText: {
+    fontSize: 16,
+    color: 'rgba(205, 92, 92, 0.8)',
+    fontWeight: '400',
+    letterSpacing: 0.5,
+  },
+  signInLink: {
+    fontSize: 16,
+    color: '#DC143C',
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
 });

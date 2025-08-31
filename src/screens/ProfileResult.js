@@ -3,18 +3,17 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-    Animated,
-    Dimensions,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { useAuth } from '../contexts/AuthContext';
 
 // SVG content as string constant with app theme colors
 const sexualPositionSvg = `<?xml version="1.0" encoding="utf-8"?>
@@ -33,7 +32,6 @@ const { width, height } = Dimensions.get('window');
 
 export default function ProfileResultScreen() {
   const router = useRouter();
-  const { markOnboardingCompleted } = useAuth();
   const [userProfile, setUserProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -186,13 +184,20 @@ export default function ProfileResultScreen() {
 
   const handleExploreMore = async () => {
     try {
-      // Mark onboarding as completed when user explores more
-      await markOnboardingCompleted();
-      router.replace('/home');
+      // Check if user is signed in
+      const hasCompletedOnboarding = await AsyncStorage.getItem('hasCompletedOnboarding');
+      
+      if (hasCompletedOnboarding === 'true') {
+        // User has completed onboarding and is signed in, go to home
+        router.replace('/home');
+      } else {
+        // User needs to sign up/sign in, go to signup
+        router.replace('/signup');
+      }
     } catch (error) {
-      console.error('Error marking onboarding as completed:', error);
-      // Still navigate to home even if marking completion fails
-      router.replace('/home');
+      console.error('Error checking onboarding status:', error);
+      // Default to signup if there's an error
+      router.replace('/signup');
     }
   };
 

@@ -1,9 +1,10 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-  updateProfile
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    signOut,
+    updateProfile
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import React, { createContext, useContext, useEffect, useState } from 'react';
@@ -70,15 +71,27 @@ export const AuthProvider = ({ children }) => {
       // Update profile with display name
       await updateProfile(user, { displayName });
       
+      // Get user profile from AsyncStorage if available
+      const userProfile = await AsyncStorage.getItem('userProfile');
+      const onboardingAnswers = await AsyncStorage.getItem('onboardingAnswers');
+      
       // Create user document in Firestore
       await setDoc(doc(db, 'users', user.uid), {
         email: user.email,
         displayName: displayName,
         isPremium: false,
-        hasCompletedOnboarding: false,
+        hasCompletedOnboarding: userProfile ? true : false, // If they have a profile, onboarding is complete
+        userProfile: userProfile ? JSON.parse(userProfile) : null,
+        onboardingAnswers: onboardingAnswers ? JSON.parse(onboardingAnswers) : null,
         createdAt: new Date(),
         lastLogin: new Date()
       });
+      
+      // If user has a profile, mark onboarding as completed in AsyncStorage
+      if (userProfile) {
+        await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
+        setHasCompletedOnboarding(true);
+      }
       
       return user;
     } catch (error) {
@@ -95,6 +108,12 @@ export const AuthProvider = ({ children }) => {
       await updateDoc(doc(db, 'users', user.uid), {
         lastLogin: new Date()
       });
+      
+      // Also check AsyncStorage for onboarding status
+      const hasCompletedOnboarding = await AsyncStorage.getItem('hasCompletedOnboarding');
+      if (hasCompletedOnboarding === 'true') {
+        setHasCompletedOnboarding(true);
+      }
       
       return user;
     } catch (error) {
@@ -128,10 +147,35 @@ export const AuthProvider = ({ children }) => {
     if (!user) return;
     
     try {
-      await updateDoc(doc(db, 'users', user.uid), {
-        hasCompletedOnboarding: true
-      });
-      setHasCompletedOnboarding(true);
+      // Get the user profile from AsyncStorage
+      const userProfile = await AsyncStorage.getItem('userProfile');
+      const onboardingAnswers = await AsyncStorage.getItem('onboardingAnswers');
+      
+      if (userProfile) {
+        const profileData = JSON.parse(userProfile);
+        
+        // Save both the onboarding completion status and the profile data
+        await updateDoc(doc(db, 'users', user.uid), {
+          hasCompletedOnboarding: true,
+          userProfile: profileData,
+          onboardingAnswers: onboardingAnswers ? JSON.parse(onboardingAnswers) : null,
+          onboardingCompletedAt: new Date()
+        });
+        
+        // Also update AsyncStorage to mark onboarding as completed
+        await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
+        setHasCompletedOnboarding(true);
+      } else {
+        // Just mark as completed if no profile data
+        await updateDoc(doc(db, 'users', user.uid), {
+          hasCompletedOnboarding: true,
+          onboardingCompletedAt: new Date()
+        });
+        
+        // Also update AsyncStorage
+        await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
+        setHasCompletedOnboarding(true);
+      }
     } catch (error) {
       throw error;
     }
