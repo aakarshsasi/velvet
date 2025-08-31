@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
+  Alert,
   Animated,
   SafeAreaView,
   ScrollView,
@@ -13,9 +14,11 @@ import {
   View,
 } from 'react-native';
 import { Path, Svg } from 'react-native-svg';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { user, isPremium, upgradeToPremium } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [userProfile, setUserProfile] = useState(null);
   const [revealedCards, setRevealedCards] = useState(new Set());
@@ -323,8 +326,24 @@ export default function HomeScreen() {
             
             
           </View>
-          <TouchableOpacity style={styles.profileButton}>
-            <Text style={styles.profileIcon}>👤</Text>
+          <TouchableOpacity 
+            style={styles.profileButton} 
+            onPress={() => {
+              if (user) {
+                Alert.alert(
+                  'Profile',
+                  `Welcome, ${user.displayName || 'User'}!`,
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    { text: 'Logout', onPress: logout, style: 'destructive' }
+                  ]
+                );
+              } else {
+                router.push('/login');
+              }
+            }}
+          >
+            <Text style={styles.profileIcon}>{user ? '👤' : '🔐'}</Text>
           </TouchableOpacity>
         </View>
       </LinearGradient>
@@ -360,9 +379,20 @@ export default function HomeScreen() {
             <Text style={styles.heroSubtitle}>
               Intimate experiences designed for connection
             </Text>
-            {userProfile ? (
+            {user ? (
               <View style={styles.heroBadge}>
-                <Text style={styles.heroBadgeText}>Welcome back, {userProfile.persona} ✨</Text>
+                <Text style={styles.heroBadgeText}>
+                  {isPremium ? '👑 Premium Member' : '🔥 Free User'}
+                </Text>
+                {!isPremium && (
+                  <TouchableOpacity 
+                    style={styles.upgradeButton}
+                    onPress={upgradeToPremium}
+                  >
+                    <Text style={styles.upgradeButtonText}>Upgrade to Premium</Text>
+                  </TouchableOpacity>
+                )}
+
               </View>
             ) : (
               <View style={styles.heroBadge}>
@@ -1036,4 +1066,26 @@ const styles = StyleSheet.create({
   bottomSpacing: {
     height: 100,
   },
+  upgradeButton: {
+    backgroundColor: 'rgba(220, 20, 60, 0.9)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    marginTop: 12,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.6,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  upgradeButtonText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    textAlign: 'center',
+  },
+
 });

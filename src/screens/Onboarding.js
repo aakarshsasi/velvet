@@ -20,7 +20,8 @@ import Svg, { Path } from 'react-native-svg';
 const { width } = Dimensions.get('window');
 
 export default function OnboardingScreen() {
-    const router = useRouter();
+  const router = useRouter();
+
   const [currentStep, setCurrentStep] = useState(0); // 0 = intro, 1+ = quiz steps
   const [progress, setProgress] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -224,35 +225,7 @@ export default function OnboardingScreen() {
     fadeAnim.setValue(0);
   };
 
-  const handleSkipOnboarding = async () => {
-    try {
-      // Mark onboarding as completed with default values
-      const defaultProfile = {
-        gender: 'prefer-not-to-say',
-        sexualOrientation: [],
-        experimenting: true,
-        desireLevel: 'mild',
-        turnOns: [],
-        fantasySettings: [],
-        personality: 'equal',
-        experience: 'beginner',
-        enhancement: 50,
-        persona: 'Seductive Explorer',
-        premiumSuggestions: ['Step-by-Step Guides', 'Video Tutorials']
-      };
-      
-      // Store default profile and mark onboarding as completed
-      await AsyncStorage.setItem('userProfile', JSON.stringify(defaultProfile));
-      await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
-      
-      console.log('Skipped onboarding, using default profile:', defaultProfile);
-      router.replace('/home');
-    } catch (error) {
-      console.error('Error saving default profile:', error);
-      // Still navigate to home even if saving fails
-      router.replace('/home');
-    }
-  };
+
 
   const handleAnswer = (stepId, value, isMultiple = false) => {
     if (isMultiple) {
@@ -325,6 +298,9 @@ export default function OnboardingScreen() {
       // Store profile and mark onboarding as completed
       await AsyncStorage.setItem('userProfile', JSON.stringify(profile));
       await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
+      
+      // Mark onboarding as completed in Firestore
+      await markOnboardingCompleted();
       
       console.log('Generated Profile:', profile);
       router.replace('/profile-result');
@@ -594,11 +570,7 @@ export default function OnboardingScreen() {
                 </LinearGradient>
               </TouchableOpacity>
               
-              {/* Skip Button */}
-              <TouchableOpacity style={styles.skipButton} onPress={handleSkipOnboarding}>
-                <Text style={styles.skipButtonText}>Skip for now</Text>
-                <Text style={styles.skipButtonSubtext}>I'll explore later</Text>
-              </TouchableOpacity>
+
             </View>
 
             {/* Bottom Spacing */}
@@ -630,10 +602,7 @@ export default function OnboardingScreen() {
           </Text>
         </View>
         
-        {/* Skip Button for Quiz Steps */}
-        <TouchableOpacity style={styles.headerSkipButton} onPress={handleSkipOnboarding}>
-          <Text style={styles.headerSkipButtonText}>Skip</Text>
-        </TouchableOpacity>
+
       </View>
 
       {/* Progress Bar */}
@@ -889,10 +858,7 @@ export default function OnboardingScreen() {
           </TouchableOpacity>
         )}
         
-        {/* Skip Button in Navigation */}
-        <TouchableOpacity style={styles.navSkipButton} onPress={handleSkipOnboarding}>
-          <Text style={styles.navSkipButtonText}>Skip</Text>
-        </TouchableOpacity>
+
         
         <TouchableOpacity
           style={[styles.nextButton, !canProceed() && styles.nextButtonDisabled]}
@@ -1991,72 +1957,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     fontWeight: '600',
     },
-  skipButton: {
-    marginTop: 16,
-    paddingVertical: 18,
-    paddingHorizontal: 28,
-    borderRadius: 28,
-    borderWidth: 2,
-    borderColor: 'rgba(220, 20, 60, 0.4)',
-    backgroundColor: 'rgba(220, 20, 60, 0.08)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    alignItems: 'center',
-  },
-  skipButtonText: {
-    color: '#E5E7EB',
-    fontSize: 16,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-  },
-  skipButtonSubtext: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontWeight: '400',
-  },
-  headerSkipButton: {
-    paddingVertical: 18,
-    paddingHorizontal: 28,
-    borderRadius: 28,
-    borderWidth: 2,
-    borderColor: 'rgba(220, 20, 60, 0.4)',
-    backgroundColor: 'rgba(220, 20, 60, 0.08)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  headerSkipButtonText: {
-    color: '#E5E7EB',
-    fontSize: 16,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-  },
-  navSkipButton: {
-    paddingVertical: 18,
-    paddingHorizontal: 24,
-    borderRadius: 28,
-    borderWidth: 2,
-    borderColor: 'rgba(220, 20, 60, 0.4)',
-    backgroundColor: 'rgba(220, 20, 60, 0.08)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    minWidth: 100,
-    alignItems: 'center',
-  },
-  navSkipButtonText: {
-    color: '#E5E7EB',
-    fontSize: 16,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-  },
+
   sliderValueDisplay: {
     alignItems: 'center',
     marginBottom: 10,
