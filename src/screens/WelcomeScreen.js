@@ -12,10 +12,12 @@ import {
     View,
 } from 'react-native';
 import { Path, Svg } from 'react-native-svg';
+import { useAuth } from '../contexts/AuthContext';
 
 const { width, height } = Dimensions.get('window');
 
 export default function WelcomeScreen() {
+  const { user, loading, hasCompletedOnboarding } = useAuth();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const glowAnim = useRef(new Animated.Value(0)).current;
@@ -25,6 +27,27 @@ export default function WelcomeScreen() {
   useEffect(() => {
     startAnimations();
   }, []);
+
+  // Smart routing effect - redirect based on auth state
+  useEffect(() => {
+    if (!loading) {
+      if (user) {
+        // Add a delay so users can see the welcome screen briefly
+        const timer = setTimeout(() => {
+          if (hasCompletedOnboarding) {
+            // User has completed onboarding, go to home
+            router.replace('/home');
+          } else {
+            // User hasn't completed onboarding, go to onboarding
+            router.replace('/onboarding');
+          }
+        }, 2000); // 2 second delay
+        
+        return () => clearTimeout(timer);
+      }
+      // If no user, stay on welcome screen (user will click "Get Started")
+    }
+  }, [user, loading, hasCompletedOnboarding, router]);
 
   const startAnimations = () => {
     // Fade in and slide up
@@ -91,7 +114,7 @@ export default function WelcomeScreen() {
   };
 
   const handleGetStarted = () => {
-    router.push('/onboarding');
+    router.push('/login');
   };
 
   return (
