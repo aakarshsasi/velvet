@@ -124,6 +124,16 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await signOut(auth);
+      
+      // Clear local state
+      setUser(null);
+      setIsPremium(false);
+      setHasCompletedOnboarding(false);
+      
+      // Clear AsyncStorage
+      await AsyncStorage.removeItem('hasCompletedOnboarding');
+      await AsyncStorage.removeItem('userProfile');
+      await AsyncStorage.removeItem('onboardingAnswers');
     } catch (error) {
       throw error;
     }
@@ -150,15 +160,18 @@ export const AuthProvider = ({ children }) => {
       // Get the user profile from AsyncStorage
       const userProfile = await AsyncStorage.getItem('userProfile');
       const onboardingAnswers = await AsyncStorage.getItem('onboardingAnswers');
+      const analysisData = await AsyncStorage.getItem('analysisData');
       
       if (userProfile) {
         const profileData = JSON.parse(userProfile);
+        const analysis = analysisData ? JSON.parse(analysisData) : null;
         
         // Save both the onboarding completion status and the profile data
         await updateDoc(doc(db, 'users', user.uid), {
           hasCompletedOnboarding: true,
           userProfile: profileData,
           onboardingAnswers: onboardingAnswers ? JSON.parse(onboardingAnswers) : null,
+          analysis: analysis, // Save comprehensive analysis
           onboardingCompletedAt: new Date()
         });
         

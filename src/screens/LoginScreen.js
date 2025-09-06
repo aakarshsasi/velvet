@@ -2,15 +2,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -23,6 +23,10 @@ export default function LoginScreen() {
   
   const { signIn, signUp } = useAuth();
   const router = useRouter();
+
+  const handleBack = () => {
+    router.back();
+  };
 
   const handleSubmit = async () => {
     if (!email || !password) {
@@ -55,102 +59,142 @@ export default function LoginScreen() {
   };
 
   return (
-    <LinearGradient
-      colors={['#000000', '#1A0000', '#330000', '#4D0000']}
-      style={styles.container}
-    >
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#000000', '#1A0000', '#330000', '#4D0000']}
+        style={styles.background}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      />
+      
+      {/* Back Button - Fixed at top */}
+      <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+        <Text style={styles.backButtonText}>← Back</Text>
+      </TouchableOpacity>
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View style={styles.content}>
-            {/* Header */}
-            <View style={styles.header}>
-              <Text style={styles.title}>Velvet</Text>
-              <Text style={styles.subtitle}>
-                {isSignUp ? 'Create your account' : 'Welcome back'}
-              </Text>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Header Section */}
+          <View style={styles.headerSection}>
+            <Text style={styles.title}>Velvet</Text>
+            <Text style={styles.subtitle}>
+              {isSignUp ? 'Create your account' : 'Welcome back'}
+            </Text>
+          </View>
+
+          {/* Form Section */}
+          <View style={styles.formSection}>
+            {isSignUp && (
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Name</Text>
+                <TextInput
+                  style={styles.input}
+                  value={displayName}
+                  onChangeText={setDisplayName}
+                  placeholder="Enter your name"
+                  placeholderTextColor="rgba(255, 255, 255, 0.7)"
+                  autoCapitalize="words"
+                />
+              </View>
+            )}
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Email</Text>
+              <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Enter your email"
+                placeholderTextColor="rgba(255, 255, 255, 0.7)"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
             </View>
 
-            {/* Form */}
-            <View style={styles.form}>
-              {isSignUp && (
-                <View style={styles.inputContainer}>
-                  <Text style={styles.label}>Name</Text>
-                  <TextInput
-                    style={styles.input}
-                    value={displayName}
-                    onChangeText={setDisplayName}
-                    placeholder="Enter your name"
-                    placeholderTextColor="rgba(255, 255, 255, 0.7)"
-                    autoCapitalize="words"
-                  />
-                </View>
-              )}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Password</Text>
+              <TextInput
+                style={styles.input}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Enter your password"
+                placeholderTextColor="rgba(255, 255, 255, 0.7)"
+                secureTextEntry
+              />
+            </View>
 
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>Email</Text>
-                <TextInput
-                  style={styles.input}
-                  value={email}
-                  onChangeText={setEmail}
-                  placeholder="Enter your email"
-                  placeholderTextColor="rgba(255, 255, 255, 0.7)"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
-              </View>
-
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>Password</Text>
-                <TextInput
-                  style={styles.input}
-                  value={password}
-                  onChangeText={setPassword}
-                  placeholder="Enter your password"
-                  placeholderTextColor="rgba(255, 255, 255, 0.7)"
-                  secureTextEntry
-                />
-              </View>
-
-              <TouchableOpacity
-                style={[styles.button, loading && styles.buttonDisabled]}
-                onPress={handleSubmit}
-                disabled={loading}
+            <TouchableOpacity
+              style={[styles.submitButton, loading && styles.submitButtonDisabled]}
+              onPress={handleSubmit}
+              disabled={loading}
+            >
+              <LinearGradient
+                colors={['#DC143C', '#B22222', '#8B0000']}
+                style={styles.submitButtonGradient}
               >
-                <LinearGradient
-                  colors={['#DC143C', '#B22222', '#8B0000']}
-                  style={styles.buttonGradient}
-                >
-                  <Text style={styles.buttonText}>
-                    {loading ? 'Please wait...' : (isSignUp ? 'Sign Up' : 'Sign In')}
-                  </Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-
-            {/* Toggle */}
-            <View style={styles.toggleContainer}>
-              <Text style={styles.toggleText}>
-                {isSignUp ? 'Already have an account?' : "Don't have an account?"}
-              </Text>
-              <TouchableOpacity onPress={() => setIsSignUp(!isSignUp)}>
-                <Text style={styles.toggleButton}>
-                  {isSignUp ? 'Sign In' : 'Sign Up'}
+                <Text style={styles.submitButtonText}>
+                  {loading ? 'Please wait...' : (isSignUp ? 'Sign Up' : 'Sign In')}
                 </Text>
-              </TouchableOpacity>
-            </View>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+
+          {/* Toggle Section */}
+          <View style={styles.toggleSection}>
+            <Text style={styles.toggleText}>
+              {isSignUp ? 'Already have an account?' : "Don't have an account?"}
+            </Text>
+            <TouchableOpacity onPress={() => setIsSignUp(!isSignUp)}>
+              <Text style={styles.toggleButton}>
+                {isSignUp ? 'Sign In' : 'Sign Up'}
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#000000',
+  },
+  background: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    backgroundColor: 'rgba(220, 20, 60, 0.15)',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(220, 20, 60, 0.3)',
+    zIndex: 100,
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  backButtonText: {
+    color: '#DC143C',
+    fontSize: 16,
+    fontWeight: '600',
   },
   keyboardView: {
     flex: 1,
@@ -158,12 +202,11 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     justifyContent: 'center',
-  },
-  content: {
     paddingHorizontal: 30,
-    paddingVertical: 40,
+    paddingTop: 100, // Space for back button
+    paddingBottom: 40,
   },
-  header: {
+  headerSection: {
     alignItems: 'center',
     marginBottom: 50,
   },
@@ -181,7 +224,7 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
   },
-  form: {
+  formSection: {
     marginBottom: 30,
   },
   inputContainer: {
@@ -205,27 +248,33 @@ const styles = StyleSheet.create({
     selectionColor: '#FFFFFF',
     underlineColorAndroid: 'transparent',
   },
-  button: {
+  submitButton: {
     borderRadius: 12,
     overflow: 'hidden',
     marginTop: 10,
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
-  buttonDisabled: {
+  submitButtonDisabled: {
     opacity: 0.6,
   },
-  buttonGradient: {
+  submitButtonGradient: {
     paddingVertical: 16,
     alignItems: 'center',
   },
-  buttonText: {
+  submitButtonText: {
     fontSize: 18,
     fontWeight: '700',
     color: '#FFFFFF',
   },
-  toggleContainer: {
+  toggleSection: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 20,
   },
   toggleText: {
     color: 'rgba(255, 255, 255, 0.7)',

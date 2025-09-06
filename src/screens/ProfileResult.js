@@ -1,9 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
+  BackHandler,
   Dimensions,
   SafeAreaView,
   ScrollView,
@@ -14,6 +15,7 @@ import {
   View,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
+import { generateComprehensiveAnalysis } from '../utils/ProfileAnalysis';
 
 // SVG content as string constant with app theme colors
 const sexualPositionSvg = `<?xml version="1.0" encoding="utf-8"?>
@@ -33,9 +35,8 @@ const { width, height } = Dimensions.get('window');
 export default function ProfileResultScreen() {
   const router = useRouter();
   const [userProfile, setUserProfile] = useState(null);
+  const [analysis, setAnalysis] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   
   // Animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -44,74 +45,28 @@ export default function ProfileResultScreen() {
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const glowAnim = useRef(new Animated.Value(0.3)).current;
   const shimmerAnim = useRef(new Animated.Value(0)).current;
-  const progressAnim = useRef(new Animated.Value(0)).current;
 
-  const loadingMessages = [
-    "Processing your responses...",
-    "Calculating compatibility...",
-    "Setting up personalised decks...",
-    "Generating insights...",
-    "Almost ready..."
-  ];
 
   useEffect(() => {
     loadUserProfile();
-    startLoadingAnimation();
+    startEnhancedAnimations();
   }, []);
 
-  const startLoadingAnimation = () => {
-    const loadingSteps = [
-      { progress: 18, messageIndex: 0, delay: 0 },
-      { progress: 37, messageIndex: 1, delay: 1600 },
-      { progress: 59, messageIndex: 2, delay: 1600 },
-      { progress: 78, messageIndex: 3, delay: 1600 },
-      { progress: 99, messageIndex: 4, delay: 1600 },
-      { progress: 100, messageIndex: 4, delay: 1000 }
-    ];
+  // Prevent any back navigation from profile result
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        // Prevent any back navigation - users can only go forward to signup
+        return true; // Return true to prevent default back behavior
+      };
 
-    let currentStep = 0;
-    
-    const animateProgress = () => {
-      if (currentStep < loadingSteps.length) {
-        const step = loadingSteps[currentStep];
-        
-        Animated.timing(progressAnim, {
-          toValue: step.progress,
-          duration: 1600,
-          useNativeDriver: false,
-        }).start();
-        
-        setProgress(step.progress);
-        
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }).start(() => {
-          setCurrentMessageIndex(step.messageIndex);
-          
-          Animated.timing(fadeAnim, {
-            toValue: 1,
-            duration: 400,
-            useNativeDriver: true,
-          }).start();
-        });
-        
-        currentStep++;
-        
-        if (currentStep < loadingSteps.length) {
-          setTimeout(animateProgress, step.delay);
-        } else {
-          setTimeout(() => {
-            setIsLoading(false);
-            startEnhancedAnimations();
-          }, 1000);
-        }
-      }
-    };
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
-    animateProgress();
-  };
+      return () => {
+        subscription.remove();
+      };
+    }, [])
+  );
 
   const startEnhancedAnimations = () => {
     Animated.parallel([
@@ -174,299 +129,35 @@ export default function ProfileResultScreen() {
   const loadUserProfile = async () => {
     try {
       const profileData = await AsyncStorage.getItem('userProfile');
-      if (profileData) {
-        setUserProfile(JSON.parse(profileData));
+      const answersData = await AsyncStorage.getItem('onboardingAnswers');
+      
+      if (profileData && answersData) {
+        const profile = JSON.parse(profileData);
+        const answers = JSON.parse(answersData);
+        
+        setUserProfile(profile);
+        
+        // Generate comprehensive analysis
+        const comprehensiveAnalysis = generateComprehensiveAnalysis(answers);
+        setAnalysis(comprehensiveAnalysis);
+        
+        // Save analysis to AsyncStorage for later use
+        await AsyncStorage.setItem('analysisData', JSON.stringify(comprehensiveAnalysis));
+        
+        console.log('Generated comprehensive analysis:', comprehensiveAnalysis);
       }
+      
+      setIsLoading(false);
     } catch (error) {
       console.error('Error loading user profile:', error);
+      setIsLoading(false);
     }
   };
 
-  const handleExploreMore = async () => {
-    try {
-      // Check if user is signed in
-      const hasCompletedOnboarding = await AsyncStorage.getItem('hasCompletedOnboarding');
-      
-      if (hasCompletedOnboarding === 'true') {
-        // User has completed onboarding and is signed in, go to home
-        router.replace('/home');
-      } else {
-        // User needs to sign up/sign in, go to signup
-        router.replace('/signup');
-      }
-    } catch (error) {
-      console.error('Error checking onboarding status:', error);
-      // Default to signup if there's an error
-      router.replace('/signup');
-    }
+  const handleContinueToSignup = () => {
+    // Navigate to signup-details using replace to clear the stack
+    router.replace('/signup-details');
   };
-
-  // Realistic scoring algorithm based on quiz answers
-  const generateProfileDimensions = (profile) => {
-    if (!profile) {
-      console.log('No profile found, using default dimensions');
-      return {
-        desire: 65,
-        satisfaction: 70,
-        openness: 60,
-        communication: 55,
-        trust: 75
-      };
-    }
-
-    console.log('Generating realistic dimensions for profile:', profile);
-
-    let dimensions = {
-      desire: 50,      // Base score - can be low or high
-      satisfaction: 50, // Base score - can be low or high  
-      openness: 50,    // Base score - can be low or high
-      communication: 50, // Base score - can be low or high
-      trust: 50        // Base score - can be low or high
-    };
-
-    // 1. DESIRE DIMENSION - Based on desire level, intimacy frequency, and enhancement
-    if (profile.desireLevel === 'mild') {
-      dimensions.desire = 35 + Math.floor(Math.random() * 20); // 35-55 range
-    } else if (profile.desireLevel === 'spicy') {
-      dimensions.desire = 60 + Math.floor(Math.random() * 25); // 60-85 range
-    } else if (profile.desireLevel === 'extreme') {
-      dimensions.desire = 75 + Math.floor(Math.random() * 20); // 75-95 range
-    }
-
-    // Intimacy frequency impact
-    if (profile.intimacyFrequency === 'rarely') dimensions.desire -= 10;
-    else if (profile.intimacyFrequency === 'daily') dimensions.desire += 15;
-    else if (profile.intimacyFrequency === 'weekly') dimensions.desire += 8;
-    else if (profile.intimacyFrequency === 'monthly') dimensions.desire += 2;
-
-    // Enhancement commitment impact
-    if (profile.enhancement >= 80) dimensions.desire += 12;
-    else if (profile.enhancement >= 60) dimensions.desire += 8;
-    else if (profile.enhancement >= 40) dimensions.desire += 4;
-    else if (profile.enhancement < 40) dimensions.desire -= 5;
-
-    // 2. SATISFACTION DIMENSION - Based on relationship status and improvement goals
-    if (profile.relationshipStatus === 'dating') {
-      dimensions.satisfaction = 45 + Math.floor(Math.random() * 20); // 45-65 range
-    } else if (profile.relationshipStatus === 'committed') {
-      dimensions.satisfaction = 55 + Math.floor(Math.random() * 20); // 55-75 range
-    } else if (profile.relationshipStatus === 'engaged') {
-      dimensions.satisfaction = 65 + Math.floor(Math.random() * 20); // 65-85 range
-    } else if (profile.relationshipStatus === 'married') {
-      dimensions.satisfaction = 60 + Math.floor(Math.random() * 25); // 60-85 range
-    } else if (profile.relationshipStatus === 'long-term') {
-      dimensions.satisfaction = 70 + Math.floor(Math.random() * 20); // 70-90 range
-    }
-
-    // Improvement goals impact
-    if (profile.improvementGoal === 'quality') dimensions.satisfaction += 10;
-    else if (profile.improvementGoal === 'frequency') dimensions.satisfaction += 8;
-    else if (profile.improvementGoal === 'variety') dimensions.satisfaction += 12;
-    else if (profile.improvementGoal === 'communication') dimensions.satisfaction += 6;
-    else if (profile.improvementGoal === 'emotional-connection') dimensions.satisfaction += 8;
-
-    // 3. OPENNESS DIMENSION - Based on fantasy settings, turn-ons, and comfort level
-    dimensions.openness = 40; // Lower base score
-    
-    if (profile.fantasySettings) {
-      dimensions.openness += profile.fantasySettings.length * 4;
-      if (profile.fantasySettings.includes('outdoors')) dimensions.openness += 8;
-      if (profile.fantasySettings.includes('public-place')) dimensions.openness += 12;
-      if (profile.fantasySettings.includes('office')) dimensions.openness += 6;
-      if (profile.fantasySettings.includes('car')) dimensions.openness += 8;
-      if (profile.fantasySettings.includes('shower')) dimensions.openness += 5;
-    }
-
-    if (profile.turnOns) {
-      dimensions.openness += profile.turnOns.length * 3;
-      if (profile.turnOns.includes('sensory')) dimensions.openness += 6;
-      if (profile.turnOns.includes('teasing')) dimensions.openness += 5;
-      if (profile.turnOns.includes('roleplay')) dimensions.openness += 8;
-      if (profile.turnOns.includes('power-play')) dimensions.openness += 10;
-      if (profile.turnOns.includes('public-play')) dimensions.openness += 12;
-      if (profile.turnOns.includes('bondage')) dimensions.openness += 9;
-      if (profile.turnOns.includes('dirty-talk')) dimensions.openness += 7;
-    }
-
-    // Comfort level impact
-    if (profile.comfortLevel >= 8) dimensions.openness += 15;
-    else if (profile.comfortLevel >= 6) dimensions.openness += 10;
-    else if (profile.comfortLevel >= 4) dimensions.openness += 5;
-    else if (profile.comfortLevel < 4) dimensions.openness -= 8;
-
-    // 4. COMMUNICATION DIMENSION - Based on comfort level and improvement goals
-    dimensions.communication = 45; // Lower base score
-    
-    if (profile.comfortLevel >= 8) dimensions.communication += 20;
-    else if (profile.comfortLevel >= 6) dimensions.communication += 15;
-    else if (profile.comfortLevel >= 4) dimensions.communication += 8;
-    else if (profile.comfortLevel < 4) dimensions.communication -= 10;
-    
-    if (profile.improvementGoal === 'communication') dimensions.communication += 15;
-    if (profile.improvementGoal === 'emotional-connection') dimensions.communication += 12;
-    
-    if (profile.turnOns?.includes('dirty-talk')) dimensions.communication += 10;
-    if (profile.turnOns?.includes('roleplay')) dimensions.communication += 8;
-
-    // 5. TRUST DIMENSION - Based on relationship status and biggest challenge
-    dimensions.trust = 60; // Moderate base score
-    
-    if (profile.relationshipStatus === 'dating') dimensions.trust += 5;
-    else if (profile.relationshipStatus === 'committed') dimensions.trust += 10;
-    else if (profile.relationshipStatus === 'engaged') dimensions.trust += 15;
-    else if (profile.relationshipStatus === 'married') dimensions.trust += 20;
-    else if (profile.relationshipStatus === 'long-term') dimensions.trust += 18;
-
-    // Biggest challenge impact
-    if (profile.biggestChallenge === 'communication') dimensions.trust -= 8;
-    else if (profile.biggestChallenge === 'time') dimensions.trust -= 3;
-    else if (profile.biggestChallenge === 'desire-mismatch') dimensions.trust -= 5;
-    else if (profile.biggestChallenge === 'routine') dimensions.trust -= 2;
-    else if (profile.biggestChallenge === 'emotional-connection') dimensions.trust -= 6;
-
-    // Cap all dimensions between 20-95 for realism
-    Object.keys(dimensions).forEach(key => {
-      dimensions[key] = Math.max(20, Math.min(95, dimensions[key]));
-    });
-
-    console.log('Generated realistic dimensions:', dimensions);
-    return dimensions;
-  };
-
-  const profileDimensions = generateProfileDimensions(userProfile);
-
-  // Personalized insight generation based on actual app content
-  const generatePersonalizedInsight = (profile, dimensions) => {
-    if (!profile) {
-      return {
-        title: "Your Personalized Velvet Experience ✨",
-        text: "Based on your profile, we recommend starting with our Mild Seduction category and the Sexy Dice Game for a gentle introduction to new experiences.",
-        icons: ["💕", "🎲", "✨"],
-        recommendations: ["Mild Seduction", "Sexy Dice Game", "Today's Picks"]
-      };
-    }
-
-    console.log('Generating personalized insight for profile:', profile);
-    console.log('Dimensions:', dimensions);
-
-    // Find top and lowest dimensions
-    const sortedDimensions = Object.entries(dimensions)
-      .sort(([,a], [,b]) => b - a);
-    
-    const topDimension = sortedDimensions[0];
-    const lowestDimension = sortedDimensions[sortedDimensions.length - 1];
-
-    let insightTitle = "Your Personalized Velvet Experience ✨";
-    let insightText = "";
-    let icons = ["✨", "💋", "🔥"];
-    let recommendations = [];
-
-    // Base recommendations on actual app content
-    const baseRecommendations = [
-      "Today's Picks 💋",
-      "Sexy Dice Game 🎲", 
-      "Spin the Wheel 🎡",
-      "Fantasy Builder 🏗️"
-    ];
-
-    // 1. Desire-based recommendations
-    if (profile.desireLevel === 'mild') {
-      recommendations.push("Mild Seduction 💕", "Foreplay 💋");
-      icons = ["🌸", "💕", "✨"];
-      insightText += "Your gentle approach to intimacy is perfect for our Mild Seduction and Foreplay categories. ";
-    } else if (profile.desireLevel === 'spicy') {
-      recommendations.push("Soft Domination 👑", "Roleplay 🎭");
-      icons = ["🔥", "🎭", "💋"];
-      insightText += "Your adventurous spirit will love our Soft Domination and Roleplay experiences. ";
-    } else if (profile.desireLevel === 'extreme') {
-      recommendations.push("Fantasy Extreme ⚡", "Light Restraints 🔗");
-      icons = ["⚡", "🔗", "😈"];
-      insightText += "Your extreme desires are perfect for our Fantasy Extreme and Light Restraints categories. ";
-    }
-
-    // 2. Frequency-based recommendations
-    if (profile.intimacyFrequency === 'rarely') {
-      recommendations.push("Sensory Play ✨");
-      insightText += "Since you're in a dry spell, our Sensory Play cards can help rekindle the spark. ";
-    } else if (profile.intimacyFrequency === 'daily') {
-      recommendations.push("Teasing & Denial 🔥");
-      insightText += "Your daily intimacy makes you perfect for our Teasing & Denial challenges. ";
-    }
-
-    // 3. Challenge-based recommendations
-    if (profile.biggestChallenge === 'communication') {
-      recommendations.push("Communication Cards 💬");
-      insightText += "Our communication-focused cards will help you express your needs better. ";
-    } else if (profile.biggestChallenge === 'routine') {
-      recommendations.push("Variety Packs 🎭");
-      insightText += "Break out of routine with our variety packs and random position generators. ";
-    } else if (profile.biggestChallenge === 'emotional-connection') {
-      recommendations.push("Emotional Intimacy 💝");
-      insightText += "Focus on emotional connection with our gentle, bonding experiences. ";
-    }
-
-    // 4. Comfort level recommendations
-    if (profile.comfortLevel < 5) {
-      recommendations.push("Gentle Start 🌸");
-      insightText += "Start gently with our beginner-friendly experiences to build confidence. ";
-    } else if (profile.comfortLevel >= 8) {
-      recommendations.push("Advanced Challenges 🚀");
-      insightText += "Your high comfort level makes you perfect for our advanced challenges. ";
-    }
-
-    // 5. Fantasy settings recommendations
-    if (profile.fantasySettings?.includes('outdoors')) {
-      recommendations.push("Outdoor Adventure 🌲");
-      insightText += "Your love for outdoor play will enjoy our adventure-themed cards. ";
-    }
-    if (profile.fantasySettings?.includes('public-place')) {
-      recommendations.push("Public Play 🌆");
-      insightText += "Explore our public play scenarios for thrilling experiences. ";
-    }
-
-    // 6. Turn-ons based recommendations
-    if (profile.turnOns?.includes('sensory')) {
-      recommendations.push("Sensory Experience 🎵");
-      insightText += "Our sensory play cards will heighten your pleasure. ";
-    }
-    if (profile.turnOns?.includes('roleplay')) {
-      recommendations.push("Roleplay Collection 🎭");
-      insightText += "Dive into our extensive roleplay scenarios. ";
-    }
-
-    // 7. Enhancement commitment recommendations
-    if (profile.enhancement >= 80) {
-      recommendations.push("Premium Content 💎");
-      insightText += "Your high commitment to improvement makes you perfect for our premium content. ";
-    }
-
-    // Remove duplicates and limit to 6 recommendations
-    recommendations = [...new Set([...baseRecommendations, ...recommendations])].slice(0, 6);
-
-    // Create personalized message based on dimensions
-    if (topDimension[1] >= 80) {
-      insightText += `Your ${topDimension[0]} score of ${Math.round(topDimension[1])}% shows you're ready for advanced experiences! `;
-    } else if (topDimension[1] >= 60) {
-      insightText += `Your ${topDimension[0]} score of ${Math.round(topDimension[1])}% indicates good potential for growth. `;
-    } else {
-      insightText += `Your ${topDimension[0]} score of ${Math.round(topDimension[1])}% suggests starting with foundational experiences. `;
-    }
-
-    if (lowestDimension[1] < 40) {
-      insightText += `Focus on improving your ${lowestDimension[0]} through our targeted exercises and guidance.`;
-    } else {
-      insightText += `All areas show balanced development, perfect for comprehensive growth.`;
-    }
-
-    return {
-      title: insightTitle,
-      text: insightText,
-      icons: icons,
-      recommendations: recommendations
-    };
-  };
-
-  const personalizedInsight = generatePersonalizedInsight(userProfile, profileDimensions);
 
   // Loading screen
   if (isLoading) {
@@ -485,49 +176,6 @@ export default function ProfileResultScreen() {
           <Text style={styles.loadingTitle}>Analyzing Your Profile</Text>
           <Text style={styles.loadingSubtitle}>Discovering your unique desires...</Text>
           
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBar}>
-              <Animated.View 
-                style={[
-                  styles.progressFill,
-                  {
-                    width: progressAnim.interpolate({
-                      inputRange: [0, 100],
-                      outputRange: ['0%', '100%']
-                    })
-                  }
-                ]}
-              />
-            </View>
-            <Text style={styles.progressText}>{Math.round(progress)}%</Text>
-          </View>
-
-          <Animated.View 
-            style={[
-              styles.loadingMessages,
-              {
-                opacity: fadeAnim
-              }
-            ]}
-          >
-            <Animated.Text 
-              style={[
-                styles.loadingMessage,
-                {
-                  opacity: fadeAnim,
-                  transform: [{
-                    translateY: fadeAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [10, 0]
-                    })
-                  }]
-                }
-              ]}
-            >
-              {loadingMessages[currentMessageIndex]}
-            </Animated.Text>
-          </Animated.View>
-
           <View style={styles.sparkleContainer}>
             <Text style={styles.sparkle}>✨</Text>
             <Text style={styles.sparkle}>💫</Text>
@@ -580,7 +228,7 @@ export default function ProfileResultScreen() {
                 }
               ]}
             >
-              Your Intimacy Profile 🔥
+              Your Intimacy Profile ✨
             </Animated.Text>
             <Text style={styles.heroSubtitle}>Discover your unique desires</Text>
             
@@ -602,92 +250,57 @@ export default function ProfileResultScreen() {
           </View>
         </Animated.View>
 
-        {/* Profile Summary Card */}
-        <Animated.View 
-          style={[
-            styles.profileSummaryCard, 
-            { 
-              opacity: fadeAnim, 
-              transform: [{ translateY: slideAnim }] 
-            }
-          ]}
-        >
-          <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>Profile Summary</Text>
-            <Text style={styles.cardSubtitle}>Based on your quiz answers</Text>
-            
-            {/* Small SVG Decoration */}
-            <View style={styles.cardSvgContainer}>
-              <SvgXml
-                xml={sexualPositionSvg}
-                width="80"
-                height="40"
-                style={styles.cardSvg}
-              />
-            </View>
-          </View>
-
-          <View style={styles.summaryGrid}>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Desire Level</Text>
-              <Text style={styles.summaryValue}>
-                {userProfile?.desireLevel?.charAt(0).toUpperCase() + userProfile?.desireLevel?.slice(1) || 'Not specified'}
-              </Text>
-            </View>
-            
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Relationship</Text>
-              <Text style={styles.summaryValue}>
-                {userProfile?.relationshipStatus?.charAt(0).toUpperCase() + userProfile?.relationshipStatus?.slice(1) || 'Not specified'}
-              </Text>
-            </View>
-            
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Frequency</Text>
-              <Text style={styles.summaryValue}>
-                {userProfile?.intimacyFrequency?.charAt(0).toUpperCase() + userProfile?.intimacyFrequency?.slice(1) || 'Not specified'}
-              </Text>
+        {/* Persona Card */}
+        {analysis?.persona && (
+          <Animated.View 
+            style={[
+              styles.personaCard, 
+              { 
+                opacity: fadeAnim, 
+                transform: [{ translateY: slideAnim }] 
+              }
+            ]}
+          >
+            <View style={styles.cardHeader}>
+              <Text style={styles.cardTitle}>Your Intimacy Persona</Text>
+              <Text style={styles.cardSubtitle}>Based on your unique responses</Text>
             </View>
 
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryLabel}>Enhancement</Text>
-              <Text style={styles.summaryValue}>
-                {userProfile?.enhancement ? `${Math.round(userProfile.enhancement)}%` : 'Not specified'}
-              </Text>
+            <View style={styles.personaContent}>
+              <Text style={styles.personaName}>{analysis.persona.name}</Text>
+              <Text style={styles.personaDescription}>{analysis.persona.description}</Text>
+              
+              <View style={styles.traitsContainer}>
+                {analysis.traits.slice(0, 5).map((trait, index) => (
+                  <View key={index} style={styles.traitTag}>
+                    <Text style={styles.traitText}>{trait}</Text>
+                  </View>
+                ))}
+              </View>
             </View>
-          </View>
-        </Animated.View>
+          </Animated.View>
+        )}
 
-        {/* Intimacy Dimensions */}
-        <Animated.View 
-          style={[
-            styles.dimensionsSection, 
-            { 
-              opacity: fadeAnim, 
-              transform: [{ translateY: slideAnim }] 
-            }
-          ]}
-        >
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Your Intimacy Dimensions</Text>
-            
-            {/* Section SVG Decoration */}
-            <View style={styles.sectionSvgContainer}>
-              <SvgXml
-                xml={sexualPositionSvg}
-                width="60"
-                height="30"
-                style={styles.sectionSvg}
-              />
+        {/* Insights Section */}
+        {analysis?.insights && analysis.insights.length > 0 && (
+          <Animated.View 
+            style={[
+              styles.insightsSection, 
+              { 
+                opacity: fadeAnim, 
+                transform: [{ translateY: slideAnim }] 
+              }
+            ]}
+          >
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>What We Discovered About You</Text>
             </View>
-          </View>
 
-          <View style={styles.dimensionsGrid}>
-            {Object.entries(profileDimensions).map(([key, value], index) => (
+            {analysis.insights.slice(0, 3).map((insight, index) => (
               <Animated.View 
-                key={key}
+                key={index}
                 style={[
-                  styles.dimensionCard,
+                  styles.insightCard,
                   {
                     opacity: fadeAnim,
                     transform: [{
@@ -699,137 +312,97 @@ export default function ProfileResultScreen() {
                   }
                 ]}
               >
-                <View style={styles.dimensionHeader}>
-                  <Text style={styles.dimensionLabel}>{key.charAt(0).toUpperCase() + key.slice(1)}</Text>
-                  <Text style={styles.dimensionValue}>{Math.round(value)}%</Text>
+                <View style={styles.insightHeader}>
+                  <Text style={styles.insightTitle}>{insight.title}</Text>
                 </View>
                 
-            <View style={styles.dimensionBar}>
-                  <Animated.View 
-                    style={[
-                      styles.dimensionFill, 
-                      { 
-                        width: `${value}%`
-                      }
-                    ]} 
-                  />
-                </View>
+                <Text style={styles.insightText}>{insight.insight}</Text>
                 
-                <View style={styles.dimensionFooter}>
-                  <Text style={styles.dimensionDescription}>
-                    {value >= 90 ? 'Exceptional' : 
-                     value >= 80 ? 'Excellent' : 
-                     value >= 70 ? 'Good' : 
-                     value >= 60 ? 'Fair' : 'Developing'}
-                  </Text>
-                  <Text style={styles.dimensionReason}>
-                    {key === 'desire' && 'Based on your desire level, frequency, and enhancement commitment'}
-                    {key === 'satisfaction' && 'Based on your relationship status and improvement goals'}
-                    {key === 'openness' && 'Based on your fantasy settings, turn-ons, and comfort level'}
-                    {key === 'communication' && 'Based on your comfort level and improvement goals'}
-                    {key === 'trust' && 'Based on your relationship status and biggest challenges'}
-                  </Text>
-                </View>
+                {insight.tips && insight.tips.length > 0 && (
+                  <View style={styles.tipsContainer}>
+                    {insight.tips.slice(0, 2).map((tip, tipIndex) => (
+                      <Text key={tipIndex} style={styles.tipText}>• {tip}</Text>
+                    ))}
+                  </View>
+                )}
               </Animated.View>
             ))}
-          </View>
-        </Animated.View>
+          </Animated.View>
+        )}
 
-                {/* Personalized Recommendations */}
-        <Animated.View 
-          style={[
-            styles.recommendationsSection, 
-            { 
-              opacity: fadeAnim, 
-              transform: [{ translateY: slideAnim }] 
-            }
-          ]}
-        >
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Recommended for You ✨</Text>
-            
-            {/* Section SVG Decoration */}
-            <View style={styles.sectionSvgContainer}>
-              <SvgXml
-                xml={sexualPositionSvg}
-                width="60"
-                height="30"
-                style={styles.sectionSvg}
-              />
-            </View>
-          </View>
-
-          <View style={styles.recommendationsGrid}>
-            {personalizedInsight.recommendations.map((recommendation, index) => (
-              <Animated.View 
-                key={index}
-                style={[
-                  styles.recommendationCard,
-                  {
-                    opacity: fadeAnim,
-                    transform: [{
-                      translateX: slideAnim.interpolate({
-                        inputRange: [0, 50],
-                        outputRange: [0, index % 2 === 0 ? 15 : -15]
-                      })
-                    }]
-                  }
-                ]}
-              >
-                <Text style={styles.recommendationText}>{recommendation}</Text>
-              </Animated.View>
-            ))}
-          </View>
-        </Animated.View>
-
-        {/* Personalized Insight */}
-        <Animated.View 
-          style={[
-            styles.insightSection, 
-            { 
-              opacity: fadeAnim, 
-              transform: [{ translateY: slideAnim }] 
-            }
-          ]}
-        >
+        {/* Recommendations Section */}
+        {analysis?.recommendations && analysis.recommendations.length > 0 && (
           <Animated.View 
             style={[
-              styles.insightCard,
-              {
-                transform: [{
-                  translateY: pulseAnim.interpolate({
-                    inputRange: [1, 1.05],
-                    outputRange: [0, -5]
-                  })
-                }]
+              styles.recommendationsSection, 
+              { 
+                opacity: fadeAnim, 
+                transform: [{ translateY: slideAnim }] 
               }
             ]}
           >
-            <View style={styles.insightHeader}>
-              <Text style={styles.insightTitle}>{personalizedInsight.title}</Text>
-              
-              {/* Insight SVG Decoration */}
-              <View style={styles.insightSvgContainer}>
-                <SvgXml
-                  xml={sexualPositionSvg}
-                  width="50"
-                  height="25"
-                  style={styles.insightSvg}
-                />
-              </View>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Recommended for You ✨</Text>
             </View>
-            
-            <Text style={styles.insightText}>
-              {personalizedInsight.text}
-            </Text>
-            
-            <View style={styles.insightIcons}>
-              {personalizedInsight.icons.map((icon, index) => (
-                <Text key={index} style={styles.insightIcon}>{icon}</Text>
+
+            <View style={styles.recommendationsGrid}>
+              {analysis.recommendations.slice(0, 6).map((recommendation, index) => (
+                <Animated.View 
+                  key={index}
+                  style={[
+                    styles.recommendationCard,
+                    {
+                      opacity: fadeAnim,
+                      transform: [{
+                        translateX: slideAnim.interpolate({
+                          inputRange: [0, 50],
+                          outputRange: [0, index % 2 === 0 ? 15 : -15]
+                        })
+                      }]
+                    }
+                  ]}
+                >
+                  <Text style={styles.recommendationText}>{recommendation}</Text>
+                </Animated.View>
               ))}
             </View>
           </Animated.View>
-        </Animated.View>
+        )}
+
+        {/* Personalized Message */}
+        {analysis?.personalizedMessage && (
+          <Animated.View 
+            style={[
+              styles.messageSection, 
+              { 
+                opacity: fadeAnim, 
+                transform: [{ translateY: slideAnim }] 
+              }
+            ]}
+          >
+            <Animated.View 
+              style={[
+                styles.messageCard,
+                {
+                  transform: [{
+                    translateY: pulseAnim.interpolate({
+                      inputRange: [1, 1.05],
+                      outputRange: [0, -5]
+                    })
+                  }]
+                }
+              ]}
+            >
+              <View style={styles.messageHeader}>
+                <Text style={styles.messageTitle}>Your Personalized Insight</Text>
+              </View>
+              
+              <Text style={styles.messageText}>
+                {analysis.personalizedMessage}
+              </Text>
+            </Animated.View>
+          </Animated.View>
+        )}
 
         {/* Bottom Spacing */}
         <View style={styles.bottomSpacing} />
@@ -845,10 +418,10 @@ export default function ProfileResultScreen() {
           }
         ]}
       >
-        <TouchableOpacity style={styles.exploreButton} onPress={handleExploreMore}>
+        <TouchableOpacity style={styles.continueButton} onPress={handleContinueToSignup}>
           <LinearGradient
             colors={['#DC143C', '#B22222', '#8B0000']}
-            style={styles.exploreButtonGradient}
+            style={styles.continueButtonGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
@@ -873,7 +446,7 @@ export default function ProfileResultScreen() {
               />
             </Animated.View>
             
-            <Text style={styles.exploreButtonText}>Begin your Velvet journey ✨</Text>
+            <Text style={styles.continueButtonText}>Continue to Create Account ✨</Text>
             <Text style={styles.arrowIcon}>→</Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -954,8 +527,8 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 
-  // Profile Summary Card
-  profileSummaryCard: {
+  // Persona Card
+  personaCard: {
     marginHorizontal: 20,
     marginBottom: 30,
     backgroundColor: 'rgba(220, 20, 60, 0.1)',
@@ -983,51 +556,50 @@ const styles = StyleSheet.create({
     color: '#CD5C5C',
     opacity: 0.8,
   },
-  summaryGrid: {
+  personaContent: {
+    alignItems: 'center',
+  },
+  personaName: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#DC143C',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  personaDescription: {
+    fontSize: 16,
+    color: '#CD5C5C',
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 20,
+  },
+  traitsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    gap: 8,
   },
-  summaryItem: {
-    width: '48%',
-    alignItems: 'center',
-    marginBottom: 16,
-    padding: 16,
-    backgroundColor: 'rgba(220, 20, 60, 0.05)',
+  traitTag: {
+    backgroundColor: 'rgba(220, 20, 60, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(220, 20, 60, 0.2)',
+    borderColor: 'rgba(220, 20, 60, 0.4)',
   },
-  summaryLabel: {
-    fontSize: 14,
-    color: '#CD5C5C',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  summaryValue: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#DC143C',
-    textAlign: 'center',
-  },
-  cardSvgContainer: {
-    marginTop: 10,
-    alignSelf: 'center',
-  },
-  cardSvg: {
-    width: '100%',
-    height: '100%',
+  traitText: {
+    fontSize: 12,
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
 
-  // Dimensions Section
-  dimensionsSection: {
+  // Insights Section
+  insightsSection: {
     paddingHorizontal: 20,
     marginBottom: 30,
   },
   sectionHeader: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     marginBottom: 24,
   },
   sectionTitle: {
@@ -1037,20 +609,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 1,
   },
-  sectionSvgContainer: {
-    marginLeft: 10,
-  },
-  sectionSvg: {
-    width: '100%',
-    height: '100%',
-  },
-  dimensionsGrid: {
-    gap: 16,
-  },
-  dimensionCard: {
+  insightCard: {
     backgroundColor: 'rgba(220, 20, 60, 0.08)',
     borderRadius: 20,
     padding: 20,
+    marginBottom: 16,
     borderWidth: 1,
     borderColor: 'rgba(220, 20, 60, 0.2)',
     shadowColor: '#DC143C',
@@ -1058,57 +621,28 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 8,
   },
-  dimensionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  dimensionLabel: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  dimensionValue: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#DC143C',
-  },
-  dimensionBar: {
-    height: 12,
-    backgroundColor: 'rgba(220, 20, 60, 0.15)',
-    borderRadius: 6,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(220, 20, 60, 0.3)',
+  insightHeader: {
     marginBottom: 12,
   },
-  dimensionFill: {
-    height: '100%',
-    backgroundColor: '#DC143C',
-    borderRadius: 6,
-    shadowColor: '#DC143C',
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 4,
-    shadowOpacity: 0.6,
-    elevation: 4,
+  insightTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#DC143C',
   },
-  dimensionFooter: {
-    alignItems: 'center',
+  insightText: {
+    fontSize: 16,
+    color: '#CD5C5C',
+    lineHeight: 24,
+    marginBottom: 12,
   },
-  dimensionDescription: {
+  tipsContainer: {
+    marginTop: 8,
+  },
+  tipText: {
     fontSize: 14,
-    color: '#CD5C5C',
-    fontWeight: '500',
-  },
-  dimensionReason: {
-    fontSize: 11,
-    fontWeight: '400',
-    color: '#CD5C5C',
-    textAlign: 'center',
-    marginTop: 4,
-    opacity: 0.8,
-    lineHeight: 14,
+    color: '#E5E7EB',
+    lineHeight: 20,
+    marginBottom: 4,
   },
 
   // Recommendations Section
@@ -1146,12 +680,12 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
 
-  // Insight Section
-  insightSection: {
+  // Message Section
+  messageSection: {
     paddingHorizontal: 20,
     marginBottom: 30,
   },
-  insightCard: {
+  messageCard: {
     backgroundColor: 'rgba(220, 20, 60, 0.1)',
     borderRadius: 24,
     padding: 24,
@@ -1162,40 +696,21 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 12,
   },
-  insightHeader: {
+  messageHeader: {
     alignItems: 'center',
     marginBottom: 16,
   },
-  insightTitle: {
+  messageTitle: {
     fontSize: 20,
     fontWeight: '700',
     color: '#FFFFFF',
-    marginBottom: 10,
     textAlign: 'center',
   },
-  insightSvgContainer: {
-    marginTop: 10,
-    alignSelf: 'center',
-  },
-  insightSvg: {
-    width: '100%',
-    height: '100%',
-  },
-  insightText: {
+  messageText: {
     fontSize: 16,
     color: '#CD5C5C',
     lineHeight: 24,
     textAlign: 'center',
-    marginBottom: 20,
-  },
-  insightIcons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 16,
-  },
-  insightIcon: {
-    fontSize: 24,
-    opacity: 0.8,
   },
 
   // Bottom Spacing
@@ -1213,7 +728,7 @@ const styles = StyleSheet.create({
     zIndex: 1000,
     elevation: 1000,
   },
-  exploreButton: {
+  continueButton: {
     borderRadius: 50,
     overflow: 'hidden',
     elevation: 15,
@@ -1223,7 +738,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.6,
     minWidth: 280,
   },
-  exploreButtonGradient: {
+  continueButtonGradient: {
     paddingVertical: 18,
     paddingHorizontal: 32,
     alignItems: 'center',
@@ -1248,7 +763,7 @@ const styles = StyleSheet.create({
     left: 0,
     backfaceVisibility: 'hidden',
   },
-  exploreButtonText: {
+  continueButtonText: {
     fontSize: 18,
     fontWeight: '700',
     color: '#FFFFFF',
@@ -1284,49 +799,5 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     textAlign: 'center',
     marginBottom: 30,
-  },
-  progressContainer: {
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  progressBar: {
-    width: '100%',
-    height: 8,
-    backgroundColor: 'rgba(220, 20, 60, 0.2)',
-    borderRadius: 4,
-    marginBottom: 8,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(220, 20, 60, 0.3)',
-    shadowColor: '#DC143C',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    shadowOpacity: 0.3,
-    elevation: 5,
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#DC143C',
-    borderRadius: 4,
-    shadowColor: '#DC143C',
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 4,
-    shadowOpacity: 0.8,
-    elevation: 5,
-  },
-  progressText: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#DC143C',
-  },
-  loadingMessages: {
-    marginBottom: 30,
-  },
-  loadingMessage: {
-    fontSize: 18,
-    color: '#CD5C5C',
-    textAlign: 'center',
-    marginBottom: 10,
   },
 });

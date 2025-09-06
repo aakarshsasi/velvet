@@ -3,15 +3,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  Alert,
-  Animated,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Alert,
+    Animated,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { Path, Svg } from 'react-native-svg';
 import { useAuth } from '../contexts/AuthContext';
@@ -598,7 +598,10 @@ export default function HomeScreen() {
                   `Welcome, ${user.displayName || 'User'}!`,
                   [
                     { text: 'Cancel', style: 'cancel' },
-                    { text: 'Logout', onPress: logout, style: 'destructive' }
+                    { text: 'Logout', onPress: async () => {
+                      await logout();
+                      router.replace('/login');
+                    }, style: 'destructive' }
                   ]
                 );
               } else {

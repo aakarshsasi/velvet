@@ -7,6 +7,8 @@ import {
     Animated,
     Dimensions,
     Image,
+    KeyboardAvoidingView,
+    Platform,
     SafeAreaView,
     ScrollView,
     StatusBar,
@@ -303,8 +305,8 @@ export default function OnboardingScreen() {
       console.log('Generated Profile:', profile);
       console.log('Profile saved to AsyncStorage. User needs to sign up to save to Firebase.');
       
-      // Navigate to sign up screen instead of profile result
-      router.replace('/signup');
+      // Navigate to analysis screen
+      router.replace('/analysis');
     } catch (error) {
       console.error('Error saving profile:', error);
       // Still navigate to profile result even if saving fails
@@ -653,7 +655,17 @@ export default function OnboardingScreen() {
       </View>
 
       {/* Content */}
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView 
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        <ScrollView 
+          style={styles.content} 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
         <Animated.View style={[styles.stepContainer, { opacity: fadeAnim }]}>
           <Text style={styles.stepTitle}>{currentStepData.title}</Text>
           <Text style={styles.stepSubtitle}>{currentStepData.subtitle}</Text>
@@ -849,7 +861,8 @@ export default function OnboardingScreen() {
             )}
           </View>
         </Animated.View>
-            </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       {/* Navigation */}
       <View style={styles.navigation}>
@@ -894,8 +907,14 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
   },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   content: {
     flex: 1,

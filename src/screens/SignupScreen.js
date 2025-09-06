@@ -6,14 +6,15 @@ import {
     Alert,
     Animated,
     Dimensions,
+    KeyboardAvoidingView,
+    Platform,
     SafeAreaView,
     ScrollView,
     StatusBar,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -147,16 +148,26 @@ export default function SignupScreen() {
         <View style={[styles.floatingCircle, { bottom: height * 0.2, left: width * 0.2 }]} />
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <Animated.View 
-          style={[
-            styles.content,
-            { 
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }]
-            }
-          ]}
+      <KeyboardAvoidingView 
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        <ScrollView 
+          style={styles.scrollView} 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
         >
+          <Animated.View 
+            style={[
+              styles.content,
+              { 
+                opacity: fadeAnim,
+                transform: [{ translateY: slideAnim }]
+              }
+            ]}
+          >
           {/* Header */}
           <View style={styles.header}>
             <Animated.Text 
@@ -167,103 +178,95 @@ export default function SignupScreen() {
                 }
               ]}
             >
-              Complete Your Profile ✨
+              Your Intimacy Profile ✨
             </Animated.Text>
             <Text style={styles.subtitle}>
-              We've captured your preferences. Now let's create your account to save them permanently.
+              We've analyzed your responses and created a personalized profile just for you. Ready to unlock your intimate potential?
             </Text>
           </View>
 
-          {/* Onboarding Summary */}
+          {/* Personalized Insights */}
           {onboardingData && (
-            <View style={styles.summaryCard}>
-              <Text style={styles.summaryTitle}>Your Preferences Summary</Text>
-              <View style={styles.summaryItem}>
-                <Text style={styles.summaryLabel}>Desire Level:</Text>
-                <Text style={styles.summaryValue}>
-                  {onboardingData.profile.desireLevel?.charAt(0).toUpperCase() + onboardingData.profile.desireLevel?.slice(1)}
-                </Text>
+            <View style={styles.insightsContainer}>
+              <Text style={styles.insightsTitle}>Your Personalized Insights</Text>
+              
+              {/* Profile Summary */}
+              <View style={styles.profileCard}>
+                <Text style={styles.profileTitle}>Your Intimacy Profile</Text>
+                <View style={styles.profileRow}>
+                  <Text style={styles.profileLabel}>Desire Level:</Text>
+                  <Text style={styles.profileValue}>
+                    {onboardingData.profile.desireLevel?.charAt(0).toUpperCase() + onboardingData.profile.desireLevel?.slice(1)}
+                  </Text>
+                </View>
+                <View style={styles.profileRow}>
+                  <Text style={styles.profileLabel}>Relationship:</Text>
+                  <Text style={styles.profileValue}>
+                    {onboardingData.profile.relationshipStatus?.charAt(0).toUpperCase() + onboardingData.profile.relationshipStatus?.slice(1)}
+                  </Text>
+                </View>
+                <View style={styles.profileRow}>
+                  <Text style={styles.profileLabel}>Frequency:</Text>
+                  <Text style={styles.profileValue}>
+                    {onboardingData.profile.intimacyFrequency?.charAt(0).toUpperCase() + onboardingData.profile.intimacyFrequency?.slice(1)}
+                  </Text>
+                </View>
+                <View style={styles.profileRow}>
+                  <Text style={styles.profileLabel}>Persona:</Text>
+                  <Text style={styles.profileValue}>
+                    {onboardingData.profile.persona}
+                  </Text>
+                </View>
               </View>
-              <View style={styles.summaryItem}>
-                <Text style={styles.summaryLabel}>Relationship:</Text>
-                <Text style={styles.summaryValue}>
-                  {onboardingData.profile.relationshipStatus?.charAt(0).toUpperCase() + onboardingData.profile.relationshipStatus?.slice(1)}
-                </Text>
-              </View>
-              <View style={styles.summaryItem}>
-                <Text style={styles.summaryLabel}>Frequency:</Text>
-                <Text style={styles.summaryValue}>
-                  {onboardingData.profile.intimacyFrequency?.charAt(0).toUpperCase() + onboardingData.profile.intimacyFrequency?.slice(1)}
-                </Text>
+
+              {/* Key Insights */}
+              <View style={styles.insightsCard}>
+                <Text style={styles.insightsCardTitle}>What We Discovered About You</Text>
+                <View style={styles.insightItem}>
+                  <Text style={styles.insightIcon}>🔥</Text>
+                  <Text style={styles.insightText}>
+                    You're a {onboardingData.profile.persona} who loves {onboardingData.profile.turnOns?.join(', ')} experiences
+                  </Text>
+                </View>
+                <View style={styles.insightItem}>
+                  <Text style={styles.insightIcon}>💫</Text>
+                  <Text style={styles.insightText}>
+                    Your biggest challenge is {onboardingData.profile.biggestChallenge?.replace('-', ' ')} - we'll help you overcome it
+                  </Text>
+                </View>
+                <View style={styles.insightItem}>
+                  <Text style={styles.insightIcon}>✨</Text>
+                  <Text style={styles.insightText}>
+                    You want to focus on {onboardingData.profile.improvementGoal?.replace('-', ' ')} - perfect for your journey
+                  </Text>
+                </View>
               </View>
             </View>
           )}
 
-          {/* Sign Up Form */}
-          <View style={styles.formContainer}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Display Name</Text>
-              <TextInput
-                style={styles.textInput}
-                value={displayName}
-                onChangeText={setDisplayName}
-                placeholder="Enter your name"
-                placeholderTextColor="rgba(205, 92, 92, 0.6)"
-                autoCapitalize="words"
-              />
-            </View>
+          {/* Call to Action */}
+          <View style={styles.ctaContainer}>
+            <Text style={styles.ctaTitle}>Ready to Begin Your Journey? 🚀</Text>
+            <Text style={styles.ctaSubtitle}>
+              Create your account to save your personalized profile and unlock exclusive content tailored just for you.
+            </Text>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Email</Text>
-              <TextInput
-                style={styles.textInput}
-                value={email}
-                onChangeText={setEmail}
-                placeholder="Enter your email"
-                placeholderTextColor="rgba(205, 92, 92, 0.6)"
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Password</Text>
-              <TextInput
-                style={styles.textInput}
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Create a password"
-                placeholderTextColor="rgba(205, 92, 92, 0.6)"
-                secureTextEntry
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Confirm Password</Text>
-              <TextInput
-                style={styles.textInput}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                placeholder="Confirm your password"
-                placeholderTextColor="rgba(205, 92, 92, 0.6)"
-                secureTextEntry
-              />
-            </View>
-
-            {/* Sign Up Button */}
+            {/* Continue Button */}
             <TouchableOpacity 
-              style={[styles.signUpButton, isLoading && styles.signUpButtonDisabled]} 
-              onPress={handleSignUp}
-              disabled={isLoading}
+              style={styles.continueButton} 
+              onPress={() => router.push('/signup-details')}
             >
               <LinearGradient
-                colors={isLoading ? ['#6B7280', '#4B5563'] : ['#DC143C', '#B22222', '#8B0000']}
-                style={styles.signUpButtonGradient}
+                colors={['#DC143C', '#B22222', '#8B0000']}
+                style={styles.continueButtonGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
               >
-                <Text style={styles.signUpButtonText}>
-                  {isLoading ? 'Creating Account...' : 'Create Account & Save Preferences'}
+                <Text style={styles.continueButtonText}>
+                  Continue to Create Account
+                </Text>
+                <Text style={styles.continueButtonSubtext}>
+                  It only takes 30 seconds
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -276,8 +279,9 @@ export default function SignupScreen() {
               </TouchableOpacity>
             </View>
           </View>
-        </Animated.View>
-      </ScrollView>
+          </Animated.View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -309,8 +313,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: 'rgba(220, 20, 60, 0.8)',
   },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   content: {
     flex: 1,
@@ -339,84 +349,127 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     opacity: 0.9,
   },
-  summaryCard: {
-    backgroundColor: 'rgba(220, 20, 60, 0.1)',
+  insightsContainer: {
+    marginBottom: 40,
+  },
+  insightsTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  profileCard: {
+    backgroundColor: 'rgba(220, 20, 60, 0.15)',
     borderRadius: 20,
     padding: 24,
-    marginBottom: 40,
+    marginBottom: 20,
     borderWidth: 1,
-    borderColor: 'rgba(220, 20, 60, 0.3)',
+    borderColor: 'rgba(220, 20, 60, 0.4)',
   },
-  summaryTitle: {
+  profileTitle: {
     fontSize: 20,
     fontWeight: '700',
     color: '#FFFFFF',
     textAlign: 'center',
     marginBottom: 20,
   },
-  summaryItem: {
+  profileRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
-    paddingVertical: 8,
+    marginBottom: 16,
+    paddingVertical: 12,
     paddingHorizontal: 16,
-    backgroundColor: 'rgba(220, 20, 60, 0.05)',
+    backgroundColor: 'rgba(220, 20, 60, 0.08)',
     borderRadius: 12,
   },
-  summaryLabel: {
+  profileLabel: {
     fontSize: 16,
     color: '#FFFFFF',
-    opacity: 0.8,
+    opacity: 0.9,
+    fontWeight: '500',
   },
-  summaryValue: {
+  profileValue: {
     fontSize: 16,
     color: '#FF6B9D',
-    fontWeight: '600',
+    fontWeight: '700',
   },
-  formContainer: {
-    gap: 24,
-  },
-  inputContainer: {
-    gap: 8,
-  },
-  inputLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginLeft: 4,
-  },
-  textInput: {
+  insightsCard: {
     backgroundColor: 'rgba(220, 20, 60, 0.1)',
-    borderRadius: 16,
-    padding: 16,
-    fontSize: 16,
-    color: '#FFFFFF',
+    borderRadius: 20,
+    padding: 24,
     borderWidth: 1,
     borderColor: 'rgba(220, 20, 60, 0.3)',
   },
-  signUpButton: {
+  insightsCardTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  insightItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+    paddingVertical: 8,
+  },
+  insightIcon: {
+    fontSize: 20,
+    marginRight: 12,
+    marginTop: 2,
+  },
+  insightText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    opacity: 0.9,
+    flex: 1,
+    lineHeight: 22,
+  },
+  ctaContainer: {
+    alignItems: 'center',
+  },
+  ctaTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  ctaSubtitle: {
+    fontSize: 16,
+    color: '#CD5C5C',
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 32,
+    opacity: 0.9,
+  },
+  continueButton: {
     borderRadius: 50,
     overflow: 'hidden',
-    marginTop: 16,
+    marginBottom: 24,
     elevation: 15,
     shadowColor: '#DC143C',
     shadowOffset: { width: 0, height: 15 },
     shadowRadius: 30,
     shadowOpacity: 0.6,
   },
-  signUpButtonDisabled: {
-    opacity: 0.6,
-  },
-  signUpButtonGradient: {
+  continueButtonGradient: {
     paddingVertical: 20,
     paddingHorizontal: 40,
     alignItems: 'center',
   },
-  signUpButtonText: {
+  continueButtonText: {
     fontSize: 18,
     fontWeight: '700',
     color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  continueButtonSubtext: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
   },
   signInContainer: {
