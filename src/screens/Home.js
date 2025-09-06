@@ -387,7 +387,7 @@ export default function HomeScreen() {
                 {!isPremium && (
                   <TouchableOpacity 
                     style={styles.upgradeButton}
-                    onPress={upgradeToPremium}
+                    onPress={() => router.push('/payment')}
                   >
                     <Text style={styles.upgradeButtonText}>Upgrade to Premium</Text>
                   </TouchableOpacity>

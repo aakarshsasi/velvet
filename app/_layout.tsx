@@ -29,10 +29,11 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <AuthProvider>
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="welcome" />
-          <Stack.Screen name="onboarding" />
-          <Stack.Screen name="signup" />
-          <Stack.Screen name="profile-result" />
+        <Stack.Screen name="welcome" />
+        <Stack.Screen name="onboarding" />
+        <Stack.Screen name="signup" />
+        <Stack.Screen name="profile-result" />
+        <Stack.Screen name="payment" />
           <Stack.Screen name="login" />
           <Stack.Screen name="home" />
           <Stack.Screen name="deck" />
