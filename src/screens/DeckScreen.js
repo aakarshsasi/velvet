@@ -2,27 +2,32 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
-  Animated,
-  Dimensions,
-  Image,
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Animated,
+    Dimensions,
+    Image,
+    Modal,
+    SafeAreaView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
+import PremiumUpgrade from '../components/PremiumUpgrade';
+import { useAuth } from '../contexts/AuthContext';
 
 const { width, height } = Dimensions.get('window');
 
 export default function DeckScreen() {
   const router = useRouter();
   const { category } = useLocalSearchParams();
+  const { user, isPremium } = useAuth();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [completedCards, setCompletedCards] = useState(new Set());
   const [showCompletion, setShowCompletion] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
   const [showCardReveal, setShowCardReveal] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
   
   const glowAnim = useRef(new Animated.Value(0.3)).current;
   const cardRevealAnim = useRef(new Animated.Value(0)).current;
@@ -58,6 +63,17 @@ export default function DeckScreen() {
 
     startAnimations();
   }, []);
+
+  // Helper function to check if a category is premium
+  const isCategoryPremium = (categoryKey) => {
+    // Only 'mild-seduction' is free, all others are premium
+    return categoryKey !== 'mild-seduction';
+  };
+
+  // Helper function to show premium upgrade modal
+  const showPremiumUpgradeModal = () => {
+    setShowPremiumModal(true);
+  };
 
   // Card data for each category
   const cardDecks = {
@@ -1441,6 +1457,12 @@ export default function DeckScreen() {
 
 
   const nextCard = () => {
+    // Check if current category is premium and user is not premium
+    if (isCategoryPremium(category) && !isPremium) {
+      showPremiumUpgradeModal();
+      return;
+    }
+    
     if (currentCardIndex < currentDeck.length - 1) {
       // Start exit animation for current card
       Animated.parallel([
@@ -1503,6 +1525,11 @@ export default function DeckScreen() {
   };
 
     const startDeck = () => {
+    // Check if current category is premium and user is not premium
+    if (isCategoryPremium(category) && !isPremium) {
+      showPremiumUpgradeModal();
+      return;
+    }
     
     // Reset all animation values to starting positions
     cardRevealAnim.setValue(0);
@@ -2283,6 +2310,61 @@ export default function DeckScreen() {
           ]}
         />
       </View>
+
+      {/* Premium Upgrade Modal */}
+      <Modal
+        visible={showPremiumModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowPremiumModal(false)}
+      >
+        <TouchableOpacity 
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowPremiumModal(false)}
+        >
+          <TouchableOpacity 
+            style={styles.premiumModalContent}
+            activeOpacity={1}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <LinearGradient
+              colors={['#DC143C', '#B22222', '#8B0000']}
+              style={styles.modalGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              {/* Drag Handle */}
+              <View style={styles.dragHandle} />
+              
+              {/* Modal Header */}
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Unlock Premium Categories</Text>
+                <TouchableOpacity 
+                  style={styles.closeButton}
+                  onPress={() => setShowPremiumModal(false)}
+                >
+                  <Text style={styles.closeButtonText}>×</Text>
+                </TouchableOpacity>
+              </View>
+              
+              {/* Modal Body */}
+              <View style={styles.premiumModalBody}>
+                <Text style={styles.premiumModalDescription}>
+                  This category is part of our premium collection. Upgrade now to access all premium categories and unlock unlimited intimate experiences!
+                </Text>
+                
+                <PremiumUpgrade 
+                  onUpgradePress={() => {
+                    setShowPremiumModal(false);
+                    router.push('/payment');
+                  }} 
+                />
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -3423,6 +3505,90 @@ const styles = StyleSheet.create({
   sexyShimmerGradient: {
     width: 200,
     height: '100%',
+  },
+
+  // Premium Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'flex-end',
+  },
+  premiumModalContent: {
+    maxHeight: height * 0.75,
+    backgroundColor: '#DC143C',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -5,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  modalGradient: {
+    paddingTop: 16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  dragHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    alignSelf: 'center',
+    marginTop: 8,
+    marginBottom: 0,
+    borderRadius: 2,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingHorizontal: 50,
+    position: 'relative',
+    minHeight: 40,
+  },
+  modalTitle: {
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    lineHeight: 32,
+  },
+  closeButton: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    fontSize: 24,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    lineHeight: 24,
+  },
+  premiumModalBody: {
+    paddingHorizontal: 24,
+    paddingTop: 10,
+    paddingBottom: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 180,
+  },
+  premiumModalDescription: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 20,
+    lineHeight: 22,
+    paddingHorizontal: 10,
   },
 
 });

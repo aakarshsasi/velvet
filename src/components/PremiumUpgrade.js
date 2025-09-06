@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function PremiumUpgrade() {
+export default function PremiumUpgrade({ onUpgradePress }) {
   const { isPremium, upgradeToPremium, user } = useAuth();
 
   const handleUpgrade = async () => {
@@ -18,6 +18,13 @@ export default function PremiumUpgrade() {
       return;
     }
 
+    // If onUpgradePress is provided, use it (for navigation to payments page)
+    if (onUpgradePress) {
+      onUpgradePress();
+      return;
+    }
+
+    // Fallback to original alert behavior
     Alert.alert(
       'Upgrade to Premium',
       'Unlock all premium features including exclusive content, advanced games, and personalized experiences!',

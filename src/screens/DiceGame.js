@@ -12,11 +12,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import PremiumUpgrade from '../components/PremiumUpgrade';
+import { useAuth } from '../contexts/AuthContext';
 
 const { width, height } = Dimensions.get('window');
 
 export default function DiceGame() {
   const router = useRouter();
+  const { user, isPremium, upgradeToPremium } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState('sensual');
   const [actionResult, setActionResult] = useState(null);
   const [targetResult, setTargetResult] = useState(null);
@@ -24,6 +27,8 @@ export default function DiceGame() {
   const [rollAnimation] = useState(new Animated.Value(0));
   const [shakeAnimation] = useState(new Animated.Value(0));
   const [showMenu, setShowMenu] = useState(false);
+  const [rollCount, setRollCount] = useState(0);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   const categories = {
     sensual: {
@@ -31,6 +36,7 @@ export default function DiceGame() {
       icon: '💕',
       description: 'Soft & Romantic',
       color: '#FF6B9D',
+      isPremium: false,
       actions: ['Kiss', 'Massage', 'Caress', 'Nibble', 'Stroke', 'Whisper to'],
       targets: ['Neck', 'Lips', 'Ears', 'Shoulders', 'Back', 'Arms']
     },
@@ -39,6 +45,7 @@ export default function DiceGame() {
       icon: '🔥',
       description: 'Bold & Teasing',
       color: '#FF6B35',
+      isPremium: true,
       actions: ['Lick', 'Bite', 'Suck', 'Tease', 'Spank', 'Grind against'],
       targets: ['Thighs', 'Butt', 'Chest', 'Inner thighs', 'Nipples', 'Lower back']
     },
@@ -47,6 +54,7 @@ export default function DiceGame() {
       icon: '⚡',
       description: 'Wild & Daring',
       color: '#8B5CF6',
+      isPremium: true,
       actions: ['Tongue-tease', 'Nibble on', 'Ice-play with', 'Blindfold and touch', 'Feather-tickle', 'Deep kiss'],
       targets: ['Cock/Pussy', 'Asshole', 'Inner thighs', 'Tits', 'Balls/Clit', 'Collarbone']
     }
@@ -75,8 +83,28 @@ export default function DiceGame() {
     console.log('Category changed to:', selectedCategory);
   }, [selectedCategory]);
 
+  // Helper function to check if a category is accessible
+  const isCategoryAccessible = (categoryKey) => {
+    const category = categories[categoryKey];
+    if (!category.isPremium) return true; // Sensual is always free
+    
+    // Premium categories are only accessible if user is premium
+    return isPremium;
+  };
+
+  // Helper function to show premium upgrade modal
+  const showPremiumUpgradeModal = () => {
+    setShowPremiumModal(true);
+  };
+
   const rollDice = () => {
     if (isRolling) return;
+    
+    // Check if current category is accessible
+    if (!isCategoryAccessible(selectedCategory)) {
+      showPremiumUpgradeModal();
+      return;
+    }
     
     setIsRolling(true);
     
@@ -126,6 +154,7 @@ export default function DiceGame() {
       
       setActionResult(randomAction);
       setTargetResult(randomTarget);
+      setRollCount(prev => prev + 1); // Increment roll count
       setIsRolling(false);
     }, 600);
   };
@@ -183,8 +212,16 @@ export default function DiceGame() {
 
       {/* Category Display */}
       <View style={styles.categoryDisplay}>
-        <Text style={styles.categoryText}>{categories[selectedCategory].name}</Text>
-        <Text style={styles.categorySubtext}>Your current vibe</Text>
+        <Text style={styles.categoryText}>
+          {categories[selectedCategory].name}
+          {!isCategoryAccessible(selectedCategory) && categories[selectedCategory].isPremium && ' 🔒'}
+        </Text>
+        <Text style={styles.categorySubtext}>
+          {!isCategoryAccessible(selectedCategory) && categories[selectedCategory].isPremium 
+            ? 'Premium category - Upgrade to unlock' 
+            : 'Your current vibe'
+          }
+        </Text>
       </View>
 
       {/* Dice Results */}
@@ -317,45 +354,107 @@ export default function DiceGame() {
               </View>
 
               <View style={styles.categoryList}>
-                {Object.keys(categories).map((category) => (
-                  <TouchableOpacity
-                    key={category}
-                    style={[
-                      styles.categoryItem,
-                      selectedCategory === category && styles.categoryItemSelected
-                    ]}
-                    onPress={() => {
-                      console.log('Changing category to:', category);
-                      setSelectedCategory(category);
-                      setShowMenu(false);
-                      // Reset results when category changes
-                      setActionResult(null);
-                      setTargetResult(null);
-                    }}
-                  >
-                    <Text style={styles.categoryItemIcon}>{categories[category].icon}</Text>
-                    <View style={styles.categoryItemText}>
-                      <Text style={[
-                        styles.categoryItemName,
-                        selectedCategory === category && styles.categoryItemNameSelected
-                      ]}>
-                        {categories[category].name}
-                      </Text>
-                      <Text style={styles.categoryItemDescription}>
-                        {categories[category].description}
-                      </Text>
-                    </View>
-                    {selectedCategory === category && (
-                      <View style={styles.selectedCheckmark}>
-                        <Text style={styles.checkmarkText}>✓</Text>
+                {Object.keys(categories).map((category) => {
+                  const isAccessible = isCategoryAccessible(category);
+                  const isPremiumCategory = categories[category].isPremium;
+                  const isLockedForRolling = !isAccessible && isPremiumCategory;
+                  
+                  return (
+                    <TouchableOpacity
+                      key={category}
+                      style={[
+                        styles.categoryItem,
+                        selectedCategory === category && styles.categoryItemSelected
+                      ]}
+                      onPress={() => {
+                        console.log('Changing category to:', category);
+                        setSelectedCategory(category);
+                        setShowMenu(false);
+                        // Reset results when category changes
+                        setActionResult(null);
+                        setTargetResult(null);
+                      }}
+                    >
+                      <Text style={styles.categoryItemIcon}>{categories[category].icon}</Text>
+                      <View style={styles.categoryItemText}>
+                        <Text style={[
+                          styles.categoryItemName,
+                          selectedCategory === category && styles.categoryItemNameSelected
+                        ]}>
+                          {categories[category].name}
+                          {isLockedForRolling && ' 🔒'}
+                        </Text>
+                        <Text style={[
+                          styles.categoryItemDescription
+                        ]}>
+                          {isLockedForRolling 
+                            ? `${categories[category].description} - Premium (Locked)` 
+                            : categories[category].description
+                          }
+                        </Text>
                       </View>
-                    )}
-                  </TouchableOpacity>
-                ))}
+                      {isLockedForRolling && (
+                        <View style={styles.browseOnlyBadge}>
+                          <Text style={styles.browseOnlyText}>Locked</Text>
+                        </View>
+                      )}
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             </LinearGradient>
           </View>
         </View>
+      </Modal>
+
+      {/* Premium Upgrade Modal */}
+      <Modal
+        visible={showPremiumModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowPremiumModal(false)}
+      >
+        <TouchableOpacity 
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowPremiumModal(false)}
+        >
+          <TouchableOpacity 
+            style={styles.premiumModalContent}
+            activeOpacity={1}
+            onPress={(e) => e.stopPropagation()}
+          >
+            {/* Drag Handle */}
+            <View style={styles.dragHandle} />
+            
+            <LinearGradient
+              colors={['#DC143C', '#B22222', '#8B0000']}
+              style={styles.modalGradient}
+            >
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>🔥 Unlock Premium Categories</Text>
+                <TouchableOpacity 
+                  style={styles.closeButton}
+                  onPress={() => setShowPremiumModal(false)}
+                >
+                  <Text style={styles.closeButtonText}>✕</Text>
+                </TouchableOpacity>
+              </View>
+              
+              <View style={styles.premiumModalBody}>
+                <Text style={styles.premiumModalDescription}>
+                  Premium categories are completely locked! Upgrade to unlock Naughty and Expert categories and start rolling the dice!
+                </Text>
+                <PremiumUpgrade 
+                  onUpgradePress={() => {
+                    setShowPremiumModal(false);
+                    router.push('/payment');
+                  }} 
+                />
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+        </TouchableOpacity>
       </Modal>
     </SafeAreaView>
   );
@@ -600,22 +699,30 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   modalGradient: {
-    paddingTop: 24,
+    paddingTop: 16,
     paddingBottom: 50,
     paddingHorizontal: 24,
   },
   modalHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 28,
+    marginBottom: 20,
+    paddingHorizontal: 50,
+    position: 'relative',
+    minHeight: 40,
   },
   modalTitle: {
     fontSize: 26,
     fontWeight: '800',
     color: '#FFFFFF',
+    textAlign: 'center',
+    lineHeight: 32,
   },
   closeButton: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
     width: 36,
     height: 36,
     borderRadius: 18,
@@ -665,17 +772,63 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.85)',
     lineHeight: 20,
   },
-  selectedCheckmark: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#FFFFFF',
+  categoryItemLocked: {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    opacity: 0.6,
+  },
+  categoryItemNameLocked: {
+    color: 'rgba(255, 255, 255, 0.6)',
+  },
+  categoryItemDescriptionLocked: {
+    color: 'rgba(255, 255, 255, 0.5)',
+  },
+  browseOnlyBadge: {
+    width: 60,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 215, 0, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 215, 0, 0.4)',
   },
-  checkmarkText: {
-    fontSize: 18,
-    color: '#8B0000',
-    fontWeight: 'bold',
+  browseOnlyText: {
+    fontSize: 10,
+    color: '#FFD700',
+    fontWeight: '600',
+  },
+  premiumModalContent: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    overflow: 'hidden',
+    maxHeight: height * 0.75,
+    backgroundColor: '#DC143C',
+    marginBottom: 0,
+  },
+  dragHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginTop: 8,
+    marginBottom: 0,
+  },
+  premiumModalBody: {
+    paddingHorizontal: 24,
+    paddingTop: 10,
+    paddingBottom: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 180,
+  },
+  premiumModalDescription: {
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.9)',
+    textAlign: 'center',
+    marginBottom: 20,
+    lineHeight: 22,
+    paddingHorizontal: 10,
   },
 });
