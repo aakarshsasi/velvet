@@ -2,15 +2,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -83,7 +83,7 @@ export default function LoginScreen() {
                     value={displayName}
                     onChangeText={setDisplayName}
                     placeholder="Enter your name"
-                    placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                    placeholderTextColor="rgba(255, 255, 255, 0.7)"
                     autoCapitalize="words"
                   />
                 </View>
@@ -96,7 +96,7 @@ export default function LoginScreen() {
                   value={email}
                   onChangeText={setEmail}
                   placeholder="Enter your email"
-                  placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                  placeholderTextColor="rgba(255, 255, 255, 0.7)"
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
@@ -109,7 +109,7 @@ export default function LoginScreen() {
                   value={password}
                   onChangeText={setPassword}
                   placeholder="Enter your password"
-                  placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                  placeholderTextColor="rgba(255, 255, 255, 0.7)"
                   secureTextEntry
                 />
               </View>
@@ -194,14 +194,16 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(220, 20, 60, 0.15)',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 16,
     color: '#FFFFFF',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: 'rgba(220, 20, 60, 0.3)',
+    selectionColor: '#FFFFFF',
+    underlineColorAndroid: 'transparent',
   },
   button: {
     borderRadius: 12,

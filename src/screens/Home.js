@@ -18,7 +18,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { user, isPremium, upgradeToPremium } = useAuth();
+  const { user, isPremium, upgradeToPremium, logout } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [userProfile, setUserProfile] = useState(null);
   const [revealedCards, setRevealedCards] = useState(new Set());
@@ -387,7 +387,7 @@ export default function HomeScreen() {
                 {!isPremium && (
                   <TouchableOpacity 
                     style={styles.upgradeButton}
-                    onPress={upgradeToPremium}
+                    onPress={() => router.push('/payment')}
                   >
                     <Text style={styles.upgradeButtonText}>Upgrade to Premium</Text>
                   </TouchableOpacity>
