@@ -118,7 +118,8 @@ export default function HomeScreen() {
     { id: 'fantasy-extreme', name: 'Fantasy Extreme', icon: '⚡', color: '#DC2626' },
   ];
 
-  const featuredCards = [
+  // Comprehensive pool of featured cards for daily shuffling
+  const allFeaturedCards = [
     {
       id: 1,
       title: 'The Seductive Explorer',
@@ -140,7 +141,240 @@ export default function HomeScreen() {
       category: 'soft-domination',
       intensity: 'spicy',
     },
+    {
+      id: 4,
+      title: 'Intimate Whisper',
+      description: 'Share your deepest fantasy while maintaining eye contact',
+      category: 'mild-seduction',
+      intensity: 'mild',
+    },
+    {
+      id: 5,
+      title: 'Touch & Tell',
+      description: 'Guide your partner\'s hands to show them exactly how you want to be touched',
+      category: 'foreplay',
+      intensity: 'spicy',
+    },
+    {
+      id: 6,
+      title: 'Satin Surprise',
+      description: 'Blindfold your partner and let them explore your lingerie with their hands',
+      category: 'lingerie-play',
+      intensity: 'hot',
+    },
+    {
+      id: 7,
+      title: 'Temperature Play',
+      description: 'Use ice cubes and warm oil for an alternating sensation experience',
+      category: 'sensory-play',
+      intensity: 'spicy',
+    },
+    {
+      id: 8,
+      title: 'The Tease Master',
+      description: 'Build anticipation by getting close but not touching for 20 minutes',
+      category: 'teasing-denial',
+      intensity: 'hot',
+    },
+    {
+      id: 9,
+      title: 'Role Reversal',
+      description: 'Switch dominant and submissive roles mid-session',
+      category: 'soft-domination',
+      intensity: 'spicy',
+    },
+    {
+      id: 10,
+      title: 'Silk Road',
+      description: 'Use silk scarves to create gentle restraints and blindfolds',
+      category: 'light-restraints',
+      intensity: 'mild',
+    },
+    {
+      id: 11,
+      title: 'Public Tension',
+      description: 'Exchange secret touches in a public setting without getting caught',
+      category: 'public-play',
+      intensity: 'hot',
+    },
+    {
+      id: 12,
+      title: 'Fantasy Island',
+      description: 'Act out a romantic getaway scenario with tropical sounds and scents',
+      category: 'roleplay',
+      intensity: 'mild',
+    },
+    {
+      id: 13,
+      title: 'The Massage Master',
+      description: 'Give a full body massage focusing on erogenous zones',
+      category: 'foreplay',
+      intensity: 'mild',
+    },
+    {
+      id: 14,
+      title: 'Midnight Snack',
+      description: 'Feed each other sensually with your favorite treats',
+      category: 'sensory-play',
+      intensity: 'mild',
+    },
+    {
+      id: 15,
+      title: 'The Photographer',
+      description: 'Take intimate photos of each other (keep them private!)',
+      category: 'lingerie-play',
+      intensity: 'spicy',
+    },
+    {
+      id: 16,
+      title: 'Dance of Desire',
+      description: 'Create a slow, sensual dance together with your favorite music',
+      category: 'mild-seduction',
+      intensity: 'mild',
+    },
+    {
+      id: 17,
+      title: 'The Commander',
+      description: 'Give your partner specific instructions for 30 minutes',
+      category: 'soft-domination',
+      intensity: 'hot',
+    },
+    {
+      id: 18,
+      title: 'Scent Sensation',
+      description: 'Use different perfumes and scents to create a multi-sensory experience',
+      category: 'sensory-play',
+      intensity: 'mild',
+    },
+    {
+      id: 19,
+      title: 'The Restraint Artist',
+      description: 'Use soft ties to create beautiful, comfortable restraints',
+      category: 'light-restraints',
+      intensity: 'spicy',
+    },
+    {
+      id: 20,
+      title: 'Fantasy Fulfillment',
+      description: 'Act out your partner\'s secret fantasy scenario',
+      category: 'roleplay',
+      intensity: 'hot',
+    }
   ];
+
+  // Deck cards data (extracted from DeckScreen.js)
+  const deckCards = {
+    'mild-seduction': [
+      { id: 1, title: 'Whisper Compliments', description: 'Whisper three compliments into your partner\'s ear while maintaining eye contact.', difficulty: 'Easy', duration: '5 min', icon: '💭', color: '#FBBF24' },
+      { id: 2, title: 'Arm Tracing', description: 'Gently trace your fingers along your partner\'s arm, starting from the wrist up to the shoulder.', difficulty: 'Easy', duration: '3 min', icon: '👆', color: '#F59E0B' },
+      { id: 3, title: 'Hand Kiss Trail', description: 'Kiss your partner\'s hand slowly, lingering on each knuckle.', difficulty: 'Easy', duration: '5 min', icon: '💋', color: '#D97706' },
+      { id: 4, title: 'Seductive Gaze', description: 'Hold your partner\'s gaze for 30 seconds while smiling seductively.', difficulty: 'Easy', duration: '1 min', icon: '👀', color: '#FBBF24' },
+      { id: 5, title: 'Cheek Whisper', description: 'Lightly brush your lips against your partner\'s cheek without fully kissing.', difficulty: 'Easy', duration: '2 min', icon: '💋', color: '#F59E0B' },
+      { id: 6, title: 'Neck Nibble', description: 'Gently nibble along your partner\'s neck, alternating between soft kisses and light bites.', difficulty: 'Easy', duration: '4 min', icon: '👄', color: '#D97706' },
+      { id: 7, title: 'Back Massage', description: 'Give a gentle back massage while your partner lies face down.', difficulty: 'Easy', duration: '10 min', icon: '🤲', color: '#FBBF24' },
+      { id: 8, title: 'Foot Worship', description: 'Gently massage and kiss your partner\'s feet for a relaxing experience.', difficulty: 'Easy', duration: '8 min', icon: '🦶', color: '#F59E0B' }
+    ],
+    'foreplay': [
+      { id: 1, title: 'Slow Undressing', description: 'Take turns slowly undressing each other, making eye contact throughout.', difficulty: 'Medium', duration: '15 min', icon: '👗', color: '#EC4899' },
+      { id: 2, title: 'Kiss and Tell', description: 'Kiss different parts of your partner\'s body and tell them what you love about each spot.', difficulty: 'Medium', duration: '12 min', icon: '💋', color: '#F472B6' },
+      { id: 3, title: 'Teasing Touch', description: 'Touch your partner everywhere except where they want to be touched most.', difficulty: 'Medium', duration: '20 min', icon: '👆', color: '#FB7185' },
+      { id: 4, title: 'Sensual Shower', description: 'Take a warm shower together, washing each other slowly and intimately.', difficulty: 'Medium', duration: '25 min', icon: '🚿', color: '#EC4899' },
+      { id: 5, title: 'Bedroom Eyes', description: 'Stare into each other\'s eyes for 5 minutes without speaking or touching.', difficulty: 'Easy', duration: '5 min', icon: '👀', color: '#F472B6' }
+    ],
+    'sensory-play': [
+      { id: 1, title: 'Blindfolded Taste', description: 'Blindfold your partner and feed them different foods to guess.', difficulty: 'Easy', duration: '15 min', icon: '👁️', color: '#06B6D4' },
+      { id: 2, title: 'Temperature Play', description: 'Use ice cubes and warm water to create alternating sensations.', difficulty: 'Medium', duration: '20 min', icon: '❄️', color: '#0891B2' },
+      { id: 3, title: 'Scent Exploration', description: 'Use different scented oils and let your partner identify them blindfolded.', difficulty: 'Easy', duration: '12 min', icon: '🌸', color: '#0E7490' },
+      { id: 4, title: 'Texture Touch', description: 'Use different fabrics and materials to explore textures on your partner\'s skin.', difficulty: 'Easy', duration: '18 min', icon: '🤏', color: '#06B6D4' },
+      { id: 5, title: 'Sound Sensation', description: 'Use music, whispers, and different sounds to create an audio experience.', difficulty: 'Medium', duration: '25 min', icon: '🎵', color: '#0891B2' }
+    ],
+    'lingerie-play': [
+      { id: 1, title: 'Lingerie Reveal', description: 'Model different lingerie pieces for your partner, letting them choose their favorite.', difficulty: 'Medium', duration: '30 min', icon: '👙', color: '#EC4899' },
+      { id: 2, title: 'Slow Strip', description: 'Perform a slow, sensual striptease in your favorite lingerie.', difficulty: 'Medium', duration: '15 min', icon: '💃', color: '#F472B6' },
+      { id: 3, title: 'Lingerie Shopping', description: 'Shop for lingerie together online, discussing what you\'d like to see each other in.', difficulty: 'Easy', duration: '45 min', icon: '🛍️', color: '#FB7185' },
+      { id: 4, title: 'Photo Session', description: 'Take tasteful photos of each other in lingerie (keep them private!).', difficulty: 'Medium', duration: '40 min', icon: '📸', color: '#EC4899' },
+      { id: 5, title: 'Lingerie Surprise', description: 'Surprise your partner by wearing their favorite lingerie under your clothes.', difficulty: 'Easy', duration: '5 min', icon: '🎁', color: '#F472B6' }
+    ],
+    'soft-domination': [
+      { id: 1, title: 'Command and Obey', description: 'Take turns giving and receiving simple, respectful commands.', difficulty: 'Medium', duration: '30 min', icon: '👑', color: '#8B5CF6' },
+      { id: 2, title: 'Power Play', description: 'Switch dominant and submissive roles every 10 minutes.', difficulty: 'Medium', duration: '40 min', icon: '⚖️', color: '#7C3AED' },
+      { id: 3, title: 'Pleasure Control', description: 'One partner controls the other\'s pleasure for 20 minutes.', difficulty: 'Medium', duration: '20 min', icon: '🎮', color: '#6D28D9' },
+      { id: 4, title: 'Service Time', description: 'One partner serves the other for 25 minutes (massage, drinks, etc.).', difficulty: 'Easy', duration: '25 min', icon: '🤝', color: '#8B5CF6' },
+      { id: 5, title: 'Permission Game', description: 'Ask permission before any touch or action for 30 minutes.', difficulty: 'Medium', duration: '30 min', icon: '🙋', color: '#7C3AED' }
+    ]
+  };
+
+  // Transform deck cards to featured card format
+  const transformDeckCard = (deckCard, category) => {
+    // Map difficulty to intensity
+    const difficultyToIntensity = {
+      'Easy': 'mild',
+      'Medium': 'spicy',
+      'Hard': 'hot'
+    };
+
+    return {
+      id: `deck_${category}_${deckCard.id}`,
+      title: deckCard.title,
+      description: deckCard.description,
+      category: category,
+      intensity: difficultyToIntensity[deckCard.difficulty] || 'mild',
+      source: 'deck',
+      originalCard: deckCard
+    };
+  };
+
+  // Daily shuffle function based on current date
+  const getDailyShuffledCards = () => {
+    const today = new Date();
+    const dateString = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+    
+    // Create a simple hash from the date string for consistent daily shuffling
+    let hash = 0;
+    for (let i = 0; i < dateString.length; i++) {
+      const char = dateString.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    
+    // Prepare deck cards from each category
+    const allDeckCards = [];
+    Object.keys(deckCards).forEach(category => {
+      const categoryCards = deckCards[category];
+      // Take 2-3 random cards from each category
+      const sampleSize = Math.min(3, categoryCards.length);
+      const sampledCards = categoryCards
+        .map(card => transformDeckCard(card, category))
+        .slice(0, sampleSize);
+      allDeckCards.push(...sampledCards);
+    });
+    
+    // Shuffle all cards together
+    const allCards = [...allFeaturedCards, ...allDeckCards];
+    const shuffled = [...allCards];
+    const seed = Math.abs(hash);
+    
+    // Fisher-Yates shuffle with seeded random
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor((seed * (i + 1)) % (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    
+    // Ensure at least one deck card is included
+    const firstThree = shuffled.slice(0, 3);
+    const hasDeckCard = firstThree.some(card => card.source === 'deck');
+    
+    if (!hasDeckCard && allDeckCards.length > 0) {
+      // Replace the last card with a deck card
+      const deckCardIndex = Math.floor((seed * 7) % allDeckCards.length); // Use seed for consistent selection
+      firstThree[2] = allDeckCards[deckCardIndex];
+    }
+    
+    return firstThree;
+  };
+
+  // Get today's shuffled featured cards
+  const featuredCards = getDailyShuffledCards();
 
   const renderCategoryCard = (category) => (
     <TouchableOpacity
@@ -172,13 +406,26 @@ export default function HomeScreen() {
           return ['rgba(6, 182, 212, 0.8)', 'rgba(8, 145, 178, 0.7)', 'rgba(14, 116, 144, 0.6)']; // Bright Cyan
         case 'soft-domination':
           return ['rgba(139, 92, 246, 0.8)', 'rgba(124, 58, 237, 0.7)', 'rgba(109, 40, 217, 0.6)']; // Rich Purple
+        case 'mild-seduction':
+          return ['rgba(251, 191, 36, 0.8)', 'rgba(245, 158, 11, 0.7)', 'rgba(217, 119, 6, 0.6)']; // Golden
+        case 'foreplay':
+          return ['rgba(236, 72, 153, 0.8)', 'rgba(244, 114, 182, 0.7)', 'rgba(251, 113, 133, 0.6)']; // Pink
         default:
           return ['rgba(220, 20, 60, 0.8)', 'rgba(178, 34, 34, 0.7)', 'rgba(139, 0, 0, 0.6)']; // Crimson
       }
     };
 
     return (
-      <View key={card.id} style={styles.featuredCard}>
+      <TouchableOpacity 
+        key={card.id} 
+        style={styles.featuredCard}
+        onPress={() => {
+          // If it's a deck card, navigate to the deck
+          if (card.source === 'deck') {
+            router.push({ pathname: '/deck', params: { category: card.category } });
+          }
+        }}
+      >
         <LinearGradient
           colors={getCardColors(card.category)}
           style={styles.featuredCardGradient}
@@ -187,26 +434,41 @@ export default function HomeScreen() {
         />
         <View style={styles.cardHeader}>
           <Text style={styles.cardTitle}>{card.title}</Text>
-          <View style={[styles.intensityBadge, { backgroundColor: getIntensityColor(card.intensity) }]}>
-            <Text style={styles.intensityText}>{card.intensity.toUpperCase()}</Text>
+          <View style={styles.badgeContainer}>
+            <View style={[styles.intensityBadge, { backgroundColor: getIntensityColor(card.intensity) }]}>
+              <Text style={styles.intensityText}>{card.intensity.toUpperCase()}</Text>
+            </View>
+            {card.source === 'deck' && (
+              <View style={styles.deckBadge}>
+                <Text style={styles.deckBadgeText}>🎲 DECK</Text>
+              </View>
+            )}
           </View>
         </View>
         {revealedCards.has(card.id) ? (
           <Text style={styles.cardDescription}>{card.description}</Text>
         ) : (
           <View style={styles.cardPlaceholder}>
-            <Text style={styles.cardPlaceholderText}>Click Reveal to see content</Text>
+            <Text style={styles.cardPlaceholderText}>
+              {card.source === 'deck' ? 'Tap to explore this deck' : 'Click Reveal to see content'}
+            </Text>
           </View>
         )}
         <LinearGradient
           colors={['#DC143C', '#B22222', '#8B0000']}
           style={styles.revealButton}
         >
-          <TouchableOpacity style={styles.gradientButtonContent} onPress={() => toggleCardReveal(card.id)}>
+          <TouchableOpacity 
+            style={styles.gradientButtonContent} 
+            onPress={(e) => {
+              e.stopPropagation(); // Prevent deck navigation when revealing
+              toggleCardReveal(card.id);
+            }}
+          >
             <Text style={styles.revealButtonText}>{revealedCards.has(card.id) ? 'Hide' : 'Reveal'}</Text>
           </TouchableOpacity>
         </LinearGradient>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -214,6 +476,7 @@ export default function HomeScreen() {
     switch (intensity) {
       case 'mild': return '#10B981';
       case 'spicy': return '#F59E0B';
+      case 'hot': return '#DC143C';
       case 'extreme': return '#EF4444';
       default: return '#6B7280';
     }
@@ -858,10 +1121,26 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 12,
   },
+  badgeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   intensityBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
+  },
+  deckBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  deckBadgeText: {
+    fontSize: 10,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
   intensityText: {
     fontSize: 10,
