@@ -18,7 +18,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { user, isPremium, upgradeToPremium } = useAuth();
+  const { user, isPremium, upgradeToPremium, logout } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [userProfile, setUserProfile] = useState(null);
   const [revealedCards, setRevealedCards] = useState(new Set());
