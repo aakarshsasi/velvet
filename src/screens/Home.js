@@ -3,17 +3,17 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    Alert,
-    Animated,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { Path, Svg } from 'react-native-svg';
+import SideMenu from '../components/SideMenu';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function HomeScreen() {
@@ -26,6 +26,7 @@ export default function HomeScreen() {
   const [slideAnim] = useState(new Animated.Value(30));
   const [glowAnim] = useState(new Animated.Value(0.3));
   const [pulseAnim] = useState(new Animated.Value(1));
+  const [isSideMenuVisible, setIsSideMenuVisible] = useState(false);
 
   useEffect(() => {
     loadUserProfile();
@@ -551,6 +552,19 @@ export default function HomeScreen() {
         end={{ x: 1, y: 1 }}
       >
         <View style={styles.header}>
+          <TouchableOpacity 
+            style={styles.menuButton} 
+            onPress={() => {
+              if (user) {
+                setIsSideMenuVisible(true);
+              } else {
+                router.push('/login');
+              }
+            }}
+          >
+            <Text style={styles.menuIcon}>☰</Text>
+          </TouchableOpacity>
+          
           <View style={styles.brandSection}>
             {/* Brand Title with Heart V */}
             <Animated.View 
@@ -589,28 +603,6 @@ export default function HomeScreen() {
             
             
           </View>
-          <TouchableOpacity 
-            style={styles.profileButton} 
-            onPress={() => {
-              if (user) {
-                Alert.alert(
-                  'Profile',
-                  `Welcome, ${user.displayName || 'User'}!`,
-                  [
-                    { text: 'Cancel', style: 'cancel' },
-                    { text: 'Logout', onPress: async () => {
-                      await logout();
-                      router.replace('/login');
-                    }, style: 'destructive' }
-                  ]
-                );
-              } else {
-                router.push('/login');
-              }
-            }}
-          >
-            <Text style={styles.profileIcon}>{user ? '👤' : '🔐'}</Text>
-          </TouchableOpacity>
         </View>
       </LinearGradient>
 
@@ -830,6 +822,12 @@ export default function HomeScreen() {
         {/* Bottom Spacing */}
         <View style={styles.bottomSpacing} />
       </ScrollView>
+
+      {/* Side Menu */}
+      <SideMenu 
+        isVisible={isSideMenuVisible} 
+        onClose={() => setIsSideMenuVisible(false)} 
+      />
     </SafeAreaView>
   );
 }
@@ -876,7 +874,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'flex-start',
     paddingHorizontal: 20,
     paddingTop: 10,
@@ -885,6 +883,7 @@ const styles = StyleSheet.create({
   },
   brandSection: {
     flex: 1,
+    alignItems: 'center',
   },
   brandTitleContainer: {
     alignItems: 'center',
@@ -922,18 +921,21 @@ const styles = StyleSheet.create({
     fontFamily: 'System',
     fontWeight: '600',
   },
-  profileButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  menuButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: 'rgba(220, 20, 60, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'rgba(220, 20, 60, 0.3)',
+    marginRight: 15,
   },
-  profileIcon: {
-    fontSize: 14,
+  menuIcon: {
+    fontSize: 18,
+    color: '#DC143C',
+    fontWeight: 'bold',
   },
   heroSection: {
     paddingHorizontal: 20,
