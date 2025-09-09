@@ -109,7 +109,10 @@ export const AuthProvider = ({ children }) => {
         lastLogin: new Date()
       });
       
-      // Also check AsyncStorage for onboarding status
+      // Check both Firestore and AsyncStorage for onboarding status
+      await checkPremiumStatus(user.uid);
+      
+      // Also check AsyncStorage as fallback
       const hasCompletedOnboarding = await AsyncStorage.getItem('hasCompletedOnboarding');
       if (hasCompletedOnboarding === 'true') {
         setHasCompletedOnboarding(true);

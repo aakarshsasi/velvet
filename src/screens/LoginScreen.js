@@ -24,9 +24,6 @@ export default function LoginScreen() {
   const { signIn, signUp } = useAuth();
   const router = useRouter();
 
-  const handleBack = () => {
-    router.back();
-  };
 
   const handleSubmit = async () => {
     if (!email || !password) {
@@ -44,12 +41,12 @@ export default function LoginScreen() {
       if (isSignUp) {
         await signUp(email, password, displayName);
         Alert.alert('Success', 'Account created successfully!', [
-          { text: 'OK', onPress: () => router.replace('/welcome') }
+          { text: 'OK', onPress: () => router.replace('/') }
         ]);
       } else {
         await signIn(email, password);
-        // Redirect to welcome screen, which will handle routing based on onboarding status
-        router.replace('/welcome');
+        // Close the login screen and let the app's routing logic handle the redirect
+        router.replace('/');
       }
     } catch (error) {
       Alert.alert('Error', error.message);
@@ -67,10 +64,6 @@ export default function LoginScreen() {
         end={{ x: 1, y: 1 }}
       />
       
-      {/* Back Button - Fixed at top */}
-      <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-        <Text style={styles.backButtonText}>← Back</Text>
-      </TouchableOpacity>
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -174,28 +167,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-  backButton: {
-    position: 'absolute',
-    top: 50,
-    left: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    backgroundColor: 'rgba(220, 20, 60, 0.15)',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(220, 20, 60, 0.3)',
-    zIndex: 100,
-    shadowColor: '#DC143C',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  backButtonText: {
-    color: '#DC143C',
-    fontSize: 16,
-    fontWeight: '600',
-  },
   keyboardView: {
     flex: 1,
   },
@@ -203,7 +174,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     paddingHorizontal: 30,
-    paddingTop: 100, // Space for back button
+    paddingTop: 60,
     paddingBottom: 40,
   },
   headerSection: {

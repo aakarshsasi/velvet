@@ -18,11 +18,13 @@ import {
     View,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { useAuth } from '../contexts/AuthContext';
 
 const { width } = Dimensions.get('window');
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const { user, hasCompletedOnboarding, loading } = useAuth();
 
   const [currentStep, setCurrentStep] = useState(0); // 0 = intro, 1+ = quiz steps
   const [progress, setProgress] = useState(0);
@@ -33,6 +35,14 @@ export default function OnboardingScreen() {
   const [showIntro, setShowIntro] = useState(true);
   const [progressAnim] = useState(new Animated.Value(0));
   const [progressGlowAnim] = useState(new Animated.Value(0));
+
+  // Check if user has already completed onboarding
+  useEffect(() => {
+    if (!loading && user && hasCompletedOnboarding) {
+      // User has already completed onboarding, redirect to home
+      router.replace('/home');
+    }
+  }, [user, hasCompletedOnboarding, loading, router]);
 
   const onboardingSteps = [
     {

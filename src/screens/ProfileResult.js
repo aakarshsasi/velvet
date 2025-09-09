@@ -15,6 +15,7 @@ import {
   View,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
+import { useAuth } from '../contexts/AuthContext';
 import { generateComprehensiveAnalysis } from '../utils/ProfileAnalysis';
 
 // SVG content as string constant with app theme colors
@@ -34,6 +35,7 @@ const { width, height } = Dimensions.get('window');
 
 export default function ProfileResultScreen() {
   const router = useRouter();
+  const { user } = useAuth();
   const [userProfile, setUserProfile] = useState(null);
   const [analysis, setAnalysis] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -157,6 +159,11 @@ export default function ProfileResultScreen() {
   const handleContinueToSignup = () => {
     // Navigate to signup-details using replace to clear the stack
     router.replace('/signup-details');
+  };
+
+  const handleStartExploring = () => {
+    // Navigate to home page for logged-in users
+    router.replace('/home');
   };
 
   // Loading screen
@@ -418,7 +425,10 @@ export default function ProfileResultScreen() {
           }
         ]}
       >
-        <TouchableOpacity style={styles.continueButton} onPress={handleContinueToSignup}>
+        <TouchableOpacity 
+          style={styles.continueButton} 
+          onPress={user ? handleStartExploring : handleContinueToSignup}
+        >
           <LinearGradient
             colors={['#DC143C', '#B22222', '#8B0000']}
             style={styles.continueButtonGradient}
@@ -446,7 +456,9 @@ export default function ProfileResultScreen() {
               />
             </Animated.View>
             
-            <Text style={styles.continueButtonText}>Continue to Create Account ✨</Text>
+            <Text style={styles.continueButtonText}>
+              {user ? 'Start Exploring 🚀' : 'Continue to Create Account ✨'}
+            </Text>
             <Text style={styles.arrowIcon}>→</Text>
           </LinearGradient>
         </TouchableOpacity>

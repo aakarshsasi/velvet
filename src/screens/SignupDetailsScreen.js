@@ -150,9 +150,6 @@ export default function SignupDetailsScreen() {
     }
   };
 
-  const handleSignIn = () => {
-    router.push('/login');
-  };
 
 
   // Smart email validation and auto-focus
@@ -346,13 +343,6 @@ export default function SignupDetailsScreen() {
               </LinearGradient>
             </TouchableOpacity>
 
-            {/* Sign In Link */}
-            <View style={styles.signInContainer}>
-              <Text style={styles.signInText}>Already have an account? </Text>
-              <TouchableOpacity onPress={handleSignIn}>
-                <Text style={styles.signInLink}>Sign in</Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </Animated.View>
         </ScrollView>
@@ -556,22 +546,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
-  },
-  signInContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  signInText: {
-    fontSize: 16,
-    color: '#CD5C5C',
-    opacity: 0.8,
-  },
-  signInLink: {
-    fontSize: 16,
-    color: '#DC143C',
-    fontWeight: '600',
-    textDecorationLine: 'underline',
   },
 });
