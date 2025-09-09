@@ -22,14 +22,18 @@ export default function InitialRoute() {
         }
     }, [user, loading, hasCompletedOnboarding, router]);
 
-    // Show a proper loading screen
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Velvet</Text>
-            <Text style={styles.subtitle}>Your intimate adventure starts here</Text>
-            <ActivityIndicator size="large" color="#DC143C" style={styles.loader} />
-        </View>
-    );
+    // Show a minimal loading screen only while checking auth
+    if (loading) {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.title}>Velvet</Text>
+                <ActivityIndicator size="large" color="#DC143C" style={styles.loader} />
+            </View>
+        );
+    }
+
+    // If not loading, redirect immediately (this should be very fast)
+    return null;
 }
 
 const styles = StyleSheet.create({

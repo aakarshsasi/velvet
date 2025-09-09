@@ -154,10 +154,6 @@ export default function SignupDetailsScreen() {
     router.push('/login');
   };
 
-  const handleBack = () => {
-    // Navigate back to profile-result using replace
-    router.replace('/profile-result');
-  };
 
   // Smart email validation and auto-focus
   const validateAndFocusNext = (email) => {
@@ -224,10 +220,6 @@ export default function SignupDetailsScreen() {
         >
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-              <Text style={styles.backButtonText}>← Back</Text>
-            </TouchableOpacity>
-            
             <Animated.Text 
               style={[
                 styles.title,
@@ -414,21 +406,6 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginBottom: 40,
-  },
-  backButton: {
-    alignSelf: 'flex-start',
-    marginBottom: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    backgroundColor: 'rgba(220, 20, 60, 0.1)',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(220, 20, 60, 0.3)',
-  },
-  backButtonText: {
-    color: '#DC143C',
-    fontSize: 16,
-    fontWeight: '600',
   },
   title: {
     fontSize: 32,

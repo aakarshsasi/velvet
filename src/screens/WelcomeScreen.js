@@ -2,14 +2,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import {
-    Animated,
-    Dimensions,
-    SafeAreaView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Path, Svg } from 'react-native-svg';
 import { useAuth } from '../contexts/AuthContext';
@@ -28,18 +28,8 @@ export default function WelcomeScreen() {
     startAnimations();
   }, []);
 
-  // Smart routing effect - redirect based on auth state
-  useEffect(() => {
-    if (!loading) {
-      if (user && hasCompletedOnboarding) {
-        // Only redirect if user is signed in AND has completed onboarding
-        // Redirect immediately without delay
-        router.replace('/home');
-      }
-      // If no user OR user hasn't completed onboarding, stay on welcome screen
-      // User will click "Get Started" to start onboarding
-    }
-  }, [user, loading, hasCompletedOnboarding, router]);
+  // Welcome screen should only show for non-authenticated users
+  // Routing is handled by index.tsx
 
   const startAnimations = () => {
     // Fade in and slide up
