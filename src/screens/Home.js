@@ -3,14 +3,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  Animated,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    Animated,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import { Path, Svg } from 'react-native-svg';
 import SideMenu from '../components/SideMenu';
@@ -775,7 +775,7 @@ export default function HomeScreen() {
             >
               <TouchableOpacity 
                 style={styles.gradientButtonContent}
-                onPress={() => router.push('/deck')}
+                onPress={() => router.push('/fantasy-builder')}
               >
                 <Text style={styles.createButtonText}>Create</Text>
               </TouchableOpacity>

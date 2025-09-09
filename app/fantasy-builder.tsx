@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import React from 'react';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export default function SpinWheelRoute() {
+export default function FantasyBuilderRoute() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
@@ -18,17 +18,17 @@ export default function SpinWheelRoute() {
         </TouchableOpacity>
         
         <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Spin the Wheel</Text>
+          <Text style={styles.headerTitle}>Fantasy Builder</Text>
         </View>
         
         <View style={styles.headerRight} />
       </View>
       
       <View style={styles.content}>
-        <Text style={styles.title}>Spin the Wheel</Text>
+        <Text style={styles.title}>Fantasy Builder</Text>
         <Text style={styles.subtitle}>Coming Soon!</Text>
         <Text style={styles.description}>
-          This exciting feature is under development. Stay tuned for the wheel spinning action!
+          Create and customize your own intimate fantasies. This powerful feature is under development and will allow you to build personalized experiences tailored to your desires.
         </Text>
       </View>
     </SafeAreaView>
