@@ -287,14 +287,14 @@ export default function HomeScreen() {
   // Deck cards data (extracted from DeckScreen.js)
   const deckCards = {
     'mild-seduction': [
-      { id: 1, title: 'Whisper Compliments', description: 'Whisper three compliments into your partner\'s ear while maintaining eye contact.', difficulty: 'Easy', duration: '5 min', icon: '💭', color: '#FBBF24' },
-      { id: 2, title: 'Arm Tracing', description: 'Gently trace your fingers along your partner\'s arm, starting from the wrist up to the shoulder.', difficulty: 'Easy', duration: '3 min', icon: '👆', color: '#F59E0B' },
-      { id: 3, title: 'Hand Kiss Trail', description: 'Kiss your partner\'s hand slowly, lingering on each knuckle.', difficulty: 'Easy', duration: '5 min', icon: '💋', color: '#D97706' },
-      { id: 4, title: 'Seductive Gaze', description: 'Hold your partner\'s gaze for 30 seconds while smiling seductively.', difficulty: 'Easy', duration: '1 min', icon: '👀', color: '#FBBF24' },
-      { id: 5, title: 'Cheek Whisper', description: 'Lightly brush your lips against your partner\'s cheek without fully kissing.', difficulty: 'Easy', duration: '2 min', icon: '💋', color: '#F59E0B' },
-      { id: 6, title: 'Neck Nibble', description: 'Gently nibble along your partner\'s neck, alternating between soft kisses and light bites.', difficulty: 'Easy', duration: '4 min', icon: '👄', color: '#D97706' },
-      { id: 7, title: 'Back Massage', description: 'Give a gentle back massage while your partner lies face down.', difficulty: 'Easy', duration: '10 min', icon: '🤲', color: '#FBBF24' },
-      { id: 8, title: 'Foot Worship', description: 'Gently massage and kiss your partner\'s feet for a relaxing experience.', difficulty: 'Easy', duration: '8 min', icon: '🦶', color: '#F59E0B' }
+      { id: 1, title: 'Sultry Whisper Tease', description: 'Lean in close and whisper a naughty fantasy into your partner\'s ear, describing in vivid detail what you\'d do to them. Maintain intense eye contact and let your breath graze their skin.', difficulty: 'Medium', duration: '5 min', icon: '😘', color: '#FBBF24' },
+      { id: 2, title: 'Thigh Caress', description: 'Slowly trace your fingers along your partner\'s inner thigh, teasing closer to their most sensitive spots without touching them directly. Whisper how much their body turns you on.', difficulty: 'Medium', duration: '5 min', icon: '🔥', color: '#F59E0B' },
+      { id: 3, title: 'Lip Tease Nibble', description: 'Hover your lips over your partner\'s, barely brushing them, then gently nibble their lower lip while murmuring how much you crave their taste.', difficulty: 'Easy', duration: '3 min', icon: '💋', color: '#D97706' },
+      { id: 4, title: 'Blindfolded Touch', description: 'Blindfold your partner and run your hands sensually over their body, focusing on erogenous zones like their neck, chest, and hips. Describe how their reactions drive you wild.', difficulty: 'Medium', duration: '7 min', icon: '😈', color: '#FBBF24' },
+      { id: 5, title: 'Earlobe Suck', description: 'Kiss your partner\'s neck, then slowly suck on their earlobe while whispering how much you want to feel their body against yours.', difficulty: 'Easy', duration: '3 min', icon: '👂', color: '#F59E0B' },
+      { id: 6, title: 'Chest Kiss Trail', description: 'Unbutton your partner\'s shirt (or lift it) and plant slow, wet kisses from their collarbone down to their chest, lingering just above their nipples.', difficulty: 'Medium', duration: '5 min', icon: '😘', color: '#D97706' },
+      { id: 7, title: 'Slow Grind Tease', description: 'Straddle your partner\'s lap, slowly grinding against them while maintaining eye contact and whispering how desperately you want to feel them inside you.', difficulty: 'Medium', duration: '5 min', icon: '🍑', color: '#F472B6' },
+      { id: 8, title: 'Underwear Tease', description: 'Slide your hand under your partner\'s clothing, teasingly brushing over their underwear while describing in explicit detail how you plan to pleasure them later.', difficulty: 'Medium', duration: '4 min', icon: '👙', color: '#FBBF24' }
     ],
     'foreplay': [
       { id: 1, title: 'Slow Undressing', description: 'Take turns slowly undressing each other, making eye contact throughout.', difficulty: 'Medium', duration: '15 min', icon: '👗', color: '#EC4899' },
