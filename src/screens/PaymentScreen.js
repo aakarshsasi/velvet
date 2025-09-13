@@ -14,6 +14,7 @@ import {
     View,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
+import { useIAP } from '../contexts/IAPContext';
 import useAnalytics from '../hooks/useAnalytics';
 
 const { width, height } = Dimensions.get('window');
@@ -21,9 +22,10 @@ const { width, height } = Dimensions.get('window');
 export default function PaymentScreen() {
   const router = useRouter();
   const { upgradeToPremium } = useAuth();
+  const { products, isLoading: iapLoading, purchaseProduct, restorePurchases, isInitialized } = useIAP();
   const analytics = useAnalytics();
   const [selectedPlan, setSelectedPlan] = useState('monthly');
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('upi');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('iap');
   const [isProcessing, setIsProcessing] = useState(false);
   
   // Animation values
@@ -40,6 +42,8 @@ export default function PaymentScreen() {
       selected_plan: selectedPlan,
       selected_payment_method: selectedPaymentMethod
     });
+    // Track feature interest for premium upgrade
+    analytics.trackFeatureInterest('premium_upgrade', 'payment_screen_view');
   }, []);
 
   const startAnimations = () => {
@@ -89,47 +93,136 @@ export default function PaymentScreen() {
     ).start();
   };
 
-  const plans = [
+  // Get plans from IAP products or use defaults
+  const getPlans = () => {
+    if (products && products.length > 0) {
+      return products.map(product => {
+        const isYearly = product.productId.includes('yearly');
+        return {
+          id: isYearly ? 'yearly' : 'monthly',
+          productId: product.productId,
+          name: isYearly ? 'Yearly' : 'Monthly',
+          price: product.price,
+          period: isYearly ? '/year' : '/month',
+          description: isYearly ? 'Best value - Save 17%' : 'Perfect for exploring',
+          features: isYearly 
+            ? ['Everything in Monthly', 'Exclusive content', 'Early access']
+            : ['Unlimited access', 'Premium content', 'Priority support'],
+          popular: isYearly,
+        };
+      });
+    }
+    
+    // Fallback plans if IAP products not loaded
+    return [
+      {
+        id: 'monthly',
+        productId: 'com.velvet.premium.monthly',
+        name: 'Monthly',
+        price: '₹299',
+        period: '/month',
+        description: 'Perfect for exploring',
+        features: ['Unlimited access', 'Premium content', 'Priority support'],
+        popular: false,
+      },
+      {
+        id: 'yearly',
+        productId: 'com.velvet.premium.yearly',
+        name: 'Yearly',
+        price: '₹2,999',
+        period: '/year',
+        description: 'Best value - Save 17%',
+        features: ['Everything in Monthly', 'Exclusive content', 'Early access'],
+        popular: true,
+      },
+    ];
+  };
+
+  const plans = getPlans();
+
+  // Enhanced features and benefits
+  const premiumBenefits = [
     {
-      id: 'monthly',
-      name: 'Monthly',
-      price: '₹299',
-      period: '/month',
-      description: 'Perfect for exploring',
-      features: ['Unlimited access', 'Premium content', 'Priority support'],
-      popular: false,
+      icon: '🔥',
+      title: 'Unlimited Access',
+      description: 'Explore all intimate content without restrictions'
     },
     {
-      id: 'yearly',
-      name: 'Yearly',
-      price: '₹2,999',
-      period: '/year',
-      description: 'Best value - Save 17%',
-      features: ['Everything in Monthly', 'Exclusive content', 'Early access'],
-      popular: true,
+      icon: '💎',
+      title: 'Exclusive Content',
+      description: 'Premium games, challenges, and experiences'
     },
+    {
+      icon: '🎯',
+      title: 'Personalized Experience',
+      description: 'AI-powered recommendations just for you'
+    },
+    {
+      icon: '🔒',
+      title: 'Privacy First',
+      description: 'Your data is encrypted and secure'
+    }
   ];
+
+  // FOMO hooks about intimacy importance
+  const intimacyHooks = {
+    stats: [
+      {
+        number: '67%',
+        label: 'of couples report intimacy issues',
+        description: 'Don\'t become another statistic'
+      },
+      {
+        number: '3x',
+        label: 'more likely to stay together',
+        description: 'Couples who prioritize intimacy'
+      },
+      {
+        number: '89%',
+        label: 'wish they started earlier',
+        description: 'Couples who improved their intimacy'
+      }
+    ],
+    fomoMessages: [
+      {
+        icon: '⏰',
+        title: 'Every Day You Wait',
+        message: 'Your relationship grows more distant. The longer you wait, the harder it becomes to reconnect.'
+      },
+      {
+        icon: '💔',
+        title: 'The Cost of Inaction',
+        message: 'Studies show that intimacy issues are the #1 cause of relationship breakdowns. Don\'t let this be you.'
+      },
+      {
+        icon: '🔥',
+        title: 'The Passion Gap',
+        message: 'Without effort, passion fades. The couples who thrive are those who actively work on their intimacy.'
+      }
+    ]
+  };
+
+  // Urgency and scarcity elements
+  const urgencyData = {
+    limitedTime: true,
+    discountEnds: "48 hours",
+    usersOnline: "127",
+    lastPurchase: "12 minutes ago"
+  };
 
   const paymentMethods = [
     {
-      id: 'upi',
-      name: 'UPI',
-      icon: '💳',
-      description: 'Pay with UPI apps',
-      color: '#4F46E5',
-    },
-    {
-      id: 'card',
-      name: 'Card',
-      icon: '💎',
-      description: 'Credit/Debit Card',
+      id: 'iap',
+      name: 'In-App Purchase',
+      icon: '📱',
+      description: 'Secure payment via App Store/Google Play',
       color: '#DC143C',
     },
     {
-      id: 'netbanking',
-      name: 'Net Banking',
-      icon: '🏦',
-      description: 'Bank transfer',
+      id: 'restore',
+      name: 'Restore Purchases',
+      icon: '🔄',
+      description: 'Restore previous purchases',
       color: '#059669',
     },
   ];
@@ -140,49 +233,173 @@ export default function PaymentScreen() {
       return;
     }
 
-    setIsProcessing(true);
-    analytics.trackFunnelStep('premium_conversion_funnel', 'payment_attempted', 2, 3);
+    // Handle restore purchases
+    if (selectedPaymentMethod === 'restore') {
+      setIsProcessing(true);
+      analytics.trackFunnelStep('premium_conversion_funnel', 'restore_attempted', 2, 3);
+      
+      try {
+        const result = await restorePurchases();
+        if (result.success) {
+          analytics.trackFunnelConversion('premium_conversion_funnel', 'restore_success', {
+            plan: selectedPlan,
+            payment_method: selectedPaymentMethod
+          });
+        } else {
+          analytics.trackFunnelStep('premium_conversion_funnel', 'restore_failed', 3, 3);
+        }
+      } catch (error) {
+        analytics.trackError(error, 'restore_purchases', 'error');
+        console.error('Restore error:', error);
+      } finally {
+        setIsProcessing(false);
+      }
+      return;
+    }
 
-    try {
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Call the actual upgrade function
-      await upgradeToPremium();
-      
-      // Track successful payment
-      const planValue = selectedPlan === 'monthly' ? 9.99 : 99.99;
-      analytics.trackPremiumUpgradeSuccess('payment_screen', selectedPaymentMethod, planValue, 'USD');
-      analytics.trackFunnelConversion('premium_conversion_funnel', 'payment_success', {
-        plan: selectedPlan,
-        payment_method: selectedPaymentMethod,
-        value: planValue
-      });
-      
-      Alert.alert(
-        'Payment Successful! 🎉',
-        'Welcome to Velvet Premium! You now have access to all exclusive content.',
-        [
-          {
-            text: 'Start Exploring',
-            onPress: () => router.replace('/home'),
-          },
-        ]
-      );
-    } catch (error) {
-      analytics.trackPremiumUpgradeFailure('payment_screen', selectedPaymentMethod, error);
-      analytics.trackFunnelStep('premium_conversion_funnel', 'payment_failed', 3, 3);
-      analytics.trackError(error, 'payment_processing', 'error');
-      console.error('Payment error:', error);
-      Alert.alert(
-        'Payment Failed',
-        'There was an issue processing your payment. Please try again.',
-        [{ text: 'OK' }]
-      );
-    } finally {
-      setIsProcessing(false);
+    // Handle IAP purchase
+    if (selectedPaymentMethod === 'iap') {
+      if (!isInitialized) {
+        Alert.alert('Error', 'In-app purchases are not available. Please try again later.');
+        return;
+      }
+
+      setIsProcessing(true);
+      analytics.trackFunnelStep('premium_conversion_funnel', 'payment_attempted', 2, 3);
+
+      try {
+        const selectedPlanData = plans.find(p => p.id === selectedPlan);
+        if (!selectedPlanData) {
+          throw new Error('Selected plan not found');
+        }
+
+        const result = await purchaseProduct(selectedPlanData.productId);
+        
+        if (result.success) {
+          // Track successful payment
+          const planValue = selectedPlan === 'monthly' ? 9.99 : 99.99;
+          analytics.trackPremiumUpgradeSuccess('payment_screen', selectedPaymentMethod, planValue, 'USD');
+          analytics.trackFunnelConversion('premium_conversion_funnel', 'payment_success', {
+            plan: selectedPlan,
+            payment_method: selectedPaymentMethod,
+            value: planValue
+          });
+          
+          // Navigate to home after successful purchase
+          setTimeout(() => {
+            router.replace('/home');
+          }, 2000);
+        } else {
+          throw new Error(result.error || 'Purchase failed');
+        }
+      } catch (error) {
+        analytics.trackPremiumUpgradeFailure('payment_screen', selectedPaymentMethod, error);
+        analytics.trackFunnelStep('premium_conversion_funnel', 'payment_failed', 3, 3);
+        analytics.trackError(error, 'payment_processing', 'error');
+        console.error('Payment error:', error);
+        
+        // Error alert is handled in IAP context
+      } finally {
+        setIsProcessing(false);
+      }
     }
   };
+
+  // Render premium benefits section
+  const renderBenefitsSection = () => (
+    <Animated.View 
+      style={[
+        styles.section,
+        {
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }]
+        }
+      ]}
+    >
+      <Text style={styles.sectionTitle}>Why Choose Velvet Premium?</Text>
+      <Text style={styles.sectionSubtitle}>Join thousands of couples who've transformed their intimacy</Text>
+      
+      <View style={styles.benefitsGrid}>
+        {premiumBenefits.map((benefit, index) => (
+          <View key={index} style={styles.benefitCard}>
+            <Text style={styles.benefitIcon}>{benefit.icon}</Text>
+            <Text style={styles.benefitTitle}>{benefit.title}</Text>
+            <Text style={styles.benefitDescription}>{benefit.description}</Text>
+          </View>
+        ))}
+      </View>
+    </Animated.View>
+  );
+
+  // Render intimacy importance section
+  const renderIntimacyImportance = () => (
+    <Animated.View 
+      style={[
+        styles.section,
+        {
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }]
+        }
+      ]}
+    >
+      <Text style={styles.sectionTitle}>The Truth About Intimacy</Text>
+      <Text style={styles.sectionSubtitle}>Don't let your relationship become another statistic</Text>
+      
+      <View style={styles.intimacyStatsContainer}>
+        {intimacyHooks.stats.map((stat, index) => (
+          <View key={index} style={styles.intimacyStatCard}>
+            <View style={styles.statNumberContainer}>
+              <Text style={styles.intimacyStatNumber}>{stat.number}</Text>
+            </View>
+            <View style={styles.statContentContainer}>
+              <Text style={styles.intimacyStatLabel}>{stat.label}</Text>
+              <Text style={styles.intimacyStatDescription}>{stat.description}</Text>
+            </View>
+          </View>
+        ))}
+      </View>
+
+      <View style={styles.fomoMessagesContainer}>
+        {intimacyHooks.fomoMessages.map((message, index) => (
+          <View key={index} style={styles.fomoMessageCard}>
+            <Text style={styles.fomoMessageIcon}>{message.icon}</Text>
+            <View style={styles.fomoMessageContent}>
+              <Text style={styles.fomoMessageTitle}>{message.title}</Text>
+              <Text style={styles.fomoMessageText}>{message.message}</Text>
+            </View>
+          </View>
+        ))}
+      </View>
+    </Animated.View>
+  );
+
+  // Render urgency section
+  const renderUrgencySection = () => (
+    <Animated.View 
+      style={[
+        styles.urgencySection,
+        {
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }]
+        }
+      ]}
+    >
+      <LinearGradient
+        colors={['rgba(220, 20, 60, 0.2)', 'rgba(178, 34, 34, 0.1)']}
+        style={styles.urgencyGradient}
+      >
+        <View style={styles.urgencyContent}>
+          <Text style={styles.urgencyTitle}>⚡ Limited Time Offer</Text>
+          <Text style={styles.urgencyText}>
+            Join {urgencyData.usersOnline} couples online right now
+          </Text>
+          <Text style={styles.urgencySubtext}>
+            Last purchase: {urgencyData.lastPurchase}
+          </Text>
+        </View>
+      </LinearGradient>
+    </Animated.View>
+  );
 
   const renderPlanCard = (plan) => (
     <TouchableOpacity
@@ -361,6 +578,31 @@ export default function PaymentScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
+        {/* Hero Section */}
+        <Animated.View 
+          style={[
+            styles.heroSection,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }]
+            }
+          ]}
+        >
+          <Text style={styles.heroTitle}>Unlock Your Intimate Journey</Text>
+          <Text style={styles.heroSubtitle}>
+            Join thousands of couples who've discovered deeper connection through Velvet Premium
+          </Text>
+        </Animated.View>
+
+        {/* Urgency Section */}
+        {renderUrgencySection()}
+
+        {/* Benefits Section */}
+        {renderBenefitsSection()}
+
+        {/* Intimacy Importance Section */}
+        {renderIntimacyImportance()}
+
         {/* Plans Section */}
         <Animated.View 
           style={[
@@ -397,6 +639,7 @@ export default function PaymentScreen() {
           </View>
         </Animated.View>
 
+
         {/* Security Notice */}
         <Animated.View 
           style={[
@@ -425,18 +668,21 @@ export default function PaymentScreen() {
         ]}
       >
         <TouchableOpacity 
-          style={[styles.paymentButton, isProcessing && styles.paymentButtonDisabled]}
+          style={[styles.paymentButton, (isProcessing || iapLoading) && styles.paymentButtonDisabled]}
           onPress={handlePayment}
-          disabled={isProcessing}
+          disabled={isProcessing || iapLoading || !isInitialized}
         >
           <LinearGradient
-            colors={isProcessing ? ['#6B7280', '#4B5563'] : ['#DC143C', '#B22222', '#8B0000']}
+            colors={(isProcessing || iapLoading) ? ['#6B7280', '#4B5563'] : ['#DC143C', '#B22222', '#8B0000']}
             style={styles.paymentButtonGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
             <Text style={styles.paymentButtonText}>
-              {isProcessing ? 'Processing...' : `Pay ${plans.find(p => p.id === selectedPlan)?.price}`}
+              {iapLoading ? 'Loading...' : 
+               isProcessing ? 'Processing...' : 
+               selectedPaymentMethod === 'restore' ? 'Restore Purchases' :
+               `Start My Premium Journey - ${plans.find(p => p.id === selectedPlan)?.price}`}
             </Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -587,6 +833,7 @@ const styles = StyleSheet.create({
   },
   planContent: {
     padding: 20,
+    paddingRight: 50, // Add extra padding on right to avoid overlap with selected indicator
   },
   planHeader: {
     flexDirection: 'row',
@@ -623,28 +870,34 @@ const styles = StyleSheet.create({
   },
   featureItem: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    marginBottom: 6,
   },
   featureIcon: {
     fontSize: 14,
     color: '#10B981',
-    marginRight: 8,
+    marginRight: 10,
     fontWeight: '700',
+    marginTop: 2,
+    minWidth: 16,
   },
   featureText: {
     fontSize: 14,
     color: '#D1D5DB',
+    flex: 1,
+    lineHeight: 20,
   },
   selectedIndicator: {
     position: 'absolute',
-    top: 16,
-    right: 16,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    top: 20,
+    right: 12,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     backgroundColor: '#DC143C',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 3,
   },
   selectedIcon: {
     fontSize: 14,
@@ -766,5 +1019,205 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: '#FFFFFF',
+  },
+  // Hero Section
+  heroSection: {
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  heroTitle: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 12,
+    lineHeight: 34,
+    textShadowColor: 'rgba(220, 20, 60, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  heroSubtitle: {
+    fontSize: 16,
+    color: '#FFB6C1',
+    textAlign: 'center',
+    lineHeight: 22,
+    opacity: 0.9,
+    fontWeight: '500',
+  },
+  // Benefits Section
+  benefitsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  benefitCard: {
+    width: '48%',
+    backgroundColor: 'rgba(255, 182, 193, 0.1)',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 182, 193, 0.3)',
+    shadowColor: '#FFB6C1',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  benefitIcon: {
+    fontSize: 24,
+    marginBottom: 8,
+  },
+  benefitTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFB6C1',
+    marginBottom: 4,
+  },
+  benefitDescription: {
+    fontSize: 12,
+    color: '#E5E7EB',
+    lineHeight: 16,
+  },
+  // Intimacy Importance Section
+  intimacyStatsContainer: {
+    marginVertical: 20,
+    gap: 16,
+  },
+  intimacyStatCard: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 20, 147, 0.12)',
+    borderRadius: 20,
+    padding: 20,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 20, 147, 0.3)',
+    shadowColor: '#FF1493',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 6,
+    alignItems: 'center',
+  },
+  statNumberContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255, 20, 147, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 20,
+    borderWidth: 3,
+    borderColor: '#FF1493',
+    flexShrink: 0,
+  },
+  statContentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingVertical: 4,
+  },
+  intimacyStatNumber: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: '#FF1493',
+    textShadowColor: 'rgba(255, 20, 147, 0.4)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    letterSpacing: -0.3,
+    textAlign: 'center',
+    lineHeight: 28,
+  },
+  intimacyStatLabel: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: '700',
+    marginBottom: 4,
+    lineHeight: 20,
+  },
+  intimacyStatDescription: {
+    fontSize: 13,
+    color: '#FFB6C1',
+    lineHeight: 18,
+    fontWeight: '500',
+  },
+  fomoMessagesContainer: {
+    marginTop: 20,
+  },
+  fomoMessageCard: {
+    backgroundColor: 'rgba(255, 20, 147, 0.1)',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    borderLeftWidth: 3,
+    borderLeftColor: '#FF1493',
+    shadowColor: '#FF1493',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  fomoMessageIcon: {
+    fontSize: 24,
+    marginRight: 12,
+    marginTop: 2,
+  },
+  fomoMessageContent: {
+    flex: 1,
+  },
+  fomoMessageTitle: {
+    fontSize: 16,
+    color: '#FFB6C1',
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  fomoMessageText: {
+    fontSize: 14,
+    color: '#E5E7EB',
+    lineHeight: 20,
+  },
+  // Urgency Section
+  urgencySection: {
+    marginHorizontal: 20,
+    marginBottom: 20,
+  },
+  urgencyGradient: {
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 69, 0, 0.4)',
+    shadowColor: '#FF4500',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  urgencyContent: {
+    alignItems: 'center',
+  },
+  urgencyTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#FF4500',
+    marginBottom: 8,
+    textShadowColor: 'rgba(255, 69, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  urgencyText: {
+    fontSize: 14,
+    color: '#FFB6C1',
+    textAlign: 'center',
+    marginBottom: 4,
+    fontWeight: '600',
+  },
+  urgencySubtext: {
+    fontSize: 12,
+    color: '#E5E7EB',
+    textAlign: 'center',
+    fontWeight: '500',
   },
 });

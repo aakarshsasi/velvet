@@ -80,6 +80,26 @@ export const useAnalytics = () => {
       AnalyticsService.trackCardReveal(cardId, category, position);
     },
 
+    trackFeatureInterest: (feature, interestLevel) => {
+      AnalyticsService.trackFeatureInterest(feature, interestLevel);
+    },
+
+    trackWelcomeScreenView: () => {
+      AnalyticsService.trackWelcomeScreenView();
+    },
+
+    trackSignupAttempt: (method) => {
+      AnalyticsService.trackSignupAttempt(method);
+    },
+
+    trackSignupAbandon: (step, reason) => {
+      AnalyticsService.trackSignupAbandon(step, reason);
+    },
+
+    trackContentPreview: (contentType, contentId) => {
+      AnalyticsService.trackContentPreview(contentType, contentId);
+    },
+
     // Premium conversion
     trackPremiumUpgradeAttempt: (source, method) => {
       AnalyticsService.trackPremiumUpgradeAttempt(source, method);
