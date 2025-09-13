@@ -174,24 +174,39 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const upgradeToPremium = async () => {
+  const upgradeToPremium = async (purchaseData = null) => {
     if (!user) return;
     
     try {
-      await updateDoc(doc(db, 'users', user.uid), {
+      const updateData = {
         isPremium: true,
         premiumUpgradedAt: new Date()
-      });
+      };
+
+      // Add purchase data if provided
+      if (purchaseData) {
+        updateData.purchaseData = {
+          productId: purchaseData.productId,
+          transactionId: purchaseData.transactionId,
+          purchaseTime: purchaseData.purchaseTime,
+          purchaseToken: purchaseData.purchaseToken,
+          orderId: purchaseData.orderId
+        };
+      }
+
+      await updateDoc(doc(db, 'users', user.uid), updateData);
       setIsPremium(true);
       
       // Track premium upgrade success
-      AnalyticsService.trackPremiumUpgradeSuccess('auth_context', 'in_app', 9.99, 'USD');
+      const value = purchaseData?.productId?.includes('yearly') ? 99.99 : 9.99;
+      AnalyticsService.trackPremiumUpgradeSuccess('auth_context', 'in_app_purchase', value, 'USD');
       AnalyticsService.setUserProperties({
         is_premium: true,
-        premium_upgraded_at: new Date().toISOString()
+        premium_upgraded_at: new Date().toISOString(),
+        purchase_method: 'in_app_purchase'
       });
     } catch (error) {
-      AnalyticsService.trackPremiumUpgradeFailure('auth_context', 'in_app', error);
+      AnalyticsService.trackPremiumUpgradeFailure('auth_context', 'in_app_purchase', error);
       AnalyticsService.trackError(error, 'premium_upgrade', 'error');
       throw error;
     }

@@ -8,6 +8,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { AuthProvider } from '../src/contexts/AuthContext';
+import { IAPProvider } from '../src/contexts/IAPContext';
 import AnalyticsService from '../src/services/AnalyticsService';
 
 export default function RootLayout() {
@@ -53,7 +54,8 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <AuthProvider>
-        <Stack screenOptions={{ headerShown: false }}>
+        <IAPProvider>
+          <Stack screenOptions={{ headerShown: false }}>
          <Stack.Screen name="welcome" />
          <Stack.Screen name="onboarding" />
         <Stack.Screen 
@@ -87,6 +89,7 @@ export default function RootLayout() {
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />
+        </IAPProvider>
       </AuthProvider>
     </ThemeProvider>
   );
