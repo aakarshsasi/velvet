@@ -398,10 +398,14 @@ export default function HomeScreen() {
   // Get today's shuffled featured cards
   const featuredCards = getDailyShuffledCards();
 
-  const renderCategoryCard = (category) => (
+  const renderCategoryCard = (category, index) => (
     <TouchableOpacity
       key={category.id}
-      style={styles.categoryCard}
+      style={[
+        styles.categoryCard,
+        index === 0 && styles.firstCard,
+        index === categories.length - 1 && styles.lastCard
+      ]}
       onPress={() => {
         analytics.trackCategoryView(category.id, category.name);
         analytics.trackContentInteraction('category', category.id, 'view', {
@@ -711,6 +715,9 @@ export default function HomeScreen() {
             horizontal 
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.categoriesContainer}
+            decelerationRate="fast"
+            snapToInterval={130} // Card width + margin
+            snapToAlignment="start"
           >
             {categories.map(renderCategoryCard)}
           </ScrollView>
@@ -1055,21 +1062,29 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   categoriesContainer: {
-    paddingRight: 20,
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   categoryCard: {
     width: 110,
-    height: 130,
-    borderRadius: 20,
-    marginRight: 16,
+    height: 140,
+    borderRadius: 24,
+    marginRight: 20,
     shadowColor: '#DC143C',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
-    elevation: 15,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.6,
+    shadowRadius: 24,
+    elevation: 18,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(220, 20, 60, 0.3)',
+    borderWidth: 2,
+    borderColor: 'rgba(220, 20, 60, 0.4)',
+    transform: [{ scale: 1 }],
+  },
+  firstCard: {
+    marginLeft: 20,
+  },
+  lastCard: {
+    marginRight: 20,
   },
   categoryGradient: {
     width: '100%',
@@ -1103,21 +1118,21 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   categoryIcon: {
-    fontSize: 36,
-    marginBottom: 10,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
+    fontSize: 40,
+    marginBottom: 12,
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 6,
   },
   categoryName: {
-    fontSize: 13,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '800',
     color: '#FFFFFF',
     fontFamily: 'System',
     textAlign: 'center',
-    lineHeight: 18,
-    textShadowColor: 'rgba(0, 0, 0, 0.4)',
-    textShadowOffset: { width: 0, height: 1 },
+    lineHeight: 20,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 3,
     letterSpacing: 0.3,
   },

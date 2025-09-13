@@ -54,6 +54,14 @@ export const useAnalytics = () => {
       AnalyticsService.trackOnboardingDropOff(stepNumber, stepName, timeSpent);
     },
 
+    trackOnboardingAbandon: (step, reason) => {
+      AnalyticsService.trackOnboardingAbandon(step, reason);
+    },
+
+    trackOnboardingStart: () => {
+      AnalyticsService.trackOnboardingStart();
+    },
+
     // Authentication
     trackSignUp: (method, success, error) => {
       AnalyticsService.trackSignUp(method, success, error);

@@ -163,10 +163,45 @@ export default function SignupDetailsScreen() {
     // Check if email has proper structure and is complete
     const hasAtSymbol = email.includes('@');
     const hasDotAfterAt = email.includes('.', email.indexOf('@'));
-    const hasTextAfterDot = email.split('.').pop().length >= 2;
     
-    // Only consider it complete if it passes all validation checks
-    const isCompleteEmail = isValidEmail && hasAtSymbol && hasDotAfterAt && hasTextAfterDot;
+    // Get the domain part after @
+    const domainPart = email.split('@')[1] || '';
+    const domainParts = domainPart.split('.');
+    
+    // Define valid domain extensions (major ones)
+    const validExtensions = [
+      'com', 'org', 'net', 'edu', 'gov', 'mil', 'int',
+      'in', 'uk', 'ca', 'au', 'de', 'fr', 'jp', 'cn', 'ru', 'br', 'mx', 'es', 'it', 'nl', 'se', 'no', 'dk', 'fi', 'pl', 'cz', 'hu', 'gr', 'pt', 'ie', 'be', 'at', 'ch', 'lu', 'is', 'li', 'mt', 'mc', 'sm', 'va', 'ad', 'ac', 'me', 'info', 'biz', 'name', 'pro', 'aero', 'coop', 'museum', 'travel', 'jobs', 'mobi', 'asia', 'tel', 'cat', 'post', 'xxx', 'arpa'
+    ];
+    
+    // Check for multi-part extensions like co.uk, com.au, etc.
+    const multiPartExtensions = [
+      'co.uk', 'com.au', 'co.in', 'co.jp', 'co.kr', 'co.za', 'co.nz', 'co.il', 
+      'co.th', 'co.id', 'co.my', 'co.sg', 'co.ph', 'co.vn', 'co.tw', 'co.hk', 
+      'co.mo', 'co.ke', 'co.ug', 'co.tz', 'co.zw', 'co.bw', 'co.sz', 'co.ls', 
+      'co.mw', 'co.mz', 'co.na', 'co.ao', 'co.mg', 'co.mu', 'co.sc', 'co.km', 
+      'co.dj', 'co.so', 'co.et', 'co.sd', 'co.ss', 'co.cf', 'co.td', 'co.cm', 
+      'co.ga', 'co.cg', 'co.cd', 'co.st', 'co.gq', 'co.gm', 'co.gw', 'co.gn', 
+      'co.sl', 'co.lr', 'co.ci', 'co.gh', 'co.tg', 'co.bj', 'co.ne', 'co.bf', 
+      'co.ml', 'co.sn'
+    ];
+    
+    // Check if the domain extension is valid and complete
+    let hasValidExtension = false;
+    
+    if (domainParts.length >= 2) {
+      const lastTwoParts = domainParts.slice(-2).join('.');
+      const lastPart = domainParts[domainParts.length - 1];
+      
+      // Check for multi-part extensions first
+      if (multiPartExtensions.includes(lastTwoParts.toLowerCase())) {
+        hasValidExtension = true;
+      } else if (validExtensions.includes(lastPart.toLowerCase())) {
+        hasValidExtension = true;
+      }
+    }
+    const isCompleteEmail = isValidEmail && hasAtSymbol && hasDotAfterAt && hasValidExtension;
+    
     setIsEmailValid(isCompleteEmail);
     
     if (isCompleteEmail) {

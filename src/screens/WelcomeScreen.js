@@ -2,14 +2,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import {
-    Animated,
-    Dimensions,
-    SafeAreaView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Path, Svg } from 'react-native-svg';
 import { useAuth } from '../contexts/AuthContext';
@@ -104,7 +104,6 @@ export default function WelcomeScreen() {
   const handleGetStarted = () => {
     analytics.trackJourney('get_started_clicked', { source: 'welcome_screen' });
     analytics.trackFunnelStep('onboarding_funnel', 'get_started', 1, 5);
-    analytics.trackOnboardingStart();
     router.push('/onboarding');
   };
 

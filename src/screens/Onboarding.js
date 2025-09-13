@@ -2,20 +2,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-    Animated,
-    Dimensions,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useAuth } from '../contexts/AuthContext';
@@ -37,6 +37,10 @@ export default function OnboardingScreen() {
   const [showIntro, setShowIntro] = useState(true);
   const [progressAnim] = useState(new Animated.Value(0));
   const [progressGlowAnim] = useState(new Animated.Value(0));
+  
+  // Refs for ScrollView components
+  const introScrollRef = useRef(null);
+  const quizScrollRef = useRef(null);
 
   // Check if user has already completed onboarding
   useEffect(() => {
@@ -65,6 +69,20 @@ export default function OnboardingScreen() {
       }
     };
   }, [currentStep]);
+
+  // Reset scroll position when step changes
+  useEffect(() => {
+    if (quizScrollRef.current) {
+      quizScrollRef.current.scrollTo({ y: 0, animated: false });
+    }
+  }, [currentStep]);
+
+  // Reset scroll position when transitioning from intro to quiz
+  useEffect(() => {
+    if (!showIntro && quizScrollRef.current) {
+      quizScrollRef.current.scrollTo({ y: 0, animated: false });
+    }
+  }, [showIntro]);
 
   const onboardingSteps = [
     {
@@ -424,7 +442,7 @@ export default function OnboardingScreen() {
           style={styles.background}
         />
         
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <ScrollView ref={introScrollRef} style={styles.scrollView} showsVerticalScrollIndicator={false}>
           <Animated.View 
             style={[
               styles.content,
@@ -726,6 +744,7 @@ export default function OnboardingScreen() {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
         <ScrollView 
+          ref={quizScrollRef}
           style={styles.content} 
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
