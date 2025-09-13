@@ -214,27 +214,31 @@ export default function OnboardingScreen() {
       }),
     ]).start();
 
-    // Continuous glow effect for the header
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(glowAnim, {
-          toValue: 1,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(glowAnim, {
-          toValue: 0.3,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
+    // Continuous glow effect for the header - only start if not already running
+    if (glowAnim._value === 0) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(glowAnim, {
+            toValue: 1,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glowAnim, {
+            toValue: 0.3,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    }
   }, [currentStep, showIntro, answers, onboardingSteps.length]);
 
   const handleStartQuiz = () => {
+    console.log('Begin the Adventure button pressed');
+    console.log('handleStartQuiz called - setting showIntro to false');
     setShowIntro(false);
     setCurrentStep(0);
-    fadeAnim.setValue(0);
+    // Remove fadeAnim.setValue(0) - let useEffect handle the animation
   };
 
 
@@ -596,6 +600,14 @@ export default function OnboardingScreen() {
 
   // Show quiz steps
   const currentStepData = onboardingSteps[currentStep];
+  console.log('Quiz rendering - showIntro:', showIntro, 'currentStep:', currentStep, 'onboardingSteps.length:', onboardingSteps.length);
+  console.log('currentStepData:', currentStepData ? 'exists' : 'undefined', currentStepData?.title || 'no title');
+  
+  // Safety check - if currentStepData is undefined, reset to step 0
+  if (!currentStepData && !showIntro) {
+    console.log('currentStepData is undefined, resetting to step 0');
+    setCurrentStep(0);
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -677,11 +689,18 @@ export default function OnboardingScreen() {
           keyboardShouldPersistTaps="handled"
         >
         <Animated.View style={[styles.stepContainer, { opacity: fadeAnim }]}>
-          <Text style={styles.stepTitle}>{currentStepData.title}</Text>
-          <Text style={styles.stepSubtitle}>{currentStepData.subtitle}</Text>
+          {currentStepData ? (
+            <>
+              <Text style={styles.stepTitle}>{currentStepData.title}</Text>
+              <Text style={styles.stepSubtitle}>{currentStepData.subtitle}</Text>
+            </>
+          ) : (
+            <Text style={styles.stepTitle}>Loading quiz...</Text>
+          )}
           
-          <View style={styles.optionsContainer}>
-            {currentStepData.type === 'toggle' ? (
+          {currentStepData ? (
+            <View style={styles.optionsContainer}>
+              {currentStepData.type === 'toggle' ? (
               // Toggle component for toggle type questions
               <View style={styles.toggleContainer}>
                 <Text style={styles.toggleLabel}>No</Text>
@@ -869,7 +888,12 @@ export default function OnboardingScreen() {
                 );
               })
             )}
-          </View>
+            </View>
+          ) : (
+            <View style={styles.optionsContainer}>
+              <Text style={styles.stepSubtitle}>Loading options...</Text>
+            </View>
+          )}
         </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
