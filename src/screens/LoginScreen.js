@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Alert,
     KeyboardAvoidingView,
@@ -13,6 +13,7 @@ import {
     View,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
+import useAnalytics from '../hooks/useAnalytics';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -23,7 +24,13 @@ export default function LoginScreen() {
   
   const { signIn, signUp } = useAuth();
   const router = useRouter();
+  const analytics = useAnalytics();
 
+  // Track screen view
+  useEffect(() => {
+    analytics.trackScreen('login', 'LoginScreen');
+    analytics.trackJourney('login_screen_viewed', { is_signup: isSignUp });
+  }, [isSignUp]);
 
   const handleSubmit = async () => {
     if (!email || !password) {
@@ -39,16 +46,34 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       if (isSignUp) {
+        analytics.trackSignUp('email', true);
+        analytics.trackFunnelStep('signup_funnel', 'signup_attempt', 1, 3);
         await signUp(email, password, displayName);
+        analytics.trackFunnelConversion('signup_funnel', 'signup_success', { 
+          email_domain: email.split('@')[1] 
+        });
         Alert.alert('Success', 'Account created successfully!', [
           { text: 'OK', onPress: () => router.replace('/') }
         ]);
       } else {
+        analytics.trackSignIn('email', true);
+        analytics.trackFunnelStep('login_funnel', 'login_attempt', 1, 2);
         await signIn(email, password);
+        analytics.trackFunnelConversion('login_funnel', 'login_success', { 
+          email_domain: email.split('@')[1] 
+        });
         // Close the login screen and let the app's routing logic handle the redirect
         router.replace('/');
       }
     } catch (error) {
+      if (isSignUp) {
+        analytics.trackSignUp('email', false, error);
+        analytics.trackFunnelStep('signup_funnel', 'signup_failed', 2, 3);
+      } else {
+        analytics.trackSignIn('email', false, error);
+        analytics.trackFunnelStep('login_funnel', 'login_failed', 2, 2);
+      }
+      analytics.trackError(error, 'authentication', 'error');
       Alert.alert('Error', error.message);
     } finally {
       setLoading(false);

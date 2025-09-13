@@ -402,3 +402,4 @@ const generateRecommendations = (analysis, answers) => {
 
   return Array.from(recommendations).slice(0, 8); // Limit to 8 recommendations
 };
+

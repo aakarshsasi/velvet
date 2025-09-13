@@ -17,12 +17,14 @@ import {
     View
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
+import useAnalytics from '../hooks/useAnalytics';
 
 const { width, height } = Dimensions.get('window');
 
 export default function SignupScreen() {
   const router = useRouter();
   const { signUp, markOnboardingCompleted } = useAuth();
+  const analytics = useAnalytics();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,6 +42,18 @@ export default function SignupScreen() {
     startAnimations();
     loadOnboardingData();
     checkAuthStatus();
+    
+    // Track signup screen view
+    analytics.trackScreen('signup', 'SignupScreen');
+    analytics.trackSignupAttempt('email');
+  }, []);
+
+  // Track when user leaves signup screen (abandon tracking)
+  useEffect(() => {
+    return () => {
+      // This runs when component unmounts (user leaves screen)
+      analytics.trackSignupAbandon('signup_form', 'screen_exit');
+    };
   }, []);
 
   const checkAuthStatus = async () => {

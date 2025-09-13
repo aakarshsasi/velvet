@@ -9,6 +9,7 @@ import {
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '../config/firebase';
+import AnalyticsService from '../services/AnalyticsService';
 
 const AuthContext = createContext({
   user: null,
@@ -93,8 +94,26 @@ export const AuthProvider = ({ children }) => {
         setHasCompletedOnboarding(true);
       }
       
+      // Link anonymous user data to authenticated user
+      await AnalyticsService.linkAnonymousUser(user.uid);
+      
+      // Track successful signup
+      AnalyticsService.trackSignUp('email', true);
+      AnalyticsService.setUserId(user.uid);
+      AnalyticsService.setUserProperties({
+        user_id: user.uid,
+        email_domain: email.split('@')[1] || 'unknown',
+        account_created: new Date().toISOString(),
+        has_profile: !!userProfile
+      });
+
+      // Sync analytics data to Firestore
+      AnalyticsService.syncAnalyticsToFirestore();
+      
       return user;
     } catch (error) {
+      AnalyticsService.trackSignUp('email', false, error);
+      AnalyticsService.trackError(error, 'signup', 'error');
       throw error;
     }
   };
@@ -118,8 +137,17 @@ export const AuthProvider = ({ children }) => {
         setHasCompletedOnboarding(true);
       }
       
+      // Track successful sign in
+      AnalyticsService.trackSignIn('email', true);
+      AnalyticsService.setUserId(user.uid);
+
+      // Sync analytics data to Firestore
+      AnalyticsService.syncAnalyticsToFirestore();
+      
       return user;
     } catch (error) {
+      AnalyticsService.trackSignIn('email', false, error);
+      AnalyticsService.trackError(error, 'signin', 'error');
       throw error;
     }
   };
@@ -127,6 +155,9 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await signOut(auth);
+      
+      // Track logout
+      AnalyticsService.trackSignOut();
       
       // Clear local state
       setUser(null);
@@ -138,6 +169,7 @@ export const AuthProvider = ({ children }) => {
       await AsyncStorage.removeItem('userProfile');
       await AsyncStorage.removeItem('onboardingAnswers');
     } catch (error) {
+      AnalyticsService.trackError(error, 'logout', 'error');
       throw error;
     }
   };
@@ -151,7 +183,16 @@ export const AuthProvider = ({ children }) => {
         premiumUpgradedAt: new Date()
       });
       setIsPremium(true);
+      
+      // Track premium upgrade success
+      AnalyticsService.trackPremiumUpgradeSuccess('auth_context', 'in_app', 9.99, 'USD');
+      AnalyticsService.setUserProperties({
+        is_premium: true,
+        premium_upgraded_at: new Date().toISOString()
+      });
     } catch (error) {
+      AnalyticsService.trackPremiumUpgradeFailure('auth_context', 'in_app', error);
+      AnalyticsService.trackError(error, 'premium_upgrade', 'error');
       throw error;
     }
   };

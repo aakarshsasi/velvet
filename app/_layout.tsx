@@ -2,17 +2,42 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { AuthProvider } from '../src/contexts/AuthContext';
+import AnalyticsService from '../src/services/AnalyticsService';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+
+  // Initialize analytics and error tracking
+  useEffect(() => {
+    // Track app launch with anonymous user tracking
+    AnalyticsService.trackAppLaunch();
+
+    // Set up global error handler
+    const originalConsoleError = console.error;
+    console.error = (...args) => {
+      // Track JavaScript errors
+      const errorMessage = args.join(' ');
+      AnalyticsService.trackError(
+        { message: errorMessage, stack: new Error().stack },
+        'javascript_error',
+        'error'
+      );
+      originalConsoleError.apply(console, args);
+    };
+
+    return () => {
+      console.error = originalConsoleError;
+    };
+  }, [colorScheme]);
 
   if (!loaded) {
     // Show a proper splash screen instead of null
