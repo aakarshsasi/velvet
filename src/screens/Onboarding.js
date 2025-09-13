@@ -19,12 +19,14 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useAuth } from '../contexts/AuthContext';
+import useAnalytics from '../hooks/useAnalytics';
 
 const { width } = Dimensions.get('window');
 
 export default function OnboardingScreen() {
   const router = useRouter();
   const { user, hasCompletedOnboarding, loading } = useAuth();
+  const analytics = useAnalytics();
 
   const [currentStep, setCurrentStep] = useState(0); // 0 = intro, 1+ = quiz steps
   const [progress, setProgress] = useState(0);
@@ -43,6 +45,26 @@ export default function OnboardingScreen() {
       router.replace('/home');
     }
   }, [user, hasCompletedOnboarding, loading, router]);
+
+  // Track screen view
+  useEffect(() => {
+    analytics.trackScreen('onboarding', 'OnboardingScreen');
+    analytics.trackJourney('onboarding_screen_viewed', { 
+      current_step: currentStep,
+      show_intro: showIntro,
+      user_authenticated: !!user
+    });
+  }, []);
+
+  // Track when user leaves onboarding (abandon tracking)
+  useEffect(() => {
+    return () => {
+      // This runs when component unmounts (user leaves screen)
+      if (currentStep > 0 && currentStep < 5) {
+        analytics.trackOnboardingAbandon(currentStep, 'screen_exit');
+      }
+    };
+  }, [currentStep]);
 
   const onboardingSteps = [
     {
@@ -234,8 +256,8 @@ export default function OnboardingScreen() {
   }, [currentStep, showIntro, answers, onboardingSteps.length]);
 
   const handleStartQuiz = () => {
-    console.log('Begin the Adventure button pressed');
-    console.log('handleStartQuiz called - setting showIntro to false');
+    analytics.trackOnboardingStep(0, 'quiz_started', {});
+    analytics.trackFunnelStep('onboarding_funnel', 'quiz_started', 2, 5);
     setShowIntro(false);
     setCurrentStep(0);
     // Remove fadeAnim.setValue(0) - let useEffect handle the animation
@@ -244,6 +266,13 @@ export default function OnboardingScreen() {
 
 
   const handleAnswer = (stepId, value, isMultiple = false) => {
+    // Track answer selection
+    analytics.trackOnboardingStep(currentStep + 1, stepId, { 
+      answer: value, 
+      is_multiple: isMultiple,
+      step_type: onboardingSteps[currentStep]?.type || 'unknown'
+    });
+
     if (isMultiple) {
       setAnswers(prev => ({
         ...prev,
@@ -266,15 +295,18 @@ export default function OnboardingScreen() {
 
   const nextStep = () => {
     if (currentStep < onboardingSteps.length - 1) {
+      analytics.trackFunnelStep('onboarding_funnel', 'step_completed', currentStep + 2, onboardingSteps.length + 1);
       fadeAnim.setValue(0);
       setCurrentStep(currentStep + 1);
         } else {
+      analytics.trackFunnelStep('onboarding_funnel', 'quiz_completed', onboardingSteps.length + 1, onboardingSteps.length + 1);
       generateIntimacyProfile();
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
+      analytics.trackOnboardingStep(currentStep, 'step_back', { from_step: currentStep + 1, to_step: currentStep });
       fadeAnim.setValue(0);
       setCurrentStep(currentStep - 1);
     }
@@ -295,6 +327,7 @@ export default function OnboardingScreen() {
   };
 
   const generateIntimacyProfile = async () => {
+    const startTime = Date.now();
     try {
       // Generate profile based on answers
       const profile = {
@@ -319,10 +352,20 @@ export default function OnboardingScreen() {
       console.log('Generated Profile:', profile);
       console.log('Profile saved to AsyncStorage. User needs to sign up to save to Firebase.');
       
+      // Track onboarding completion
+      const completionTime = Math.round((Date.now() - startTime) / 1000);
+      analytics.trackOnboardingCompletion(onboardingSteps.length, completionTime, answers);
+      analytics.trackFunnelConversion('onboarding_funnel', 'profile_generated', { 
+        persona: profile.persona?.name || 'Unknown',
+        relationship_status: profile.relationshipStatus,
+        intimacy_frequency: profile.intimacyFrequency
+      });
+      
       // Navigate to analysis screen
       router.replace('/analysis');
     } catch (error) {
       console.error('Error saving profile:', error);
+      analytics.trackError(error, 'onboarding_profile_generation', 'error');
       // Still navigate to profile result even if saving fails
       router.replace('/profile-result');
     }

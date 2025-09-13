@@ -15,10 +15,12 @@ import {
 import { Path, Svg } from 'react-native-svg';
 import SideMenu from '../components/SideMenu';
 import { useAuth } from '../contexts/AuthContext';
+import useAnalytics from '../hooks/useAnalytics';
 
 export default function HomeScreen() {
   const router = useRouter();
   const { user, isPremium, upgradeToPremium, logout } = useAuth();
+  const analytics = useAnalytics();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [userProfile, setUserProfile] = useState(null);
   const [revealedCards, setRevealedCards] = useState(new Set());
@@ -31,6 +33,12 @@ export default function HomeScreen() {
   useEffect(() => {
     loadUserProfile();
     startAnimations();
+    // Track screen view
+    analytics.trackScreen('home', 'HomeScreen');
+    analytics.trackJourney('home_screen_viewed', { 
+      is_premium: isPremium,
+      selected_category: selectedCategory 
+    });
   }, []);
 
   const startAnimations = () => {
@@ -97,8 +105,21 @@ export default function HomeScreen() {
       const newSet = new Set(prev);
       if (newSet.has(cardId)) {
         newSet.delete(cardId);
+        analytics.trackContentInteraction('featured_card', cardId, 'hide', {
+          card_id: cardId
+        });
       } else {
         newSet.add(cardId);
+        // Find the card to get its category
+        const card = featuredCards.find(c => c.id === cardId);
+        analytics.trackCardReveal(cardId, card?.category || 'unknown', 'home_featured');
+        analytics.trackContentInteraction('featured_card', cardId, 'reveal', {
+          card_id: cardId,
+          card_category: card?.category || 'unknown',
+          card_intensity: card?.intensity || 'unknown'
+        });
+        // Track content preview for anonymous users
+        analytics.trackContentPreview('featured_card', cardId);
       }
       return newSet;
     });
@@ -381,7 +402,14 @@ export default function HomeScreen() {
     <TouchableOpacity
       key={category.id}
       style={styles.categoryCard}
-      onPress={() => router.push({ pathname: '/deck', params: { category: category.id } })}
+      onPress={() => {
+        analytics.trackCategoryView(category.id, category.name);
+        analytics.trackContentInteraction('category', category.id, 'view', {
+          category_name: category.name,
+          category_color: category.color
+        });
+        router.push({ pathname: '/deck', params: { category: category.id } });
+      }}
     >
       <LinearGradient
         colors={[category.color, category.color + 'DD', category.color + '99']}
@@ -645,7 +673,12 @@ export default function HomeScreen() {
                 {!isPremium && (
                   <TouchableOpacity 
                     style={styles.upgradeButton}
-                    onPress={() => router.push('/payment')}
+                    onPress={() => {
+                      analytics.trackPremiumUpgradeAttempt('home_screen', 'button_click');
+                      analytics.trackFunnelStep('premium_conversion_funnel', 'upgrade_clicked', 1, 3);
+                      analytics.trackFeatureInterest('premium_upgrade', 'button_click');
+                      router.push('/payment');
+                    }}
                   >
                     <Text style={styles.upgradeButtonText}>Upgrade to Premium</Text>
                   </TouchableOpacity>

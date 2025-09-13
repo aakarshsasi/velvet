@@ -2,22 +2,24 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import {
-  Animated,
-  Dimensions,
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Animated,
+    Dimensions,
+    SafeAreaView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { Path, Svg } from 'react-native-svg';
 import { useAuth } from '../contexts/AuthContext';
+import useAnalytics from '../hooks/useAnalytics';
 
 const { width, height } = Dimensions.get('window');
 
 export default function WelcomeScreen() {
   const { user, loading, hasCompletedOnboarding } = useAuth();
+  const analytics = useAnalytics();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const glowAnim = useRef(new Animated.Value(0)).current;
@@ -26,6 +28,10 @@ export default function WelcomeScreen() {
 
   useEffect(() => {
     startAnimations();
+    // Track screen view for anonymous users
+    analytics.trackWelcomeScreenView();
+    analytics.trackScreen('welcome', 'WelcomeScreen');
+    analytics.trackJourney('welcome_screen_viewed', { user_authenticated: !!user });
   }, []);
 
   // Welcome screen should only show for non-authenticated users
@@ -96,10 +102,15 @@ export default function WelcomeScreen() {
   };
 
   const handleGetStarted = () => {
+    analytics.trackJourney('get_started_clicked', { source: 'welcome_screen' });
+    analytics.trackFunnelStep('onboarding_funnel', 'get_started', 1, 5);
+    analytics.trackOnboardingStart();
     router.push('/onboarding');
   };
 
   const handleSignIn = () => {
+    analytics.trackJourney('sign_in_clicked', { source: 'welcome_screen' });
+    analytics.trackSignupAttempt('email');
     router.push('/login');
   };
 

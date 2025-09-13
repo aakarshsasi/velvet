@@ -12,11 +12,13 @@ import {
     Text,
     View,
 } from 'react-native';
+import useAnalytics from '../hooks/useAnalytics';
 
 const { width, height } = Dimensions.get('window');
 
 export default function AnalysisScreen() {
   const router = useRouter();
+  const analytics = useAnalytics();
   const [progress, setProgress] = useState(0);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
@@ -38,6 +40,10 @@ export default function AnalysisScreen() {
   useEffect(() => {
     loadUserProfile();
     startAnalysisAnimation();
+    // Track screen view
+    analytics.trackScreen('analysis', 'AnalysisScreen');
+    analytics.trackProfileAnalysisStart();
+    analytics.trackFunnelStep('onboarding_funnel', 'analysis_started', 3, 5);
   }, []);
 
   // Prevent any back navigation from analysis screen
@@ -112,6 +118,9 @@ export default function AnalysisScreen() {
           setTimeout(animateProgress, step.delay);
         } else {
           setTimeout(() => {
+            // Track analysis completion
+            analytics.trackProfileAnalysisComplete(userProfile, 15); // Assuming 15 seconds analysis time
+            analytics.trackFunnelStep('onboarding_funnel', 'analysis_completed', 4, 5);
             router.replace('/profile-result');
           }, 2000);
         }

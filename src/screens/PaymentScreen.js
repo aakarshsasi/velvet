@@ -14,12 +14,14 @@ import {
     View,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
+import useAnalytics from '../hooks/useAnalytics';
 
 const { width, height } = Dimensions.get('window');
 
 export default function PaymentScreen() {
   const router = useRouter();
   const { upgradeToPremium } = useAuth();
+  const analytics = useAnalytics();
   const [selectedPlan, setSelectedPlan] = useState('monthly');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('upi');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -32,6 +34,12 @@ export default function PaymentScreen() {
 
   useEffect(() => {
     startAnimations();
+    // Track screen view
+    analytics.trackScreen('payment', 'PaymentScreen');
+    analytics.trackJourney('payment_screen_viewed', { 
+      selected_plan: selectedPlan,
+      selected_payment_method: selectedPaymentMethod
+    });
   }, []);
 
   const startAnimations = () => {
@@ -133,6 +141,7 @@ export default function PaymentScreen() {
     }
 
     setIsProcessing(true);
+    analytics.trackFunnelStep('premium_conversion_funnel', 'payment_attempted', 2, 3);
 
     try {
       // Simulate payment processing
@@ -140,6 +149,15 @@ export default function PaymentScreen() {
       
       // Call the actual upgrade function
       await upgradeToPremium();
+      
+      // Track successful payment
+      const planValue = selectedPlan === 'monthly' ? 9.99 : 99.99;
+      analytics.trackPremiumUpgradeSuccess('payment_screen', selectedPaymentMethod, planValue, 'USD');
+      analytics.trackFunnelConversion('premium_conversion_funnel', 'payment_success', {
+        plan: selectedPlan,
+        payment_method: selectedPaymentMethod,
+        value: planValue
+      });
       
       Alert.alert(
         'Payment Successful! 🎉',
@@ -152,6 +170,9 @@ export default function PaymentScreen() {
         ]
       );
     } catch (error) {
+      analytics.trackPremiumUpgradeFailure('payment_screen', selectedPaymentMethod, error);
+      analytics.trackFunnelStep('premium_conversion_funnel', 'payment_failed', 3, 3);
+      analytics.trackError(error, 'payment_processing', 'error');
       console.error('Payment error:', error);
       Alert.alert(
         'Payment Failed',
@@ -171,7 +192,14 @@ export default function PaymentScreen() {
         selectedPlan === plan.id && styles.planCardSelected,
         plan.popular && styles.popularPlan,
       ]}
-      onPress={() => setSelectedPlan(plan.id)}
+      onPress={() => {
+        analytics.trackContentInteraction('payment_plan', plan.id, 'select', {
+          plan_name: plan.name,
+          plan_price: plan.price,
+          plan_popular: plan.popular || false
+        });
+        setSelectedPlan(plan.id);
+      }}
     >
       {plan.popular && (
         <View style={styles.popularBadge}>
@@ -226,7 +254,13 @@ export default function PaymentScreen() {
         styles.paymentMethodCard,
         selectedPaymentMethod === method.id && styles.paymentMethodSelected,
       ]}
-      onPress={() => setSelectedPaymentMethod(method.id)}
+      onPress={() => {
+        analytics.trackContentInteraction('payment_method', method.id, 'select', {
+          method_name: method.name,
+          method_type: method.type
+        });
+        setSelectedPaymentMethod(method.id);
+      }}
     >
       <LinearGradient
         colors={

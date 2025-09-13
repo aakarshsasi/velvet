@@ -3,19 +3,20 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Animated,
-  BackHandler,
-  Dimensions,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Animated,
+    BackHandler,
+    Dimensions,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useAuth } from '../contexts/AuthContext';
+import useAnalytics from '../hooks/useAnalytics';
 import { generateComprehensiveAnalysis } from '../utils/ProfileAnalysis';
 
 // SVG content as string constant with app theme colors
@@ -36,6 +37,7 @@ const { width, height } = Dimensions.get('window');
 export default function ProfileResultScreen() {
   const router = useRouter();
   const { user } = useAuth();
+  const analytics = useAnalytics();
   const [userProfile, setUserProfile] = useState(null);
   const [analysis, setAnalysis] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,6 +54,9 @@ export default function ProfileResultScreen() {
   useEffect(() => {
     loadUserProfile();
     startEnhancedAnimations();
+    // Track screen view
+    analytics.trackScreen('profile_result', 'ProfileResultScreen');
+    analytics.trackFunnelStep('onboarding_funnel', 'profile_result_viewed', 5, 5);
   }, []);
 
   // Prevent any back navigation from profile result
@@ -157,11 +162,20 @@ export default function ProfileResultScreen() {
   };
 
   const handleContinueToSignup = () => {
+    // Track signup continuation
+    analytics.trackJourney('signup_continue_clicked', { source: 'profile_result' });
+    analytics.trackFunnelStep('signup_funnel', 'profile_result_continue', 2, 3);
     // Navigate to signup-details using replace to clear the stack
     router.replace('/signup-details');
   };
 
   const handleStartExploring = () => {
+    // Track exploration start
+    analytics.trackJourney('start_exploring_clicked', { source: 'profile_result' });
+    analytics.trackFunnelConversion('onboarding_funnel', 'exploration_started', {
+      persona: analysis?.persona?.name || 'Unknown',
+      user_authenticated: !!user
+    });
     // Navigate to home page for logged-in users
     router.replace('/home');
   };
