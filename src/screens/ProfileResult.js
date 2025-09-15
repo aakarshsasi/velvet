@@ -6,6 +6,7 @@ import {
     Animated,
     BackHandler,
     Dimensions,
+    Image,
     SafeAreaView,
     ScrollView,
     StatusBar,
@@ -194,6 +195,11 @@ export default function ProfileResultScreen() {
         />
 
         <View style={styles.loadingContainer}>
+          <Image 
+            source={require('../../assets/images/logo.png')} 
+            style={styles.loadingLogo}
+            resizeMode="contain"
+          />
           <Text style={styles.loadingTitle}>Analyzing Your Profile</Text>
           <Text style={styles.loadingSubtitle}>Discovering your unique desires...</Text>
           
@@ -808,6 +814,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+  },
+  loadingLogo: {
+    width: 300,
+    height: 150,
+    marginBottom: 30,
   },
   loadingTitle: {
     fontSize: 36,

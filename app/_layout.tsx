@@ -3,7 +3,7 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, Image, View } from 'react-native';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -43,9 +43,12 @@ export default function RootLayout() {
   if (!loaded) {
     // Show a proper splash screen instead of null
     return (
-      <View style={{ flex: 1, backgroundColor: '#000000', justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: '#DC143C', fontSize: 48, fontWeight: 'bold', marginBottom: 20 }}>Velvet</Text>
-        <Text style={{ color: '#CD5C5C', fontSize: 18, marginBottom: 30 }}>Your intimate adventure starts here</Text>
+      <View style={{ flex: 1, backgroundColor: '#4A0E0E', justifyContent: 'center', alignItems: 'center' }}>
+        <Image 
+          source={require('../assets/images/logo.png')} 
+          style={{ width: 300, height: 150, marginBottom: 30 }}
+          resizeMode="contain"
+        />
         <ActivityIndicator size="large" color="#DC143C" />
       </View>
     );

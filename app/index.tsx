@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Image, StyleSheet, View } from "react-native";
 import { useAuth } from '../src/contexts/AuthContext';
 
 export default function InitialRoute() {
@@ -26,7 +26,11 @@ export default function InitialRoute() {
     if (loading) {
         return (
             <View style={styles.container}>
-                <Text style={styles.title}>Velvet</Text>
+                <Image 
+                    source={require('../assets/images/logo.png')} 
+                    style={styles.logo}
+                    resizeMode="contain"
+                />
                 <ActivityIndicator size="large" color="#DC143C" style={styles.loader} />
             </View>
         );
@@ -39,21 +43,14 @@ export default function InitialRoute() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000000',
+        backgroundColor: '#4A0E0E',
         justifyContent: 'center',
         alignItems: 'center',
     },
-    title: {
-        color: '#DC143C',
-        fontSize: 48,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    subtitle: {
-        color: '#CD5C5C',
-        fontSize: 18,
+    logo: {
+        width: 300,
+        height: 150,
         marginBottom: 30,
-        textAlign: 'center',
     },
     loader: {
         marginTop: 20,
