@@ -20,6 +20,9 @@ on:
 
 env:
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+  EXPO_APPLE_ID: ${{ secrets.EXPO_APPLE_ID }}
+  EXPO_APPLE_PASSWORD: ${{ secrets.EXPO_APPLE_PASSWORD }}
+  EXPO_TEAM_ID: ${{ secrets.EXPO_TEAM_ID }}
   NODE_OPTIONS: --openssl-legacy-provider --max_old_space_size=4096
 
 jobs:
@@ -89,14 +92,18 @@ jobs:
           # Install CocoaPods
           sudo gem install cocoapods
 
-      - name: Build iOS app locally (No EAS Minutes)
-        run: eas build --platform ios --profile production --local --non-interactive --output=./velvet-ios-build.ipa
+      - name: Build iOS Production
+        run: |
+          export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
+          eas build --platform ios --profile production --local --non-interactive --output=./app-ios-prod.ipa
+        env:
+          NODE_ENV: production
 
-      - name: Submit to TestFlight
+      - name: Submit to App Store (TestFlight)
         run: |
           echo "Attempting TestFlight submission..."
           echo "Note: EAS Submit may be experiencing outages - check https://status.expo.dev/"
-          eas submit --platform ios --profile production --path ./velvet-ios-build.ipa --non-interactive || {
+          eas submit -p ios --path ./app-ios-prod.ipa --non-interactive || {
             echo "TestFlight submission failed - this may be due to EAS Submit outage"
             echo "Build completed successfully - you can manually submit later"
             echo "Check EAS Submit status: https://status.expo.dev/"
@@ -110,8 +117,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./velvet-ios-build.ipa
-          asset_name: velvet-ios-build.ipa
+          asset_path: ./app-ios-prod.ipa
+          asset_name: app-ios-prod.ipa
           asset_content_type: application/octet-stream
 
   # Android Build (Local - No EAS Minutes Used) - PAUSED
