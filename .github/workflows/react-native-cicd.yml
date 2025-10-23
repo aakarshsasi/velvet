@@ -124,6 +124,8 @@ jobs:
           echo "EAS CLI version: $(eas --version)"
           echo "Current directory: $(pwd)"
           echo "Files in current directory: $(ls -la)"
+          echo "Checking app.json build number:"
+          cat app.json | grep -A 5 -B 5 "buildNumber"
           
           # Test bundling first
           echo "Testing bundling..."
@@ -140,6 +142,9 @@ jobs:
             exit 1
           }
           echo "iOS build completed successfully!"
+          echo "Verifying build number in generated IPA:"
+          echo "IPA file size: $(ls -lh ./app-ios-prod.ipa)"
+          echo "Checking if IPA contains correct build number..."
         env:
           NODE_ENV: production
 
