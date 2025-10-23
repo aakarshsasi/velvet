@@ -80,9 +80,9 @@ jobs:
         run: npm install -g eas-cli
 
       - name: Login to EAS
-        run: eas login --non-interactive
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          echo "EXPO_TOKEN is set: $([[ -n "$EXPO_TOKEN" ]] && echo "yes" || echo "no")"
+          eas whoami
 
       - name: Setup iOS build environment
         run: |
@@ -131,9 +131,9 @@ jobs:
         run: npm install -g eas-cli
 
       - name: Login to EAS
-        run: eas login --non-interactive
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          echo "EXPO_TOKEN is set: $([[ -n "$EXPO_TOKEN" ]] && echo "yes" || echo "no")"
+          eas whoami
 
       - name: Setup Android build environment
         run: |
