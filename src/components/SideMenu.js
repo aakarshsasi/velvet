@@ -1,7 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { updateProfile } from 'firebase/auth';
-import { doc, updateDoc } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     Alert,
@@ -15,7 +13,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { db } from '../config/firebase';
+import { db, doc, updateDoc, updateProfile } from '../config/firebase';
 import { useAuth } from '../contexts/AuthContext';
 
 const { width, height } = Dimensions.get('window');

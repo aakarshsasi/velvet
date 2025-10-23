@@ -1,14 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
+    auth,
     createUserWithEmailAndPassword,
+    db,
+    doc,
+    getDoc,
     onAuthStateChanged,
+    setDoc,
     signInWithEmailAndPassword,
     signOut,
+    updateDoc,
     updateProfile
-} from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth, db } from '../config/firebase';
+} from '../config/firebase';
 import AnalyticsService from '../services/AnalyticsService';
 
 const AuthContext = createContext({

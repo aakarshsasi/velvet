@@ -17,13 +17,6 @@ class IAPService {
         return true;
       }
 
-      // Check if IAP is available on this device
-      const isAvailable = await InAppPurchases.isAvailableAsync();
-      if (!isAvailable) {
-        console.warn('In-app purchases are not available on this device');
-        return false;
-      }
-
       // Connect to the store
       await InAppPurchases.connectAsync();
       
