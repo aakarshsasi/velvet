@@ -62,6 +62,11 @@ jobs:
       - name: Build iOS app
         run: eas build --platform ios --profile production --non-interactive
 
+      - name: Submit to TestFlight
+        run: eas submit --platform ios --profile testflight --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
       - name: Download iOS build
         run: |
           BUILD_ID=$(eas build:list --platform ios --limit 1 --json | jq -r '.[0].id')
@@ -147,11 +152,11 @@ jobs:
             - Built on: ${{ github.event.head_commit.timestamp }}
             
             ### Downloads
-            - **iOS Build**: For TestFlight distribution
+            - **iOS Build**: Automatically submitted to TestFlight
             - **Android Build**: For testing and distribution
             
             ### Installation
-            - iOS: Install via TestFlight
+            - iOS: Available in TestFlight automatically
             - Android: Download APK and install
           draft: false
           prerelease: false
