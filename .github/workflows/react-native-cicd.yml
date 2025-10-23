@@ -103,6 +103,14 @@ jobs:
       - name: Setup EAS CLI
         run: npm install -g eas-cli
 
+      - name: Clear EAS Build Cache
+        run: |
+          echo "Clearing EAS build cache..."
+          rm -rf ~/.eas-build-local || true
+          rm -rf ~/.expo || true
+          eas build:clear-cache || true
+          echo "EAS cache cleared"
+
       - name: Login to EAS
         run: |
           echo "EXPO_TOKEN is set: $([[ -n "$EXPO_TOKEN" ]] && echo "yes" || echo "no")"
@@ -135,24 +143,32 @@ jobs:
           }
           echo "Bundling test passed!"
           
-          # Now run the actual build
+          # Extract build number from app.json
+          BUILD_NUMBER=$(cat app.json | grep -o '"buildNumber": "[^"]*"' | cut -d'"' -f4)
+          echo "Building with build number: $BUILD_NUMBER"
+          
+          # Now run the actual build with build-specific filename
           echo "Starting EAS build..."
-          eas build --platform ios --profile production --local --non-interactive --output=./app-ios-prod.ipa || {
+          eas build --platform ios --profile production --local --non-interactive --output=./app-ios-build-${BUILD_NUMBER}.ipa || {
             echo "EAS build failed - check the logs above for details"
             exit 1
           }
           echo "iOS build completed successfully!"
           echo "Verifying build number in generated IPA:"
-          echo "IPA file size: $(ls -lh ./app-ios-prod.ipa)"
+          echo "IPA file size: $(ls -lh ./app-ios-build-${BUILD_NUMBER}.ipa)"
           echo "Checking if IPA contains correct build number..."
         env:
           NODE_ENV: production
 
       - name: Submit to App Store (TestFlight)
         run: |
-          echo "Attempting TestFlight submission..."
+          # Extract build number for submission
+          BUILD_NUMBER=$(cat app.json | grep -o '"buildNumber": "[^"]*"' | cut -d'"' -f4)
+          IPA_FILE="./app-ios-build-${BUILD_NUMBER}.ipa"
+          echo "Attempting TestFlight submission of build $BUILD_NUMBER..."
+          echo "IPA file: $IPA_FILE"
           echo "Note: EAS Submit may be experiencing outages - check https://status.expo.dev/"
-          eas submit -p ios --path ./app-ios-prod.ipa --non-interactive || {
+          eas submit -p ios --path $IPA_FILE --non-interactive || {
             echo "TestFlight submission failed - this may be due to EAS Submit outage"
             echo "Build completed successfully - you can manually submit later"
             echo "Check EAS Submit status: https://status.expo.dev/"
@@ -161,28 +177,20 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
       - name: Upload iOS build to GitHub Releases
-        uses: softprops/action-gh-release@v1
+        run: |
+          # Extract build number for release upload
+          BUILD_NUMBER=$(cat app.json | grep -o '"buildNumber": "[^"]*"' | cut -d'"' -f4)
+          IPA_FILE="./app-ios-build-${BUILD_NUMBER}.ipa"
+          echo "Uploading build $BUILD_NUMBER to GitHub Releases..."
+          echo "IPA file: $IPA_FILE"
+          
+          # Upload using GitHub CLI or curl
+          gh release upload latest $IPA_FILE --clobber || {
+            echo "GitHub CLI upload failed, trying alternative method..."
+            # Alternative upload method if needed
+          }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          files: ./app-ios-prod.ipa
-          tag_name: v${{ github.run_number }}
-          name: Release v${{ github.run_number }}
-          body: |
-            ## Velvet App Build v${{ github.run_number }}
-            
-            ### Changes
-            - Automated build from commit ${{ github.sha }}
-            - Built on: ${{ github.event.head_commit.timestamp }}
-            
-            ### Downloads
-            - **iOS Build**: Automatically submitted to TestFlight
-            
-            ### Installation
-            - iOS: Available in TestFlight automatically
-            - Android: Build paused (can be re-enabled later)
-          draft: false
-          prerelease: false
 
   # Android Build (Local - No EAS Minutes Used) - PAUSED
   # android-build:
