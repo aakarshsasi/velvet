@@ -184,11 +184,24 @@ jobs:
           echo "Uploading build $BUILD_NUMBER to GitHub Releases..."
           echo "IPA file: $IPA_FILE"
           
-          # Upload using GitHub CLI or curl
-          gh release upload latest $IPA_FILE --clobber || {
-            echo "GitHub CLI upload failed, trying alternative method..."
-            # Alternative upload method if needed
-          }
+          # Create release and upload file
+          gh release create v${{ github.run_number }} \
+            --title "Release v${{ github.run_number }}" \
+            --notes "## Velvet App Build v${{ github.run_number }}
+            
+            ### Changes
+            - Automated build from commit ${{ github.sha }}
+            - Built on: ${{ github.event.head_commit.timestamp }}
+            - Build Number: $BUILD_NUMBER
+            
+            ### Downloads
+            - **iOS Build**: app-ios-build-${BUILD_NUMBER}.ipa (Build Number: $BUILD_NUMBER)
+            
+            ### Installation
+            - iOS: Available in TestFlight automatically
+            - Android: Build paused (can be re-enabled later)" \
+            $IPA_FILE \
+            --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
