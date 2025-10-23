@@ -1,4 +1,4 @@
-import ProfileResultScreen from "@/src/screens/ProfileResult";
+import ProfileResultScreen from "../src/screens/ProfileResult";
 import { Stack } from "expo-router";
 
 export default function Page() {

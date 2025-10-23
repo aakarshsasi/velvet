@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { ActivityIndicator, Image, View } from 'react-native';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { useColorScheme } from '../hooks/useColorScheme';
 import { AuthProvider } from '../src/contexts/AuthContext';
 import { IAPProvider } from '../src/contexts/IAPContext';
 import AnalyticsService from '../src/services/AnalyticsService';
