@@ -2213,53 +2213,55 @@ export default function DeckScreen() {
                   </View>
                 </Animated.View>
 
-                {/* Action Buttons */}
-                <Animated.View 
-                  style={[
-                    styles.actionButtonsContainer,
-                    {
-                      transform: [{ scale: buttonPressAnim }],
-                    },
-                  ]}
-                >
-                  <TouchableOpacity
-                    style={styles.actionButton}
-                    onPress={() => animateButtonPress(nextCard)}
+                {/* Action Buttons - Only show if not the last card */}
+                {currentCardIndex < currentDeck.length - 1 && (
+                  <Animated.View 
+                    style={[
+                      styles.actionButtonsContainer,
+                      {
+                        transform: [{ scale: buttonPressAnim }],
+                      },
+                    ]}
                   >
-                    <LinearGradient
-                      colors={['#DC143C', '#B22222', '#8B0000']}
-                      style={styles.actionButtonGradient}
+                    <TouchableOpacity
+                      style={styles.actionButton}
+                      onPress={() => animateButtonPress(nextCard)}
                     >
-                      {/* Glossy Overlay */}
                       <LinearGradient
-                        colors={['rgba(255, 255, 255, 0.3)', 'transparent', 'rgba(255, 255, 255, 0.1)']}
-                        style={styles.glossyOverlay}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 0, y: 1 }}
-                      />
-                      {/* Shimmer Effect */}
-                      <Animated.View
-                        style={[
-                          styles.buttonShimmer,
-                          {
-                            transform: [{ translateX: glowAnim.interpolate({
-                              inputRange: [0.3, 1],
-                              outputRange: [-200, 250],
-                            }) }],
-                          },
-                        ]}
+                        colors={['#DC143C', '#B22222', '#8B0000']}
+                        style={styles.actionButtonGradient}
                       >
+                        {/* Glossy Overlay */}
                         <LinearGradient
-                          colors={['transparent', 'rgba(255, 255, 255, 0.4)', 'transparent']}
-                          style={styles.shimmerGradient}
+                          colors={['rgba(255, 255, 255, 0.3)', 'transparent', 'rgba(255, 255, 255, 0.1)']}
+                          style={styles.glossyOverlay}
                           start={{ x: 0, y: 0 }}
-                          end={{ x: 1, y: 0 }}
+                          end={{ x: 0, y: 1 }}
                         />
-                      </Animated.View>
-                      <Text style={styles.actionButtonText}>Next Prompt</Text>
-                    </LinearGradient>
-                  </TouchableOpacity>
-                </Animated.View>
+                        {/* Shimmer Effect */}
+                        <Animated.View
+                          style={[
+                            styles.buttonShimmer,
+                            {
+                              transform: [{ translateX: glowAnim.interpolate({
+                                inputRange: [0.3, 1],
+                                outputRange: [-200, 250],
+                              }) }],
+                            },
+                          ]}
+                        >
+                          <LinearGradient
+                            colors={['transparent', 'rgba(255, 255, 255, 0.4)', 'transparent']}
+                            style={styles.shimmerGradient}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                          />
+                        </Animated.View>
+                        <Text style={styles.actionButtonText}>Next Prompt</Text>
+                      </LinearGradient>
+                    </TouchableOpacity>
+                  </Animated.View>
+                )}
               </View>
             )}
           </>
