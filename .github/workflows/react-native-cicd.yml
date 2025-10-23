@@ -16,7 +16,6 @@ on:
         description: "Build type to run"
         options:
           - ios
-          - android
           - all
 
 env:
@@ -60,7 +59,7 @@ jobs:
   # iOS Build (Local - No EAS Minutes Used)
   ios-build:
     runs-on: macos-latest
-    needs: quality-checks
+    needs: [quality-checks, create-release]
     if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) || (github.event_name == 'workflow_dispatch' && (github.event.inputs.buildType == 'ios' || github.event.inputs.buildType == 'all'))
     steps:
       - name: Checkout code
@@ -110,73 +109,73 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ./velvet-ios-build.ipa
           asset_name: velvet-ios-build.ipa
           asset_content_type: application/octet-stream
 
-  # Android Build (Local - No EAS Minutes Used)
-  android-build:
-    runs-on: ubuntu-latest
-    needs: quality-checks
-    if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) || (github.event_name == 'workflow_dispatch' && (github.event.inputs.buildType == 'android' || github.event.inputs.buildType == 'all'))
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # Android Build (Local - No EAS Minutes Used) - PAUSED
+  # android-build:
+  #   runs-on: ubuntu-latest
+  #   needs: [quality-checks, create-release]
+  #   if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) || (github.event_name == 'workflow_dispatch' && (github.event.inputs.buildType == 'android' || github.event.inputs.buildType == 'all'))
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: 'npm'
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: "20"
+  #         cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+  #     - name: Install dependencies
+  #       run: npm ci
 
-      - name: Setup EAS CLI
-        run: npm install -g eas-cli
+  #     - name: Setup EAS CLI
+  #       run: npm install -g eas-cli
 
-      - name: Login to EAS
-        run: |
-          echo "EXPO_TOKEN is set: $([[ -n "$EXPO_TOKEN" ]] && echo "yes" || echo "no")"
-          eas whoami
+  #     - name: Login to EAS
+  #       run: |
+  #         echo "EXPO_TOKEN is set: $([[ -n "$EXPO_TOKEN" ]] && echo "yes" || echo "no")"
+  #         eas whoami
 
-      - name: Setup Android build environment
-        run: |
-          # Install Java
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk
-          # Install Android SDK
-          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip commandlinetools-linux-9477386_latest.zip
-          mkdir -p android-sdk/cmdline-tools
-          mv cmdline-tools android-sdk/cmdline-tools/latest
-          export ANDROID_HOME=$PWD/android-sdk
-          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
-          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
+  #     - name: Setup Android build environment
+  #       run: |
+  #         # Install Java
+  #         sudo apt-get update
+  #         sudo apt-get install -y openjdk-11-jdk
+  #         # Install Android SDK
+  #         wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+  #         unzip commandlinetools-linux-9477386_latest.zip
+  #         mkdir -p android-sdk/cmdline-tools
+  #         mv cmdline-tools android-sdk/cmdline-tools/latest
+  #         export ANDROID_HOME=$PWD/android-sdk
+  #         export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+  #         echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+  #         echo "PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
 
-      - name: Build Android app locally (No EAS Minutes)
-        run: |
-          export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          eas build --platform android --profile production --local --non-interactive --output=./velvet-android-build.aab
-        env:
-          NODE_ENV: production
+  #     - name: Build Android app locally (No EAS Minutes)
+  #       run: |
+  #         export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
+  #         eas build --platform android --profile production --local --non-interactive --output=./velvet-android-build.aab
+  #       env:
+  #         NODE_ENV: production
 
-      - name: Upload Android build to GitHub Releases
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./velvet-android-build.aab
-          asset_name: velvet-android-build.aab
-          asset_content_type: application/vnd.android.package-archive
+  #     - name: Upload Android build to GitHub Releases
+  #       uses: actions/upload-release-asset@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         upload_url: ${{ needs.create-release.outputs.upload_url }}
+  #         asset_path: ./velvet-android-build.aab
+  #         asset_name: velvet-android-build.aab
+  #         asset_content_type: application/vnd.android.package-archive
 
   # Create Release
   create-release:
     runs-on: ubuntu-latest
-    needs: [ios-build, android-build]
+    needs: quality-checks
     if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) || github.event_name == 'workflow_dispatch'
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
@@ -198,10 +197,9 @@ jobs:
             
             ### Downloads
             - **iOS Build**: Automatically submitted to TestFlight
-            - **Android Build**: AAB for Play Store submission
             
             ### Installation
             - iOS: Available in TestFlight automatically
-            - Android: Upload AAB to Play Store
+            - Android: Build paused (can be re-enabled later)
           draft: false
           prerelease: false
