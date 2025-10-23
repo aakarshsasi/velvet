@@ -16,7 +16,8 @@ on:
         description: "Build type to run"
         options:
           - ios
-          - android
+          - android-apk
+          - android-aab
           - all
 
 env:
@@ -112,7 +113,7 @@ jobs:
   android-build:
     runs-on: ubuntu-latest
     needs: quality-checks
-    if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) || (github.event_name == 'workflow_dispatch' && (github.event.inputs.buildType == 'android' || github.event.inputs.buildType == 'all'))
+    if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) || (github.event_name == 'workflow_dispatch' && (github.event.inputs.buildType == 'android-apk' || github.event.inputs.buildType == 'android-aab' || github.event.inputs.buildType == 'all'))
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -150,9 +151,23 @@ jobs:
           echo "PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
 
       - name: Build Android APK locally (No EAS Minutes)
-        run: eas build --platform android --profile production --local --non-interactive --output=./velvet-android-build.apk
+        if: github.event.inputs.buildType == 'all' || github.event.inputs.buildType == 'android-apk' || github.event_name == 'push'
+        run: |
+          export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
+          eas build --platform android --profile production-apk --local --non-interactive --output=./velvet-android-build.apk
+        env:
+          NODE_ENV: production
 
-      - name: Upload Android build to GitHub Releases
+      - name: Build Android AAB locally (No EAS Minutes)
+        if: github.event.inputs.buildType == 'all' || github.event.inputs.buildType == 'android-aab' || github.event_name == 'push'
+        run: |
+          export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
+          eas build --platform android --profile production --local --non-interactive --output=./velvet-android-build.aab
+        env:
+          NODE_ENV: production
+
+      - name: Upload Android APK to GitHub Releases
+        if: github.event.inputs.buildType == 'all' || github.event.inputs.buildType == 'android-apk' || github.event_name == 'push'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -160,6 +175,17 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./velvet-android-build.apk
           asset_name: velvet-android-build.apk
+          asset_content_type: application/vnd.android.package-archive
+
+      - name: Upload Android AAB to GitHub Releases
+        if: github.event.inputs.buildType == 'all' || github.event.inputs.buildType == 'android-aab' || github.event_name == 'push'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./velvet-android-build.aab
+          asset_name: velvet-android-build.aab
           asset_content_type: application/vnd.android.package-archive
 
   # Create Release
@@ -187,10 +213,12 @@ jobs:
             
             ### Downloads
             - **iOS Build**: Automatically submitted to TestFlight
-            - **Android Build**: For testing and distribution
+            - **Android APK**: For testing and distribution
+            - **Android AAB**: For Play Store submission
             
             ### Installation
             - iOS: Available in TestFlight automatically
-            - Android: Download APK and install
+            - Android APK: Download and install directly
+            - Android AAB: Upload to Play Store
           draft: false
           prerelease: false

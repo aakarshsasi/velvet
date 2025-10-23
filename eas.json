@@ -18,6 +18,13 @@
       "android": {
         "credentialsSource": "local"
       }
+    },
+    "production-apk": {
+      "distribution": "internal",
+      "android": {
+        "credentialsSource": "local",
+        "buildType": "apk"
+      }
     }
   },
   "submit": {
