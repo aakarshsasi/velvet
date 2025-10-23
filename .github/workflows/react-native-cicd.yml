@@ -96,7 +96,7 @@ jobs:
         run: |
           echo "Attempting TestFlight submission..."
           echo "Note: EAS Submit may be experiencing outages - check https://status.expo.dev/"
-          eas submit --platform ios --profile production --latest --non-interactive || {
+          eas submit --platform ios --profile production --path ./velvet-ios-build.ipa --non-interactive || {
             echo "TestFlight submission failed - this may be due to EAS Submit outage"
             echo "Build completed successfully - you can manually submit later"
             echo "Check EAS Submit status: https://status.expo.dev/"
