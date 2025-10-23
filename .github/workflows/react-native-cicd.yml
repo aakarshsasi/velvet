@@ -54,6 +54,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify project structure
+        run: |
+          echo "Checking project structure..."
+          echo "App directory contents:"
+          ls -la app/
+          echo "Src directory contents:"
+          ls -la src/
+          echo "Package.json main entry:"
+          cat package.json | grep '"main"'
+
       - name: TypeScript check
         run: npx tsc --noEmit
 
@@ -62,6 +72,15 @@ jobs:
 
       - name: Prettier format check
         run: npx prettier --check "**/*.{js,jsx,ts,tsx,json,md}" || echo "Prettier formatting issues found - continuing build"
+
+      - name: Test bundling (Quality Check)
+        run: |
+          echo "Testing bundling in quality checks..."
+          npx expo export --platform ios --output-dir ./quality-test-bundle || {
+            echo "Bundling failed in quality checks - this indicates a code issue"
+            exit 1
+          }
+          echo "Bundling test passed in quality checks!"
 
   # iOS Build (Local - No EAS Minutes Used)
   ios-build:
@@ -99,7 +118,28 @@ jobs:
       - name: Build iOS Production
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          eas build --platform ios --profile production --local --non-interactive --output=./app-ios-prod.ipa
+          echo "Starting iOS build..."
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          echo "EAS CLI version: $(eas --version)"
+          echo "Current directory: $(pwd)"
+          echo "Files in current directory: $(ls -la)"
+          
+          # Test bundling first
+          echo "Testing bundling..."
+          npx expo export --platform ios --output-dir ./test-bundle || {
+            echo "Bundling test failed - this will help identify the issue"
+            exit 1
+          }
+          echo "Bundling test passed!"
+          
+          # Now run the actual build
+          echo "Starting EAS build..."
+          eas build --platform ios --profile production --local --non-interactive --output=./app-ios-prod.ipa || {
+            echo "EAS build failed - check the logs above for details"
+            exit 1
+          }
+          echo "iOS build completed successfully!"
         env:
           NODE_ENV: production
 
