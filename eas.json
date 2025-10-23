@@ -19,24 +19,10 @@
       "android": {
         "credentialsSource": "remote"
       }
-    },
-    "production-apk": {
-      "distribution": "internal",
-      "android": {
-        "credentialsSource": "remote",
-        "buildType": "apk"
-      }
     }
   },
   "submit": {
     "production": {
-      "ios": {
-        "appleId": "aakarshsasi@gmail.com",
-        "ascAppId": "6754314589",
-        "appleTeamId": "D4N62PJYTF"
-      }
-    },
-    "testflight": {
       "ios": {
         "appleId": "aakarshsasi@gmail.com",
         "ascAppId": "6754314589",

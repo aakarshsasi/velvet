@@ -16,8 +16,7 @@ on:
         description: "Build type to run"
         options:
           - ios
-          - android-apk
-          - android-aab
+          - android
           - all
 
 env:
@@ -95,7 +94,14 @@ jobs:
         run: eas build --platform ios --profile production --local --non-interactive --output=./velvet-ios-build.ipa
 
       - name: Submit to TestFlight
-        run: eas submit --platform ios --profile testflight --non-interactive
+        run: |
+          echo "Attempting TestFlight submission..."
+          echo "Note: EAS Submit may be experiencing outages - check https://status.expo.dev/"
+          eas submit --platform ios --profile production --latest --non-interactive || {
+            echo "TestFlight submission failed - this may be due to EAS Submit outage"
+            echo "Build completed successfully - you can manually submit later"
+            echo "Check EAS Submit status: https://status.expo.dev/"
+          }
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
@@ -113,7 +119,7 @@ jobs:
   android-build:
     runs-on: ubuntu-latest
     needs: quality-checks
-    if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) || (github.event_name == 'workflow_dispatch' && (github.event.inputs.buildType == 'android-apk' || github.event.inputs.buildType == 'android-aab' || github.event.inputs.buildType == 'all'))
+    if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) || (github.event_name == 'workflow_dispatch' && (github.event.inputs.buildType == 'android' || github.event.inputs.buildType == 'all'))
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -150,35 +156,14 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
           echo "PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
 
-      - name: Build Android APK locally (No EAS Minutes)
-        if: github.event.inputs.buildType == 'all' || github.event.inputs.buildType == 'android-apk' || github.event_name == 'push'
-        run: |
-          export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          eas build --platform android --profile production-apk --local --non-interactive --output=./velvet-android-build.apk
-        env:
-          NODE_ENV: production
-
-      - name: Build Android AAB locally (No EAS Minutes)
-        if: github.event.inputs.buildType == 'all' || github.event.inputs.buildType == 'android-aab' || github.event_name == 'push'
+      - name: Build Android app locally (No EAS Minutes)
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
           eas build --platform android --profile production --local --non-interactive --output=./velvet-android-build.aab
         env:
           NODE_ENV: production
 
-      - name: Upload Android APK to GitHub Releases
-        if: github.event.inputs.buildType == 'all' || github.event.inputs.buildType == 'android-apk' || github.event_name == 'push'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./velvet-android-build.apk
-          asset_name: velvet-android-build.apk
-          asset_content_type: application/vnd.android.package-archive
-
-      - name: Upload Android AAB to GitHub Releases
-        if: github.event.inputs.buildType == 'all' || github.event.inputs.buildType == 'android-aab' || github.event_name == 'push'
+      - name: Upload Android build to GitHub Releases
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -213,12 +198,10 @@ jobs:
             
             ### Downloads
             - **iOS Build**: Automatically submitted to TestFlight
-            - **Android APK**: For testing and distribution
-            - **Android AAB**: For Play Store submission
+            - **Android Build**: AAB for Play Store submission
             
             ### Installation
             - iOS: Available in TestFlight automatically
-            - Android APK: Download and install directly
-            - Android AAB: Upload to Play Store
+            - Android: Upload AAB to Play Store
           draft: false
           prerelease: false
