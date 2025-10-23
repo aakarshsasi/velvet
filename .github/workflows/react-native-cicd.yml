@@ -59,6 +59,38 @@ jobs:
       - name: Prettier format check
         run: npx prettier --check "**/*.{js,jsx,ts,tsx,json,md}" || echo "Prettier formatting issues found - continuing build"
 
+  # Create Release
+  create-release:
+    runs-on: ubuntu-latest
+    needs: quality-checks
+    if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) || github.event_name == 'workflow_dispatch'
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            ## Velvet App Build v${{ github.run_number }}
+            
+            ### Changes
+            - Automated build from commit ${{ github.sha }}
+            - Built on: ${{ github.event.head_commit.timestamp }}
+            
+            ### Downloads
+            - **iOS Build**: Automatically submitted to TestFlight
+            
+            ### Installation
+            - iOS: Available in TestFlight automatically
+            - Android: Build paused (can be re-enabled later)
+          draft: false
+          prerelease: false
+
   # iOS Build (Local - No EAS Minutes Used)
   ios-build:
     runs-on: macos-latest
@@ -178,35 +210,3 @@ jobs:
   #         asset_path: ./velvet-android-build.aab
   #         asset_name: velvet-android-build.aab
   #         asset_content_type: application/vnd.android.package-archive
-
-  # Create Release
-  create-release:
-    runs-on: ubuntu-latest
-    needs: quality-checks
-    if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) || github.event_name == 'workflow_dispatch'
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-    steps:
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }}
-          body: |
-            ## Velvet App Build v${{ github.run_number }}
-            
-            ### Changes
-            - Automated build from commit ${{ github.sha }}
-            - Built on: ${{ github.event.head_commit.timestamp }}
-            
-            ### Downloads
-            - **iOS Build**: Automatically submitted to TestFlight
-            
-            ### Installation
-            - iOS: Available in TestFlight automatically
-            - Android: Build paused (can be re-enabled later)
-          draft: false
-          prerelease: false
