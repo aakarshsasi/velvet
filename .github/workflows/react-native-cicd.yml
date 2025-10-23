@@ -33,7 +33,7 @@ jobs:
       - name: Prettier format check
         run: npx prettier --check "**/*.{js,jsx,ts,tsx,json,md}"
 
-  # iOS Build
+  # iOS Build (Local - No EAS Minutes Used)
   ios-build:
     runs-on: macos-latest
     needs: quality-checks
@@ -59,19 +59,20 @@ jobs:
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Build iOS app
-        run: eas build --platform ios --profile production --non-interactive
+      - name: Setup iOS build environment
+        run: |
+          # Install Xcode command line tools
+          xcode-select --install || true
+          # Install CocoaPods
+          sudo gem install cocoapods
+
+      - name: Build iOS app locally (No EAS Minutes)
+        run: eas build --platform ios --profile production --local --non-interactive
 
       - name: Submit to TestFlight
         run: eas submit --platform ios --profile testflight --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-
-      - name: Download iOS build
-        run: |
-          BUILD_ID=$(eas build:list --platform ios --limit 1 --json | jq -r '.[0].id')
-          eas build:download $BUILD_ID --platform ios
-          mv *.ipa velvet-ios-build.ipa
 
       - name: Upload iOS build to GitHub Releases
         uses: actions/upload-release-asset@v1
@@ -79,11 +80,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./velvet-ios-build.ipa
+          asset_path: ./builds/velvet-ios-build.ipa
           asset_name: velvet-ios-build.ipa
           asset_content_type: application/octet-stream
 
-  # Android Build
+  # Android Build (Local - No EAS Minutes Used)
   android-build:
     runs-on: ubuntu-latest
     needs: quality-checks
@@ -109,14 +110,23 @@ jobs:
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Build Android APK
-        run: eas build --platform android --profile production --non-interactive
-
-      - name: Download Android build
+      - name: Setup Android build environment
         run: |
-          BUILD_ID=$(eas build:list --platform android --limit 1 --json | jq -r '.[0].id')
-          eas build:download $BUILD_ID --platform android
-          mv *.apk velvet-android-build.apk
+          # Install Java
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jdk
+          # Install Android SDK
+          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip commandlinetools-linux-9477386_latest.zip
+          mkdir -p android-sdk/cmdline-tools
+          mv cmdline-tools android-sdk/cmdline-tools/latest
+          export ANDROID_HOME=$PWD/android-sdk
+          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
+
+      - name: Build Android APK locally (No EAS Minutes)
+        run: eas build --platform android --profile production --local --non-interactive
 
       - name: Upload Android build to GitHub Releases
         uses: actions/upload-release-asset@v1
@@ -124,7 +134,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./velvet-android-build.apk
+          asset_path: ./builds/velvet-android-build.apk
           asset_name: velvet-android-build.apk
           asset_content_type: application/vnd.android.package-archive
 
