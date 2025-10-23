@@ -1,0 +1,157 @@
+name: React Native CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  # Quality Checks
+  quality-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript check
+        run: npx tsc --noEmit
+
+      - name: ESLint check
+        run: npx expo lint
+
+      - name: Prettier format check
+        run: npx prettier --check "**/*.{js,jsx,ts,tsx,json,md}"
+
+  # iOS Build
+  ios-build:
+    runs-on: macos-latest
+    needs: quality-checks
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup EAS CLI
+        run: npm install -g @expo/eas-cli
+
+      - name: Login to EAS
+        run: eas login --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build iOS app
+        run: eas build --platform ios --profile production --non-interactive
+
+      - name: Download iOS build
+        run: |
+          BUILD_ID=$(eas build:list --platform ios --limit 1 --json | jq -r '.[0].id')
+          eas build:download $BUILD_ID --platform ios
+          mv *.ipa velvet-ios-build.ipa
+
+      - name: Upload iOS build to GitHub Releases
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./velvet-ios-build.ipa
+          asset_name: velvet-ios-build.ipa
+          asset_content_type: application/octet-stream
+
+  # Android Build
+  android-build:
+    runs-on: ubuntu-latest
+    needs: quality-checks
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup EAS CLI
+        run: npm install -g @expo/eas-cli
+
+      - name: Login to EAS
+        run: eas login --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android APK
+        run: eas build --platform android --profile production --non-interactive
+
+      - name: Download Android build
+        run: |
+          BUILD_ID=$(eas build:list --platform android --limit 1 --json | jq -r '.[0].id')
+          eas build:download $BUILD_ID --platform android
+          mv *.apk velvet-android-build.apk
+
+      - name: Upload Android build to GitHub Releases
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./velvet-android-build.apk
+          asset_name: velvet-android-build.apk
+          asset_content_type: application/vnd.android.package-archive
+
+  # Create Release
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [ios-build, android-build]
+    if: github.ref == 'refs/heads/main'
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            ## Velvet App Build v${{ github.run_number }}
+            
+            ### Changes
+            - Automated build from commit ${{ github.sha }}
+            - Built on: ${{ github.event.head_commit.timestamp }}
+            
+            ### Downloads
+            - **iOS Build**: For TestFlight distribution
+            - **Android Build**: For testing and distribution
+            
+            ### Installation
+            - iOS: Install via TestFlight
+            - Android: Download APK and install
+          draft: false
+          prerelease: false
