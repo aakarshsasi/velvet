@@ -18,6 +18,10 @@ on:
           - ios
           - all
 
+permissions:
+  contents: write
+  actions: read
+
 env:
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
   EXPO_APPLE_ID: ${{ secrets.EXPO_APPLE_ID }}
@@ -59,42 +63,10 @@ jobs:
       - name: Prettier format check
         run: npx prettier --check "**/*.{js,jsx,ts,tsx,json,md}" || echo "Prettier formatting issues found - continuing build"
 
-  # Create Release
-  create-release:
-    runs-on: ubuntu-latest
-    needs: quality-checks
-    if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) || github.event_name == 'workflow_dispatch'
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-    steps:
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }}
-          body: |
-            ## Velvet App Build v${{ github.run_number }}
-            
-            ### Changes
-            - Automated build from commit ${{ github.sha }}
-            - Built on: ${{ github.event.head_commit.timestamp }}
-            
-            ### Downloads
-            - **iOS Build**: Automatically submitted to TestFlight
-            
-            ### Installation
-            - iOS: Available in TestFlight automatically
-            - Android: Build paused (can be re-enabled later)
-          draft: false
-          prerelease: false
-
   # iOS Build (Local - No EAS Minutes Used)
   ios-build:
     runs-on: macos-latest
-    needs: [quality-checks, create-release]
+    needs: quality-checks
     if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) || (github.event_name == 'workflow_dispatch' && (github.event.inputs.buildType == 'ios' || github.event.inputs.buildType == 'all'))
     steps:
       - name: Checkout code
@@ -144,14 +116,28 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
       - name: Upload iOS build to GitHub Releases
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./app-ios-prod.ipa
-          asset_name: app-ios-prod.ipa
-          asset_content_type: application/octet-stream
+          files: ./app-ios-prod.ipa
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          body: |
+            ## Velvet App Build v${{ github.run_number }}
+            
+            ### Changes
+            - Automated build from commit ${{ github.sha }}
+            - Built on: ${{ github.event.head_commit.timestamp }}
+            
+            ### Downloads
+            - **iOS Build**: Automatically submitted to TestFlight
+            
+            ### Installation
+            - iOS: Available in TestFlight automatically
+            - Android: Build paused (can be re-enabled later)
+          draft: false
+          prerelease: false
 
   # Android Build (Local - No EAS Minutes Used) - PAUSED
   # android-build:
