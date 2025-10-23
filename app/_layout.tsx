@@ -85,9 +85,12 @@ export default function RootLayout() {
         />
          <Stack.Screen name="payment" />
          <Stack.Screen name="login" />
+         <Stack.Screen name="iap-test" />
           <Stack.Screen name="home" />
           <Stack.Screen name="deck" />
           <Stack.Screen name="dice-game" />
+          <Stack.Screen name="spin-wheel" />
+          <Stack.Screen name="fantasy-builder" />
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="+not-found" />
         </Stack>

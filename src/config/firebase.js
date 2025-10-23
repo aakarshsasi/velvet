@@ -25,9 +25,9 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// Initialize Analytics (only in production and if measurementId is provided)
+// Initialize Analytics (only if measurementId is provided)
 let analytics = null;
-if (firebaseConfig.measurementId && !__DEV__) {
+if (firebaseConfig.measurementId) {
   try {
     analytics = getAnalytics(app);
   } catch (error) {
