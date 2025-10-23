@@ -608,7 +608,7 @@ export default function OnboardingScreen() {
             {/* Hero Section */}
             <View style={styles.heroSection}>
               <Text style={styles.heroTitle}>
-                Let's Turn Up the Heat! 🔥
+                Let&apos;s Turn Up the Heat! 🔥
               </Text>
               <Text style={styles.heroSubtitle}>
                 Your journey to unforgettable passion starts here, tell us what truly excites you.

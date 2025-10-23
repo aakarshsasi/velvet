@@ -317,7 +317,7 @@ export default function PaymentScreen() {
       ]}
     >
       <Text style={styles.sectionTitle}>Why Choose Velvet Premium?</Text>
-      <Text style={styles.sectionSubtitle}>Join thousands of couples who've transformed their intimacy</Text>
+      <Text style={styles.sectionSubtitle}>Join thousands of couples who&apos;ve transformed their intimacy</Text>
       
       <View style={styles.benefitsGrid}>
         {premiumBenefits.map((benefit, index) => (
@@ -343,7 +343,7 @@ export default function PaymentScreen() {
       ]}
     >
       <Text style={styles.sectionTitle}>The Truth About Intimacy</Text>
-      <Text style={styles.sectionSubtitle}>Don't let your relationship become another statistic</Text>
+      <Text style={styles.sectionSubtitle}>Don&apos;t let your relationship become another statistic</Text>
       
       <View style={styles.intimacyStatsContainer}>
         {intimacyHooks.stats.map((stat, index) => (
@@ -590,7 +590,7 @@ export default function PaymentScreen() {
         >
           <Text style={styles.heroTitle}>Unlock Your Intimate Journey</Text>
           <Text style={styles.heroSubtitle}>
-            Join thousands of couples who've discovered deeper connection through Velvet Premium
+            Join thousands of couples who&apos;ve discovered deeper connection through Velvet Premium
           </Text>
         </Animated.View>
 

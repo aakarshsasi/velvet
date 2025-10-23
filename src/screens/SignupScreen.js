@@ -195,7 +195,7 @@ export default function SignupScreen() {
               Your Intimacy Profile ✨
             </Animated.Text>
             <Text style={styles.subtitle}>
-              We've analyzed your responses and created a personalized profile just for you. Ready to unlock your intimate potential?
+              We&apos;ve analyzed your responses and created a personalized profile just for you. Ready to unlock your intimate potential?
             </Text>
           </View>
 
@@ -239,13 +239,13 @@ export default function SignupScreen() {
                 <View style={styles.insightItem}>
                   <Text style={styles.insightIcon}>🔥</Text>
                   <Text style={styles.insightText}>
-                    You're a {onboardingData.profile.persona} who loves {onboardingData.profile.turnOns?.join(', ')} experiences
+                    You&apos;re a {onboardingData.profile.persona} who loves {onboardingData.profile.turnOns?.join(', ')} experiences
                   </Text>
                 </View>
                 <View style={styles.insightItem}>
                   <Text style={styles.insightIcon}>💫</Text>
                   <Text style={styles.insightText}>
-                    Your biggest challenge is {onboardingData.profile.biggestChallenge?.replace('-', ' ')} - we'll help you overcome it
+                    Your biggest challenge is {onboardingData.profile.biggestChallenge?.replace('-', ' ')} - we&apos;ll help you overcome it
                   </Text>
                 </View>
                 <View style={styles.insightItem}>

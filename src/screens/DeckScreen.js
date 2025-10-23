@@ -2276,7 +2276,7 @@ export default function DeckScreen() {
             <Text style={styles.completionIcon}>🎉</Text>
             <Text style={styles.completionTitle}>Challenge Complete!</Text>
             <Text style={styles.completionSubtitle}>
-              You've completed all {totalCards} challenges in {categoryInfo.name}
+              You&apos;ve completed all {totalCards} challenges in {categoryInfo.name}
             </Text>
             <TouchableOpacity
               style={styles.completionButton}

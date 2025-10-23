@@ -734,7 +734,7 @@ export default function HomeScreen() {
           ]}
         >
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Today's Picks 💋</Text>
+            <Text style={styles.sectionTitle}>Today&apos;s Picks 💋</Text>
             <Text style={styles.sectionSubtitle}>Curated for your pleasure</Text>
           </View>
           {featuredCards.map(renderFeaturedCard)}
