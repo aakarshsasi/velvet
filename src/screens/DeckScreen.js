@@ -2433,15 +2433,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingHorizontal: 25,
-    paddingTop: 50, // Reduced from 60 to save space
-    paddingBottom: 30, // Reduced from 40 to save space
+    paddingTop: 40, // Further reduced to save space
+    paddingBottom: 20, // Further reduced to save space
     position: 'relative',
   },
   categoryImageContainer: {
-    width: width * 0.6, // Further reduced from 0.7 to save space
-    height: width * 0.6, // Further reduced from 0.7 to save space
+    width: width * 0.5, // Further reduced from 0.6 to save more space
+    height: width * 0.5, // Further reduced from 0.6 to save more space
     borderRadius: 25,
-    marginBottom: 20, // Further reduced from 30 to save space
+    marginBottom: 15, // Further reduced from 20 to save more space
     overflow: 'hidden',
     shadowColor: '#DC143C',
     shadowOffset: { width: 0, height: 15 },
@@ -2690,9 +2690,9 @@ const styles = StyleSheet.create({
 
   dareTextContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    padding: 40,
+    padding: 30,
     borderRadius: 24,
-    marginTop: 8, // Added small margin for balanced spacing
+    marginTop: 8,
     marginBottom: 0,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.15)',
@@ -2704,24 +2704,25 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
     width: width * 0.9,
-    minHeight: height * 0.35, // Further reduced to prevent excessive height
+    maxHeight: height * 0.4, // Changed from minHeight to maxHeight to prevent overflow
     justifyContent: 'center',
     alignItems: 'center',
   },
   dareText: {
-    fontSize: 26,
+    fontSize: 22, // Reduced from 26 to prevent overflow
     fontWeight: '600',
     color: '#FFFFFF',
     textAlign: 'center',
-    lineHeight: 36,
+    lineHeight: 30, // Reduced from 36 to match smaller font
     textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 6,
-    letterSpacing: 0.6,
+    letterSpacing: 0.4, // Reduced from 0.6
     position: 'relative',
     zIndex: 2,
-    paddingHorizontal: 25,
+    paddingHorizontal: 20, // Reduced from 25
     maxWidth: width * 0.8,
+    flexWrap: 'wrap', // Allow text to wrap properly
   },
   dareTextGradient: {
     position: 'absolute',
@@ -2745,25 +2746,25 @@ const styles = StyleSheet.create({
 
   cardHeader: {
     alignItems: 'center',
-    marginBottom: 15, // Added small margin for visual separation
-    marginTop: 0, // Removed top margin for visible shift
+    marginBottom: 10, // Reduced from 15 for more compact layout
+    marginTop: 0,
     paddingHorizontal: 20,
   },
   cardIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 60, // Reduced from 80 to save space
+    height: 60, // Reduced from 80 to save space
+    borderRadius: 30, // Adjusted to match new size
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8, // Reduced from 10
   },
   cardIcon: {
-    fontSize: 40,
+    fontSize: 30, // Reduced from 40 to match smaller container
     color: '#FFFFFF',
   },
   cardTitle: {
-    fontSize: 28,
+    fontSize: 24, // Reduced from 28 to save space
     fontWeight: '800',
     color: '#FFFFFF',
     textAlign: 'center',
