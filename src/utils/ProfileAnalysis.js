@@ -20,7 +20,48 @@ export const ENHANCEMENT_RANGES = {
 
 // Comprehensive persona matrix
 export const PERSONA_MATRIX = {
-  // Primary personas based on desire level and relationship status
+  // Single people personas
+  'self-explorer': {
+    name: 'Self Explorer',
+    description: 'You\'re on a journey of self-discovery, learning about your desires and building confidence',
+    traits: ['curious', 'self-aware', 'learning', 'gentle', 'introspective'],
+    triggers: ['single', 'self-discovery', 'mild', 'knowledge'],
+    recommendations: ['Self-Discovery Guide', 'Confidence Building', 'Mindful Exploration'],
+    color: '#6366F1'
+  },
+  'confident-solo': {
+    name: 'Confident Solo',
+    description: 'You\'re comfortable with yourself and focused on building confidence for future relationships',
+    traits: ['confident', 'self-assured', 'prepared', 'independent', 'strong'],
+    triggers: ['single', 'confidence-building', 'high-comfort', 'future-ready'],
+    recommendations: ['Confidence Mastery', 'Future Relationship Prep', 'Self-Love Practices'],
+    color: '#10B981'
+  },
+  'future-ready': {
+    name: 'Future Ready',
+    description: 'You\'re preparing yourself for future relationships with knowledge and self-awareness',
+    traits: ['prepared', 'knowledgeable', 'strategic', 'mature', 'ready'],
+    triggers: ['single', 'future-relationship', 'spicy', 'communication'],
+    recommendations: ['Relationship Readiness', 'Communication Skills', 'Intimacy Knowledge'],
+    color: '#EC4899'
+  },
+  'adventurous-single': {
+    name: 'Adventurous Single',
+    description: 'You\'re exploring bold experiences and pushing boundaries in your solo journey',
+    traits: ['adventurous', 'bold', 'experimental', 'fearless', 'creative'],
+    triggers: ['single', 'exploration', 'extreme', 'variety'],
+    recommendations: ['Adventure Exploration', 'Bold Experiences', 'Creative Techniques'],
+    color: '#EF4444'
+  },
+  'mindful-solo': {
+    name: 'Mindful Solo',
+    description: 'You focus on quality self-pleasure and mindful exploration of your desires',
+    traits: ['mindful', 'quality-focused', 'present', 'satisfied', 'balanced'],
+    triggers: ['single', 'self-pleasure', 'moderate-comfort', 'quality'],
+    recommendations: ['Mindful Practices', 'Quality Techniques', 'Self-Pleasure Mastery'],
+    color: '#8B5CF6'
+  },
+  // Couple personas
   'gentle-explorer': {
     name: 'Gentle Explorer',
     description: 'You prefer intimate, tender experiences that build emotional connection',
@@ -73,6 +114,38 @@ export const PERSONA_MATRIX = {
 
 // Challenge-based insights
 export const CHALLENGE_INSIGHTS = {
+  // Single people challenges
+  'self-confidence': {
+    title: 'Confidence Builder',
+    insight: 'You\'re working on building self-confidence, which is the foundation of healthy relationships and self-pleasure.',
+    tips: ['Practice self-affirmations', 'Celebrate small wins', 'Focus on your strengths'],
+    recommendations: ['Confidence Building', 'Self-Love Practices', 'Body Positivity']
+  },
+  'knowledge': {
+    title: 'Knowledge Seeker',
+    insight: 'You\'re eager to learn about your body and desires, showing great self-awareness and growth mindset.',
+    tips: ['Read educational content', 'Explore mindfully', 'Ask questions'],
+    recommendations: ['Educational Content', 'Self-Discovery Guide', 'Body Knowledge']
+  },
+  'exploration': {
+    title: 'Exploration Enthusiast',
+    insight: 'You\'re ready to try new things and expand your horizons, showing courage and openness.',
+    tips: ['Start small', 'Be patient with yourself', 'Trust your instincts'],
+    recommendations: ['Adventure Exploration', 'Variety Techniques', 'Safe Experimentation']
+  },
+  'communication': {
+    title: 'Future Communication Champion',
+    insight: 'You\'re preparing for future relationships by learning to communicate about intimacy.',
+    tips: ['Practice expressing needs', 'Learn active listening', 'Build emotional vocabulary'],
+    recommendations: ['Communication Skills', 'Relationship Readiness', 'Emotional Intelligence']
+  },
+  'routine': {
+    title: 'Routine Breaker',
+    insight: 'You\'re ready to add variety to your solo experiences and break out of patterns.',
+    tips: ['Try new locations', 'Experiment with timing', 'Introduce surprises'],
+    recommendations: ['Variety Techniques', 'Creative Exploration', 'Surprise Elements']
+  },
+  // Couple challenges
   'communication': {
     title: 'Communication Champion',
     insight: 'You recognize that great intimacy starts with great communication. Your openness to discussing needs shows emotional maturity.',
@@ -107,6 +180,32 @@ export const CHALLENGE_INSIGHTS = {
 
 // Frequency-based insights
 export const FREQUENCY_INSIGHTS = {
+  // Single people frequency
+  'single-daily': {
+    title: 'Daily Self-Explorer',
+    insight: 'Your regular self-exploration shows you prioritize self-care and understanding your desires.',
+    tips: ['Maintain variety', 'Focus on quality', 'Listen to your body'],
+    recommendations: ['Variety Techniques', 'Quality Practices', 'Body Awareness']
+  },
+  'single-weekly': {
+    title: 'Weekly Solo Enthusiast',
+    insight: 'You maintain a healthy rhythm of self-exploration that works for your lifestyle.',
+    tips: ['Make it special', 'Plan ahead', 'Stay present'],
+    recommendations: ['Ritual Building', 'Mindful Practices', 'Quality Time']
+  },
+  'single-monthly': {
+    title: 'Monthly Explorer',
+    insight: 'You take time for yourself when needed, showing self-awareness and balance.',
+    tips: ['Quality over quantity', 'Make it meaningful', 'Create anticipation'],
+    recommendations: ['Special Techniques', 'Meaningful Practices', 'Anticipation Building']
+  },
+  'single-rarely': {
+    title: 'Beginning Explorer',
+    insight: 'You\'re just starting your journey of self-discovery, which shows courage and openness.',
+    tips: ['Start gently', 'Be patient', 'Celebrate progress'],
+    recommendations: ['Beginner Guide', 'Gentle Introduction', 'Confidence Building']
+  },
+  // Couple frequency
   'daily': {
     title: 'Daily Intimacy Enthusiast',
     insight: 'Your high frequency shows you prioritize intimacy in your relationship. This creates strong bonds and deep connection.',
@@ -279,17 +378,20 @@ export const generateComprehensiveAnalysis = (answers) => {
   }
 
   // Add challenge insights
-  if (answers.biggestChallenge) {
-    const challengeInsight = CHALLENGE_INSIGHTS[answers.biggestChallenge];
+  const challengeKey = answers.biggestChallenge || answers.singleChallenge;
+  if (challengeKey) {
+    const challengeInsight = CHALLENGE_INSIGHTS[challengeKey];
     if (challengeInsight) {
       analysis.insights.push(challengeInsight);
-      analysis.challenges.push(answers.biggestChallenge);
+      analysis.challenges.push(challengeKey);
     }
   }
 
   // Add frequency insights
-  if (answers.intimacyFrequency) {
-    const frequencyInsight = FREQUENCY_INSIGHTS[answers.intimacyFrequency];
+  if (answers.intimacyFrequency || answers.singleFrequency) {
+    const frequency = answers.intimacyFrequency || answers.singleFrequency;
+    const frequencyKey = answers.relationshipStatus === 'single' ? `single-${frequency}` : frequency;
+    const frequencyInsight = FREQUENCY_INSIGHTS[frequencyKey];
     if (frequencyInsight) {
       analysis.insights.push(frequencyInsight);
     }
@@ -330,11 +432,28 @@ export const generateComprehensiveAnalysis = (answers) => {
 const determinePersona = (answers) => {
   const desire = answers.desire || 'mild';
   const relationship = answers.relationshipStatus || 'dating';
-  const challenge = answers.biggestChallenge || 'communication';
+  const challenge = answers.biggestChallenge || answers.singleChallenge || 'communication';
   const turnOns = answers.turnOns || [];
   const comfortLevel = answers.comfortLevel || 5;
+  const singleGoal = answers.singleGoal;
 
-  // Complex persona determination logic
+  // Single people persona logic
+  if (relationship === 'single') {
+    if (singleGoal === 'self-discovery' && desire === 'mild') {
+      return 'self-explorer';
+    } else if (singleGoal === 'confidence-building' && comfortLevel >= 7) {
+      return 'confident-solo';
+    } else if (singleGoal === 'future-relationship' && desire === 'spicy') {
+      return 'future-ready';
+    } else if (singleGoal === 'exploration' && desire === 'extreme') {
+      return 'adventurous-single';
+    } else if (singleGoal === 'self-pleasure' && comfortLevel >= 5) {
+      return 'mindful-solo';
+    }
+    return 'self-explorer'; // Default for single
+  }
+
+  // Couple persona logic (existing logic)
   if (desire === 'mild' && challenge === 'communication') {
     return 'intimate-communicator';
   } else if (desire === 'spicy' && turnOns.includes('sensory')) {
