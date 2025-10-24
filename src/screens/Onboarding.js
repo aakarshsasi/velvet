@@ -432,6 +432,8 @@ export default function OnboardingScreen() {
 
 
   const handleAnswer = (stepId, value, isMultiple = false) => {
+    console.log('🔵 handleAnswer called:', { stepId, value, isMultiple, currentStep });
+    
     // Track answer selection
     const currentSteps = getCurrentSteps();
     analytics.trackOnboardingStep(currentStep + 1, stepId, { 
@@ -442,29 +444,46 @@ export default function OnboardingScreen() {
 
     // If relationship status is being selected, reset to step 0 of the new flow
     if (stepId === 'relationshipStatus') {
+      console.log('🔄 Relationship status selected, resetting flow');
       setCurrentStep(0);
       setAnswers(prev => ({ ...prev, [stepId]: value }));
+      
+      // Save incremental data after relationship status selection
+      setTimeout(() => {
+        console.log('💾 Saving relationship status data');
+        saveIncrementalQuestionnaireData({ [stepId]: value }, 0);
+      }, 100);
       return;
     }
 
+    let newAnswers;
     if (isMultiple) {
-      setAnswers(prev => ({
-        ...prev,
-        [stepId]: prev[stepId] 
-          ? prev[stepId].includes(value)
-            ? prev[stepId].filter(v => v !== value)
-            : [...prev[stepId], value]
+      newAnswers = {
+        ...answers,
+        [stepId]: answers[stepId] 
+          ? answers[stepId].includes(value)
+            ? answers[stepId].filter(v => v !== value)
+            : [...answers[stepId], value]
           : [value]
-      }));
+      };
     } else if (typeof value === 'boolean') {
       // Handle toggle type questions
-      setAnswers(prev => ({ ...prev, [stepId]: value }));
+      newAnswers = { ...answers, [stepId]: value };
     } else if (typeof value === 'number') {
       // Handle slider type questions
-      setAnswers(prev => ({ ...prev, [stepId]: value }));
+      newAnswers = { ...answers, [stepId]: value };
     } else {
-      setAnswers(prev => ({ ...prev, [stepId]: value }));
+      newAnswers = { ...answers, [stepId]: value };
     }
+    
+    console.log('📝 New answers:', newAnswers);
+    setAnswers(newAnswers);
+    
+    // Save incremental data after each answer
+    setTimeout(() => {
+      console.log('💾 Saving incremental data for step:', currentStep);
+      saveIncrementalQuestionnaireData(newAnswers, currentStep);
+    }, 100);
   };
 
   const nextStep = () => {
@@ -531,6 +550,9 @@ export default function OnboardingScreen() {
       // Save questionnaire data to Firebase immediately for analytics, even if user drops off
       await saveQuestionnaireDataToFirebase(answers, profile);
       
+      // Mark questionnaire as completed
+      await markQuestionnaireCompleted(answers, profile);
+      
       console.log('Generated Profile:', profile);
       console.log('Profile saved to AsyncStorage. User needs to sign up to save to Firebase.');
       
@@ -555,52 +577,106 @@ export default function OnboardingScreen() {
     }
   };
 
-  // Save questionnaire data to Firebase for analytics, even if user drops off
-  const saveQuestionnaireDataToFirebase = async (answers, profile) => {
+  // Save questionnaire data incrementally as questions are answered
+  const saveIncrementalQuestionnaireData = async (answers, currentStep) => {
     try {
-      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+      const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
       const { db } = await import('../config/firebase');
       
-      // Create a unique identifier for anonymous users
-      const anonymousId = `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      // Get or create anonymous ID
+      let anonymousId = await AsyncStorage.getItem('anonymousId');
+      if (!anonymousId) {
+        anonymousId = `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        await AsyncStorage.setItem('anonymousId', anonymousId);
+        console.log('Created new anonymous ID:', anonymousId);
+      }
       
-      await addDoc(collection(db, 'questionnaire_responses'), {
-        anonymousId: anonymousId,
-        answers: answers,
-        profile: profile,
-        completedAt: serverTimestamp(),
-        userType: answers.relationshipStatus === 'single' ? 'single' : 'couple',
-        hasSignedUp: false, // Will be updated if user signs up
-        createdAt: serverTimestamp(),
-        userId: null // Optional - will be updated if user signs up later
+      // Create document reference
+      const docRef = doc(db, 'questionnaire_responses', anonymousId);
+      
+      // Calculate progress
+      const currentSteps = getCurrentSteps();
+      const totalSteps = currentSteps.length;
+      const answeredSteps = Object.keys(answers).length;
+      const progressPercentage = Math.round((answeredSteps / totalSteps) * 100);
+      
+      // Determine user type based on relationship status
+      const userType = answers.relationshipStatus === 'single' ? 'single' : 'couple';
+      
+      console.log('Saving incremental data:', {
+        anonymousId,
+        answeredSteps,
+        totalSteps,
+        progressPercentage,
+        currentStep,
+        userType
       });
       
-      // Store anonymous ID for potential future linking
-      await AsyncStorage.setItem('anonymousId', anonymousId);
+      // Save/update questionnaire data
+      await setDoc(docRef, {
+        anonymousId: anonymousId,
+        answers: answers,
+        currentStep: currentStep,
+        progressPercentage: progressPercentage,
+        answeredSteps: answeredSteps,
+        totalSteps: totalSteps,
+        userType: userType,
+        hasSignedUp: false,
+        userId: null,
+        lastUpdated: serverTimestamp(),
+        createdAt: serverTimestamp()
+      }, { merge: true }); // merge: true allows partial updates
       
-      console.log('Questionnaire data saved to Firebase for analytics');
+      console.log(`✅ Questionnaire data updated: ${answeredSteps}/${totalSteps} questions (${progressPercentage}%)`);
+      
     } catch (error) {
-      console.error('Error saving questionnaire data to Firebase:', error);
+      console.error('❌ Error saving incremental questionnaire data:', error);
       
-      // If it's a permission error, log it but don't block the user flow
+      // If it's a permission error, store locally
       if (error.code === 'permission-denied') {
-        console.warn('Firebase permission denied - questionnaire data not saved. Please update Firestore security rules to allow anonymous writes to questionnaire_responses collection.');
+        console.warn('Firebase permission denied - storing questionnaire data locally');
         
-        // Still store locally for potential future sync
-        const anonymousId = `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        // Store locally for potential future sync
+        const anonymousId = await AsyncStorage.getItem('anonymousId') || `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         await AsyncStorage.setItem('anonymousId', anonymousId);
         await AsyncStorage.setItem('questionnaireDataPending', JSON.stringify({
           anonymousId,
           answers,
-          profile,
-          completedAt: new Date().toISOString(),
+          currentStep,
+          progressPercentage: Math.round((Object.keys(answers).length / getCurrentSteps().length) * 100),
+          answeredSteps: Object.keys(answers).length,
+          totalSteps: getCurrentSteps().length,
           userType: answers.relationshipStatus === 'single' ? 'single' : 'couple',
           hasSignedUp: false,
-          userId: null
+          userId: null,
+          lastUpdated: new Date().toISOString()
         }));
       }
+    }
+  };
+
+  // Mark questionnaire as completed
+  const markQuestionnaireCompleted = async (answers, profile) => {
+    try {
+      const { doc, updateDoc, serverTimestamp } = await import('firebase/firestore');
+      const { db } = await import('../config/firebase');
       
-      // Don't throw error - this shouldn't block the user flow
+      const anonymousId = await AsyncStorage.getItem('anonymousId');
+      if (anonymousId) {
+        const docRef = doc(db, 'questionnaire_responses', anonymousId);
+        
+        await updateDoc(docRef, {
+          profile: profile,
+          completedAt: serverTimestamp(),
+          isCompleted: true,
+          completionPercentage: 100,
+          lastUpdated: serverTimestamp()
+        });
+        
+        console.log('Questionnaire marked as completed');
+      }
+    } catch (error) {
+      console.error('Error marking questionnaire as completed:', error);
     }
   };
 

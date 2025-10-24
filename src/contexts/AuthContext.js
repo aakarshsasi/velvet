@@ -322,10 +322,24 @@ export const AuthProvider = ({ children }) => {
     try {
       console.log('Attempting to link anonymous questionnaire data:', { anonymousId, userId });
       
-      const { collection, query, where, getDocs, updateDoc } = await import('firebase/firestore');
+      const { collection, query, where, getDocs, updateDoc, doc } = await import('firebase/firestore');
       const { db } = await import('../config/firebase');
       
-      // Find the anonymous questionnaire data
+      // Try to find by document ID first (new structure)
+      try {
+        const docRef = doc(db, 'questionnaire_responses', anonymousId);
+        await updateDoc(docRef, {
+          userId: userId, // Link to authenticated user
+          hasSignedUp: true,
+          linkedAt: new Date()
+        });
+        console.log('Questionnaire data linked by document ID');
+        return;
+      } catch (docError) {
+        console.log('Document not found by ID, trying query...');
+      }
+      
+      // Fallback: Find by anonymousId field (old structure)
       const q = query(collection(db, 'questionnaire_responses'), where('anonymousId', '==', anonymousId));
       const querySnapshot = await getDocs(q);
       
