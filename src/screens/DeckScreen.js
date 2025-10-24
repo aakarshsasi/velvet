@@ -28,6 +28,7 @@ export default function DeckScreen() {
   const [showIntro, setShowIntro] = useState(true);
   const [showCardReveal, setShowCardReveal] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [shuffledDeck, setShuffledDeck] = useState(null);
   
   const glowAnim = useRef(new Animated.Value(0.3)).current;
   const cardRevealAnim = useRef(new Animated.Value(0)).current;
@@ -64,6 +65,27 @@ export default function DeckScreen() {
     startAnimations();
   }, []);
 
+  // Shuffle deck function
+  const shuffleDeck = (deck) => {
+    const shuffled = [...deck];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Initialize shuffled deck when component mounts or category changes
+  React.useEffect(() => {
+    const originalDeck = cardDecks[category] || [];
+    if (originalDeck.length > 0) {
+      const shuffled = shuffleDeck(originalDeck);
+      setShuffledDeck(shuffled);
+      setCurrentCardIndex(0);
+      setCompletedCards(new Set());
+    }
+  }, [category]);
+
   // Helper function to check if a category is premium
   const isCategoryPremium = (categoryKey) => {
     // Only 'mild-seduction' is free, all others are premium
@@ -80,138 +102,183 @@ export default function DeckScreen() {
     'mild-seduction': [
       {
         id: 1,
-        title: 'Sultry Whisper Tease',
-        description: 'Lean in close and whisper a naughty fantasy into your partner\'s ear, describing in vivid detail what you\'d do to them. Maintain intense eye contact and let your breath graze their skin.',
+        title: 'Taboo Fantasy Unleashed',
+        description: 'Describe your filthiest fantasy to your partner—bondage, public sex, or forbidden role-play—in vivid, explicit detail while locking eyes and tracing their jawline with your fingers.',
         difficulty: 'Medium',
-        duration: '5 min',
-        icon: '😘',
+        duration: '8 min',
+        icon: '😈',
         color: '#FBBF24',
       },
       {
         id: 2,
-        title: 'Thigh Caress',
-        description: 'Slowly trace your fingers along your partner\'s inner thigh, teasing closer to their most sensitive spots without touching them directly. Whisper how much their body turns you on.',
+        title: 'Thigh Edge Tease',
+        description: 'Run your fingers up their inner thigh, stopping a breath away from their throbbing cock or dripping pussy, teasing the edge of their underwear without crossing it.',
         difficulty: 'Medium',
-        duration: '5 min',
+        duration: '7 min',
         icon: '🔥',
         color: '#F59E0B',
       },
       {
         id: 3,
-        title: 'Lip Tease Nibble',
-        description: 'Hover your lips over your partner\'s, barely brushing them, then gently nibble their lower lip while murmuring how much you crave their taste.',
+        title: 'Lip Chase Torment',
+        description: 'Hover your lips over theirs, brushing lightly, then bite their bottom lip sharply, pulling back to make them lean in desperate for more.',
         difficulty: 'Easy',
-        duration: '3 min',
+        duration: '5 min',
         icon: '💋',
         color: '#D97706',
       },
       {
         id: 4,
-        title: 'Blindfolded Touch',
-        description: 'Blindfold your partner and run your hands sensually over their body, focusing on erogenous zones like their neck, chest, and hips. Describe how their reactions drive you wild.',
-        difficulty: 'Medium',
-        duration: '7 min',
+        title: 'Blindfold Power Play',
+        description: 'Blindfold them tightly, then explore their body with bold hands—pinching nipples, slapping their ass lightly, grazing their crotch, making them squirm with anticipation.',
+        difficulty: 'Hard',
+        duration: '10 min',
         icon: '😈',
         color: '#FBBF24',
       },
       {
         id: 5,
-        title: 'Earlobe Suck',
-        description: 'Kiss your partner\'s neck, then slowly suck on their earlobe while whispering how much you want to feel their body against yours.',
+        title: 'Earlobe Hunger',
+        description: 'Lick a slow, wet trail up their neck, then suck their earlobe with deliberate heat, letting your teeth graze as you tease their sensitive skin.',
         difficulty: 'Easy',
-        duration: '3 min',
+        duration: '5 min',
         icon: '👂',
         color: '#F59E0B',
       },
       {
         id: 6,
-        title: 'Chest Kiss Trail',
-        description: 'Unbutton your partner\'s shirt (or lift it) and plant slow, wet kisses from their collarbone down to their chest, lingering just above their nipples.',
+        title: 'Nipple Flick Frenzy',
+        description: 'Lift their shirt and flick your tongue around their nipples, teasing without sucking, letting your breath drive them wild with unfulfilled need.',
         difficulty: 'Medium',
-        duration: '5 min',
+        duration: '7 min',
         icon: '😘',
         color: '#D97706',
       },
       {
         id: 7,
-        title: 'Slow Grind Tease',
-        description: 'Straddle your partner\'s lap, slowly grinding against them while maintaining eye contact and whispering how desperately you want to feel them inside you.',
-        difficulty: 'Medium',
-        duration: '5 min',
+        title: 'Lap Grind Takeover',
+        description: 'Straddle them with authority, grinding your hips in slow, deep circles against their swelling arousal, daring them to grab you and escalate.',
+        difficulty: 'Hard',
+        duration: '8 min',
         icon: '🍑',
         color: '#F472B6',
       },
       {
         id: 8,
-        title: 'Underwear Tease',
-        description: 'Slide your hand under your partner\'s clothing, teasingly brushing over their underwear while describing in explicit detail how you plan to pleasure them later.',
-        difficulty: 'Medium',
-        duration: '4 min',
+        title: 'Underwear Breach Assault',
+        description: 'Slide your hand inside their underwear, stroking their clit or shaft with feather-light touches, teasing them into a frenzy without giving full satisfaction.',
+        difficulty: 'Hard',
+        duration: '6 min',
         icon: '👙',
         color: '#FBBF24',
       },
       {
         id: 9,
-        title: 'Inner Wrist Lick',
-        description: 'Take your partner\'s wrist, kiss it softly, then trace your tongue along their pulse point while locking eyes and murmuring how their scent makes you ache.',
+        title: 'Neck Pulse Ravish',
+        description: 'Kiss and suck their neck where their pulse pounds, biting softly to mark their skin while pressing your body close to feel their reaction.',
         difficulty: 'Medium',
-        duration: '3 min',
+        duration: '6 min',
         icon: '👅',
         color: '#D97706',
       },
       {
         id: 10,
-        title: 'Collarbone Bite',
-        description: 'Kiss along your partner\'s collarbone, then give a gentle, teasing bite while pressing your body closer to theirs and describing how they make you lose control.',
+        title: 'Collarbone Claim Bite',
+        description: 'Lick their collarbone with possessive intent, then bite firmly to leave a faint mark, grinding your hips subtly to amplify the heat.',
         difficulty: 'Medium',
-        duration: '4 min',
+        duration: '6 min',
         icon: '😈',
         color: '#F59E0B',
       },
       {
         id: 11,
-        title: 'Sensual Massage Tease',
-        description: 'Massage your partner\'s lower back, letting your hands slip just under their waistband, teasing their skin while whispering how much you want to explore every inch of them.',
+        title: 'Ass Worship Massage',
+        description: 'Massage their lower back, slipping hands under their waistband to knead their ass cheeks, dipping daringly between to tease forbidden zones.',
         difficulty: 'Medium',
-        duration: '5 min',
+        duration: '7 min',
         icon: '💆',
         color: '#8B5CF6',
       },
       {
         id: 12,
-        title: 'Erotic Confession',
-        description: 'Take turns confessing your most forbidden sexual fantasy to each other in explicit detail, letting your hands wander over their body as you speak.',
-        difficulty: 'Medium',
-        duration: '5 min',
+        title: 'Kinky Confession Swap',
+        description: 'Take turns revealing your most depraved sexual secret—public fucking, domination, or taboo toys—while groping their ass, chest, or crotch to make it feel dangerously real.',
+        difficulty: 'Hard',
+        duration: '10 min',
         icon: '😈',
         color: '#F472B6',
       },
       {
         id: 13,
-        title: 'Hip Grind Hug',
-        description: 'Pull your partner close, pressing your hips together and subtly grinding against them while whispering how their body drives you crazy.',
+        title: 'Hip Clash Lock',
+        description: 'Pull them into a tight embrace, grinding your hips hard against their growing arousal, letting the friction build unbearable tension.',
         difficulty: 'Medium',
-        duration: '4 min',
+        duration: '6 min',
         icon: '💃',
         color: '#FBBF24',
       },
       {
         id: 14,
-        title: 'Nipple Tease',
-        description: 'Lightly trace circles around your partner\'s nipples through their shirt (or directly on skin if they\'re comfortable), teasing without full contact while describing how much you want them.',
-        difficulty: 'Medium',
-        duration: '5 min',
+        title: 'Nipple Twist Torture',
+        description: 'Pinch and twist their nipples through clothes (or bare), applying just enough pressure to draw gasps, teasing without full release.',
+        difficulty: 'Hard',
+        duration: '7 min',
         icon: '😘',
         color: '#F59E0B',
       },
       {
         id: 15,
-        title: 'Dirty Dance Move',
-        description: 'Pull your partner close for a slow dance, pressing your bodies together and letting your hands wander to their hips or lower back while whispering how much you want to fuck them.',
-        difficulty: 'Medium',
-        duration: '5 min',
+        title: 'Public Risk Grind',
+        description: 'Drag them into a slow, dirty dance, bodies pressed scandalously close, hands gripping their ass as you grind with reckless abandon.',
+        difficulty: 'Hard',
+        duration: '8 min',
         icon: '💃',
         color: '#D97706',
+      },
+      {
+        id: 16,
+        title: 'Ice Cube Seduction',
+        description: 'Trail an ice cube over their neck, chest, and inner thighs, chasing it with your hot tongue to create a maddening contrast of sensations.',
+        difficulty: 'Hard',
+        duration: '8 min',
+        icon: '🧊',
+        color: '#06B6D4',
+      },
+      {
+        id: 17,
+        title: 'Belt Bind Tease',
+        description: 'Use a belt to loosely tie their wrists, then kiss and touch their body, avoiding their most sensitive spots to build desperate anticipation.',
+        difficulty: 'Hard',
+        duration: '9 min',
+        icon: '😈',
+        color: '#8B5CF6',
+      },
+      {
+        id: 18,
+        title: 'Breath Play Edge',
+        description: 'With consent, lightly press your hand to their throat to feel their pulse, kissing their neck and jaw to heighten their arousal.',
+        difficulty: 'Hard',
+        duration: '7 min',
+        icon: '😘',
+        color: '#EF4444',
+      },
+      {
+        id: 19,
+        title: 'Clothed Crotch Rub',
+        description: 'Rub their crotch through their clothes with slow, deliberate pressure, feeling their hardness or wetness grow as you tease without mercy.',
+        difficulty: 'Hard',
+        duration: '6 min',
+        icon: '🔥',
+        color: '#F59E0B',
+      },
+      {
+        id: 20,
+        title: 'Mirror Fuck Fantasy',
+        description: 'Position them in front of a mirror, hands roaming their body as you both watch, teasing their erogenous zones while describing how you\'d fuck them while staring at their reflection.',
+        difficulty: 'Hard',
+        duration: '8 min',
+        icon: '😈',
+        color: '#EC4899',
       },
     ],
     'foreplay': [
@@ -1449,7 +1516,7 @@ export default function DeckScreen() {
     ],
   };
 
-  const currentDeck = cardDecks[category] || [];
+  const currentDeck = shuffledDeck || cardDecks[category] || [];
   const currentCard = currentDeck[currentCardIndex];
   const progress = completedCards.size;
   const totalCards = currentDeck.length;
@@ -1529,6 +1596,13 @@ export default function DeckScreen() {
     if (isCategoryPremium(category) && !isPremium) {
       showPremiumUpgradeModal();
       return;
+    }
+    
+    // Reshuffle the deck for a new session
+    const originalDeck = cardDecks[category] || [];
+    if (originalDeck.length > 0) {
+      const shuffled = shuffleDeck(originalDeck);
+      setShuffledDeck(shuffled);
     }
     
     // Reset all animation values to starting positions
