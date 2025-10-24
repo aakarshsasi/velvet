@@ -2,16 +2,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-    Alert,
-    Animated,
-    Dimensions,
-    Modal,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Animated,
+  Dimensions,
+  Modal,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { db, doc, updateDoc, updateProfile } from '../config/firebase';
 import { useAuth } from '../contexts/AuthContext';
@@ -65,27 +65,23 @@ const SideMenu = ({ isVisible, onClose }) => {
   }, [user?.displayName]);
 
   const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await logout();
-              onClose();
-              // Navigate to login page with no back option
-              router.replace('/login');
-            } catch (error) {
-              Alert.alert('Error', 'Failed to logout. Please try again.');
-            }
-          },
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await logout();
+            onClose();
+            // Navigate to login page with no back option
+            router.replace('/login');
+          } catch (error) {
+            Alert.alert('Error', 'Failed to logout. Please try again.');
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleSaveDisplayName = async () => {
@@ -97,7 +93,7 @@ const SideMenu = ({ isVisible, onClose }) => {
     try {
       // Update Firebase Auth profile
       await updateProfile(user, { displayName: displayName.trim() });
-      
+
       // Update Firestore document
       await updateDoc(doc(db, 'users', user.uid), {
         displayName: displayName.trim(),
@@ -223,7 +219,10 @@ const SideMenu = ({ isVisible, onClose }) => {
                   <Text style={styles.menuItemArrow}>›</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={handleLogout}
+                >
                   <Text style={styles.menuItemIcon}>🚪</Text>
                   <Text style={styles.menuItemText}>Logout</Text>
                   <Text style={styles.menuItemArrow}>›</Text>

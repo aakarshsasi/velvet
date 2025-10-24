@@ -19,7 +19,7 @@ class IAPService {
 
       // Connect to the store
       await InAppPurchases.connectAsync();
-      
+
       // Set up purchase listener
       InAppPurchases.setPurchaseListener(this.handlePurchaseUpdate.bind(this));
 
@@ -44,7 +44,7 @@ class IAPService {
 
       const products = await InAppPurchases.getProductsAsync(productIds);
       this.products = products;
-      
+
       console.log('Available products:', products);
       return products;
     } catch (error) {
@@ -61,23 +61,23 @@ class IAPService {
       }
 
       console.log('Attempting to purchase product:', productId);
-      
+
       // Find the product
-      const product = this.products.find(p => p.productId === productId);
+      const product = this.products.find((p) => p.productId === productId);
       if (!product) {
         throw new Error(getErrorMessage('PRODUCT_NOT_FOUND'));
       }
 
       // Make the purchase
       const result = await InAppPurchases.purchaseItemAsync(productId);
-      
+
       if (result.responseCode === InAppPurchases.IAPResponseCode.OK) {
         console.log('Purchase successful:', result);
         return result;
       } else {
         // Handle specific error codes
         let errorMessage = getErrorMessage('PURCHASE_FAILED');
-        
+
         switch (result.responseCode) {
           case InAppPurchases.IAPResponseCode.USER_CANCELED:
             errorMessage = getErrorMessage('PURCHASE_CANCELLED');
@@ -91,7 +91,7 @@ class IAPService {
           default:
             errorMessage = `${getErrorMessage('PURCHASE_FAILED')} (Code: ${result.responseCode})`;
         }
-        
+
         throw new Error(errorMessage);
       }
     } catch (error) {
@@ -109,7 +109,7 @@ class IAPService {
 
       console.log('Restoring purchases...');
       const result = await InAppPurchases.getPurchaseHistoryAsync();
-      
+
       if (result.responseCode === InAppPurchases.IAPResponseCode.OK) {
         this.purchases = result.results || [];
         console.log('Restored purchases:', this.purchases);
@@ -126,12 +126,12 @@ class IAPService {
   // Handle purchase updates
   handlePurchaseUpdate(purchase) {
     console.log('Purchase update received:', purchase);
-    
+
     if (purchase.responseCode === InAppPurchases.IAPResponseCode.OK) {
       this.purchases.push(purchase);
-      
+
       // Notify listeners
-      this.listeners.forEach(listener => {
+      this.listeners.forEach((listener) => {
         listener(purchase);
       });
     }
@@ -140,7 +140,7 @@ class IAPService {
   // Add purchase listener
   addPurchaseListener(listener) {
     this.listeners.push(listener);
-    
+
     // Return unsubscribe function
     return () => {
       const index = this.listeners.indexOf(listener);
@@ -154,11 +154,14 @@ class IAPService {
   async hasActiveSubscription() {
     try {
       const purchases = await this.restorePurchases();
-      
+
       // Check for active subscriptions
-      const activeSubscriptions = purchases.filter(purchase => {
+      const activeSubscriptions = purchases.filter((purchase) => {
         // For subscriptions, check if they're still valid
-        if (purchase.productId.includes('monthly') || purchase.productId.includes('yearly')) {
+        if (
+          purchase.productId.includes('monthly') ||
+          purchase.productId.includes('yearly')
+        ) {
           // You might want to add more sophisticated validation here
           // For now, we'll assume all restored purchases are active
           return true;
@@ -178,7 +181,7 @@ class IAPService {
     try {
       // This is a basic validation - in production, you should validate with your server
       // or with Apple/Google's validation endpoints
-      
+
       const receipt = purchase.transactionReceipt;
       if (!receipt) {
         throw new Error('No receipt found');
@@ -186,16 +189,16 @@ class IAPService {
 
       // Store purchase locally for offline validation
       await this.storePurchaseLocally(purchase);
-      
+
       return {
         isValid: true,
-        purchase: purchase
+        purchase: purchase,
       };
     } catch (error) {
       console.error('Purchase validation error:', error);
       return {
         isValid: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -205,14 +208,14 @@ class IAPService {
     try {
       const existingPurchases = await AsyncStorage.getItem('userPurchases');
       const purchases = existingPurchases ? JSON.parse(existingPurchases) : [];
-      
+
       // Add new purchase
       purchases.push({
         ...purchase,
         purchaseDate: new Date().toISOString(),
-        validated: true
+        validated: true,
       });
-      
+
       await AsyncStorage.setItem('userPurchases', JSON.stringify(purchases));
     } catch (error) {
       console.error('Error storing purchase locally:', error);
@@ -245,15 +248,15 @@ class IAPService {
 
   // Get product by ID
   getProductById(productId) {
-    return this.products.find(product => product.productId === productId);
+    return this.products.find((product) => product.productId === productId);
   }
 
   // Check if product is purchased
   async isProductPurchased(productId) {
     try {
       const localPurchases = await this.getLocalPurchases();
-      return localPurchases.some(purchase => 
-        purchase.productId === productId && purchase.validated
+      return localPurchases.some(
+        (purchase) => purchase.productId === productId && purchase.validated
       );
     } catch (error) {
       console.error('Error checking if product is purchased:', error);

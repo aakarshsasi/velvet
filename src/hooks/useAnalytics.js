@@ -14,7 +14,7 @@ export const useAnalytics = () => {
         user_id: user.uid,
         is_premium: isPremium,
         email_domain: user.email?.split('@')[1] || 'unknown',
-        account_created: user.metadata?.creationTime || 'unknown'
+        account_created: user.metadata?.creationTime || 'unknown',
       });
     }
   }, [user, isPremium]);
@@ -22,10 +22,12 @@ export const useAnalytics = () => {
   // Track session start
   useEffect(() => {
     AnalyticsService.trackSessionStart();
-    
+
     // Track session end when component unmounts
     return () => {
-      const sessionDuration = Math.round((Date.now() - sessionStartTime.current) / 1000);
+      const sessionDuration = Math.round(
+        (Date.now() - sessionStartTime.current) / 1000
+      );
       AnalyticsService.trackSessionEnd(sessionDuration);
     };
   }, []);
@@ -47,7 +49,11 @@ export const useAnalytics = () => {
     },
 
     trackOnboardingCompletion: (totalSteps, completionTime, answers) => {
-      AnalyticsService.trackOnboardingCompletion(totalSteps, completionTime, answers);
+      AnalyticsService.trackOnboardingCompletion(
+        totalSteps,
+        completionTime,
+        answers
+      );
     },
 
     trackOnboardingDropOff: (stepNumber, stepName, timeSpent) => {
@@ -81,7 +87,12 @@ export const useAnalytics = () => {
     },
 
     trackContentInteraction: (contentType, contentId, action, metadata) => {
-      AnalyticsService.trackContentInteraction(contentType, contentId, action, metadata);
+      AnalyticsService.trackContentInteraction(
+        contentType,
+        contentId,
+        action,
+        metadata
+      );
     },
 
     trackCardReveal: (cardId, category, position) => {
@@ -114,7 +125,12 @@ export const useAnalytics = () => {
     },
 
     trackPremiumUpgradeSuccess: (source, method, value, currency) => {
-      AnalyticsService.trackPremiumUpgradeSuccess(source, method, value, currency);
+      AnalyticsService.trackPremiumUpgradeSuccess(
+        source,
+        method,
+        value,
+        currency
+      );
     },
 
     trackPremiumUpgradeFailure: (source, method, error) => {
@@ -158,7 +174,13 @@ export const useAnalytics = () => {
 
     // Funnel tracking
     trackFunnelStep: (funnelName, stepName, stepNumber, totalSteps, data) => {
-      AnalyticsService.trackFunnelStep(funnelName, stepName, stepNumber, totalSteps, data);
+      AnalyticsService.trackFunnelStep(
+        funnelName,
+        stepName,
+        stepNumber,
+        totalSteps,
+        data
+      );
     },
 
     trackFunnelConversion: (funnelName, conversionPoint, data) => {
@@ -168,7 +190,7 @@ export const useAnalytics = () => {
     // Custom events
     trackCustomEvent: (eventName, parameters) => {
       AnalyticsService.trackCustomEvent(eventName, parameters);
-    }
+    },
   };
 };
 

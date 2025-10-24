@@ -15,12 +15,12 @@ class MockIAPService {
   async initialize() {
     try {
       console.log('🎭 Mock IAP Service initializing...');
-      
+
       // Simulate initialization delay
       if (this.simulateDelay) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
-      
+
       this.isInitialized = true;
       console.log('✅ Mock IAP Service initialized successfully');
       return true;
@@ -39,7 +39,7 @@ class MockIAPService {
 
       // Simulate network delay
       if (this.simulateDelay) {
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise((resolve) => setTimeout(resolve, 1500));
       }
 
       // Mock products for testing
@@ -51,7 +51,7 @@ class MockIAPService {
           description: 'Monthly subscription to Velvet Premium',
           type: 'subscription',
           localizedPrice: '₹299',
-          currency: 'INR'
+          currency: 'INR',
         },
         {
           productId: 'com.velvet.premium.yearly',
@@ -60,10 +60,10 @@ class MockIAPService {
           description: 'Yearly subscription to Velvet Premium',
           type: 'subscription',
           localizedPrice: '₹2,999',
-          currency: 'INR'
-        }
+          currency: 'INR',
+        },
       ];
-      
+
       console.log('📦 Mock products loaded:', this.products);
       return this.products;
     } catch (error) {
@@ -80,10 +80,10 @@ class MockIAPService {
       }
 
       console.log('🛒 Mock purchase attempt:', productId);
-      
+
       // Simulate purchase delay
       if (this.simulateDelay) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
 
       // Simulate errors if enabled
@@ -95,13 +95,15 @@ class MockIAPService {
       }
 
       // Find the product
-      const product = this.products.find(p => p.productId === productId);
+      const product = this.products.find((p) => p.productId === productId);
       if (!product) {
         throw new Error(getErrorMessage('PRODUCT_NOT_FOUND'));
       }
 
       // Check if already purchased
-      const alreadyPurchased = this.purchases.some(p => p.productId === productId);
+      const alreadyPurchased = this.purchases.some(
+        (p) => p.productId === productId
+      );
       if (alreadyPurchased) {
         throw new Error(getErrorMessage('PURCHASE_ALREADY_OWNED'));
       }
@@ -116,17 +118,17 @@ class MockIAPService {
         responseCode: 0, // OK
         title: product.title,
         price: product.price,
-        currency: product.currency
+        currency: product.currency,
       };
-      
+
       this.purchases.push(mockPurchase);
-      
+
       // Store locally
       await this.storePurchaseLocally(mockPurchase);
-      
+
       // Notify listeners
-      this.listeners.forEach(listener => listener(mockPurchase));
-      
+      this.listeners.forEach((listener) => listener(mockPurchase));
+
       console.log('✅ Mock purchase successful:', mockPurchase);
       return mockPurchase;
     } catch (error) {
@@ -143,16 +145,16 @@ class MockIAPService {
       }
 
       console.log('🔄 Mock restore purchases...');
-      
+
       // Simulate network delay
       if (this.simulateDelay) {
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise((resolve) => setTimeout(resolve, 1500));
       }
 
       // Load from local storage
       const localPurchases = await this.getLocalPurchases();
       this.purchases = localPurchases;
-      
+
       console.log('✅ Mock restore completed:', this.purchases);
       return this.purchases;
     } catch (error) {
@@ -165,12 +167,14 @@ class MockIAPService {
   async hasActiveSubscription() {
     try {
       const purchases = await this.restorePurchases();
-      
+
       // Check for active subscriptions
-      const activeSubscriptions = purchases.filter(purchase => {
-        return purchase.productId.includes('premium') || 
-               purchase.productId.includes('monthly') || 
-               purchase.productId.includes('yearly');
+      const activeSubscriptions = purchases.filter((purchase) => {
+        return (
+          purchase.productId.includes('premium') ||
+          purchase.productId.includes('monthly') ||
+          purchase.productId.includes('yearly')
+        );
       });
 
       const hasActive = activeSubscriptions.length > 0;
@@ -186,15 +190,15 @@ class MockIAPService {
   async validatePurchase(purchase) {
     try {
       console.log('🔍 Mock validating purchase:', purchase.productId);
-      
+
       // Simulate validation delay
       if (this.simulateDelay) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
       // Mock validation - always valid for testing
       const isValid = purchase && purchase.productId && purchase.transactionId;
-      
+
       if (isValid) {
         console.log('✅ Mock purchase validation successful');
         return { isValid: true, purchase };
@@ -212,7 +216,7 @@ class MockIAPService {
   addPurchaseListener(listener) {
     this.listeners.push(listener);
     console.log('👂 Mock purchase listener added');
-    
+
     // Return unsubscribe function
     return () => {
       const index = this.listeners.indexOf(listener);
@@ -228,15 +232,15 @@ class MockIAPService {
     try {
       const existingPurchases = await AsyncStorage.getItem('userPurchases');
       const purchases = existingPurchases ? JSON.parse(existingPurchases) : [];
-      
+
       // Add new purchase
       purchases.push({
         ...purchase,
         purchaseDate: new Date().toISOString(),
         validated: true,
-        mock: true // Mark as mock purchase
+        mock: true, // Mark as mock purchase
       });
-      
+
       await AsyncStorage.setItem('userPurchases', JSON.stringify(purchases));
       console.log('💾 Mock purchase stored locally');
     } catch (error) {
@@ -259,8 +263,8 @@ class MockIAPService {
   async isProductPurchased(productId) {
     try {
       const localPurchases = await this.getLocalPurchases();
-      return localPurchases.some(purchase => 
-        purchase.productId === productId && purchase.validated
+      return localPurchases.some(
+        (purchase) => purchase.productId === productId && purchase.validated
       );
     } catch (error) {
       console.error('❌ Error checking if product is purchased:', error);
@@ -281,7 +285,7 @@ class MockIAPService {
 
   // Get product by ID
   getProductById(productId) {
-    return this.products.find(product => product.productId === productId);
+    return this.products.find((product) => product.productId === productId);
   }
 
   // Debug methods for testing
@@ -319,7 +323,7 @@ class MockIAPService {
       purchasesCount: this.purchases.length,
       listenersCount: this.listeners.length,
       simulateErrors: this.simulateErrors,
-      simulateDelay: this.simulateDelay
+      simulateDelay: this.simulateDelay,
     };
   }
 }

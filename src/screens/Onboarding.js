@@ -4,18 +4,18 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-    Animated,
-    Dimensions,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useAuth } from '../contexts/AuthContext';
@@ -37,7 +37,7 @@ export default function OnboardingScreen() {
   const [showIntro, setShowIntro] = useState(true);
   const [progressAnim] = useState(new Animated.Value(0));
   const [progressGlowAnim] = useState(new Animated.Value(0));
-  
+
   // Refs for ScrollView components
   const introScrollRef = useRef(null);
   const quizScrollRef = useRef(null);
@@ -53,10 +53,10 @@ export default function OnboardingScreen() {
   // Track screen view
   useEffect(() => {
     analytics.trackScreen('onboarding', 'OnboardingScreen');
-    analytics.trackJourney('onboarding_screen_viewed', { 
+    analytics.trackJourney('onboarding_screen_viewed', {
       current_step: currentStep,
       show_intro: showIntro,
-      user_authenticated: !!user
+      user_authenticated: !!user,
     });
   }, []);
 
@@ -89,32 +89,82 @@ export default function OnboardingScreen() {
     {
       id: 'relationshipStatus',
       title: "What's Your Relationship Status? 💕",
-      subtitle: "Help us understand your journey",
+      subtitle: 'Help us understand your journey',
       type: 'single',
       options: [
-        { value: 'single', label: 'Single', description: 'Exploring on my own', color: '#6366F1' },
-        { value: 'dating', label: 'Dating', description: 'Getting to know each other', color: '#10B981' },
-        { value: 'committed', label: 'Committed', description: 'Exclusive relationship', color: '#EC4899' },
-        { value: 'engaged', label: 'Engaged', description: 'Planning our future', color: '#8B5CF6' },
-        { value: 'married', label: 'Married', description: 'Long-term partnership', color: '#F59E0B' },
-        { value: 'long-term', label: 'Long-term Partners', description: 'Established relationship', color: '#EF4444' }
-      ]
-    }
+        {
+          value: 'single',
+          label: 'Single',
+          description: 'Exploring on my own',
+          color: '#6366F1',
+        },
+        {
+          value: 'dating',
+          label: 'Dating',
+          description: 'Getting to know each other',
+          color: '#10B981',
+        },
+        {
+          value: 'committed',
+          label: 'Committed',
+          description: 'Exclusive relationship',
+          color: '#EC4899',
+        },
+        {
+          value: 'engaged',
+          label: 'Engaged',
+          description: 'Planning our future',
+          color: '#8B5CF6',
+        },
+        {
+          value: 'married',
+          label: 'Married',
+          description: 'Long-term partnership',
+          color: '#F59E0B',
+        },
+        {
+          value: 'long-term',
+          label: 'Long-term Partners',
+          description: 'Established relationship',
+          color: '#EF4444',
+        },
+      ],
+    },
   ];
 
   // Questions for couples/in relationships (after relationship status is selected)
   const coupleSteps = [
     {
       id: 'intimacyFrequency',
-      title: "How Often Are You Intimate? 🔥",
-      subtitle: "Be honest about your current rhythm",
+      title: 'How Often Are You Intimate? 🔥',
+      subtitle: 'Be honest about your current rhythm',
       type: 'single',
       options: [
-        { value: 'daily', label: 'Daily', description: 'Very active', color: '#EF4444' },
-        { value: 'weekly', label: 'Weekly', description: 'Regular connection', color: '#F59E0B' },
-        { value: 'monthly', label: 'Monthly', description: 'Occasional', color: '#8B5CF6' },
-        { value: 'rarely', label: 'Rarely', description: 'In a dry spell', color: '#6B7280' }
-      ]
+        {
+          value: 'daily',
+          label: 'Daily',
+          description: 'Very active',
+          color: '#EF4444',
+        },
+        {
+          value: 'weekly',
+          label: 'Weekly',
+          description: 'Regular connection',
+          color: '#F59E0B',
+        },
+        {
+          value: 'monthly',
+          label: 'Monthly',
+          description: 'Occasional',
+          color: '#8B5CF6',
+        },
+        {
+          value: 'rarely',
+          label: 'Rarely',
+          description: 'In a dry spell',
+          color: '#6B7280',
+        },
+      ],
     },
     {
       id: 'biggestChallenge',
@@ -122,57 +172,132 @@ export default function OnboardingScreen() {
       subtitle: "We're here to help you overcome it",
       type: 'single',
       options: [
-        { value: 'communication', label: 'Communication', description: 'Hard to talk about needs', color: '#10B981' },
-        { value: 'time', label: 'Time & Stress', description: 'Life gets in the way', color: '#F59E0B' },
-        { value: 'desire-mismatch', label: 'Desire Mismatch', description: 'Different libidos', color: '#EC4899' },
-        { value: 'routine', label: 'Getting Stuck in Routine', description: 'Need more variety', color: '#8B5CF6' },
-        { value: 'emotional-connection', label: 'Emotional Connection', description: 'Missing intimacy', color: '#06B6D4' }
-      ]
+        {
+          value: 'communication',
+          label: 'Communication',
+          description: 'Hard to talk about needs',
+          color: '#10B981',
+        },
+        {
+          value: 'time',
+          label: 'Time & Stress',
+          description: 'Life gets in the way',
+          color: '#F59E0B',
+        },
+        {
+          value: 'desire-mismatch',
+          label: 'Desire Mismatch',
+          description: 'Different libidos',
+          color: '#EC4899',
+        },
+        {
+          value: 'routine',
+          label: 'Getting Stuck in Routine',
+          description: 'Need more variety',
+          color: '#8B5CF6',
+        },
+        {
+          value: 'emotional-connection',
+          label: 'Emotional Connection',
+          description: 'Missing intimacy',
+          color: '#06B6D4',
+        },
+      ],
     },
     {
       id: 'comfortLevel',
-      title: "How Comfortable Are You Discussing Intimate Needs? 💬",
-      subtitle: "Rate your communication comfort",
+      title: 'How Comfortable Are You Discussing Intimate Needs? 💬',
+      subtitle: 'Rate your communication comfort',
       type: 'slider',
       minValue: 0,
       maxValue: 10,
       defaultValue: 5,
       labels: {
-        min: "Very Uncomfortable",
-        max: "Very Comfortable"
-      }
+        min: 'Very Uncomfortable',
+        max: 'Very Comfortable',
+      },
     },
     {
       id: 'desire',
       title: "What's Your Desire Level? 🔥",
-      subtitle: "Help us understand your comfort zone",
+      subtitle: 'Help us understand your comfort zone',
       type: 'single',
       options: [
-        { value: 'mild', label: 'Mild & Playful', description: 'Gentle exploration', color: '#10B981' },
-        { value: 'spicy', label: 'Spicy & Adventurous', description: 'Push boundaries', color: '#F59E0B' },
-        { value: 'extreme', label: 'Extreme & Wild', description: 'No limits', color: '#EF4444' }
-      ]
+        {
+          value: 'mild',
+          label: 'Mild & Playful',
+          description: 'Gentle exploration',
+          color: '#10B981',
+        },
+        {
+          value: 'spicy',
+          label: 'Spicy & Adventurous',
+          description: 'Push boundaries',
+          color: '#F59E0B',
+        },
+        {
+          value: 'extreme',
+          label: 'Extreme & Wild',
+          description: 'No limits',
+          color: '#EF4444',
+        },
+      ],
     },
     {
       id: 'turnOns',
-      title: "What Turns You Both On? 💋",
-      subtitle: "Select all that excite you as a couple",
+      title: 'What Turns You Both On? 💋',
+      subtitle: 'Select all that excite you as a couple',
       type: 'multiple',
       options: [
-        { value: 'dirty-talk', label: 'Dirty Talk', icon: '💬', color: '#EC4899' },
+        {
+          value: 'dirty-talk',
+          label: 'Dirty Talk',
+          icon: '💬',
+          color: '#EC4899',
+        },
         { value: 'roleplay', label: 'Roleplay', icon: '🎭', color: '#8B5CF6' },
-        { value: 'foreplay', label: 'Extended Foreplay', icon: '🔥', color: '#F97316' },
-        { value: 'sensory', label: 'Sensory Play', icon: '✨', color: '#06B6D4' },
-        { value: 'power-play', label: 'Power Dynamics', icon: '👑', color: '#8B5CF6' },
-        { value: 'public-play', label: 'Public Fantasy', icon: '🌆', color: '#10B981' },
-        { value: 'bondage', label: 'Light Bondage', icon: '🔗', color: '#EF4444' },
-        { value: 'teasing', label: 'Teasing & Denial', icon: '😈', color: '#F59E0B' }
-      ]
+        {
+          value: 'foreplay',
+          label: 'Extended Foreplay',
+          icon: '🔥',
+          color: '#F97316',
+        },
+        {
+          value: 'sensory',
+          label: 'Sensory Play',
+          icon: '✨',
+          color: '#06B6D4',
+        },
+        {
+          value: 'power-play',
+          label: 'Power Dynamics',
+          icon: '👑',
+          color: '#8B5CF6',
+        },
+        {
+          value: 'public-play',
+          label: 'Public Fantasy',
+          icon: '🌆',
+          color: '#10B981',
+        },
+        {
+          value: 'bondage',
+          label: 'Light Bondage',
+          icon: '🔗',
+          color: '#EF4444',
+        },
+        {
+          value: 'teasing',
+          label: 'Teasing & Denial',
+          icon: '😈',
+          color: '#F59E0B',
+        },
+      ],
     },
     {
       id: 'fantasy',
-      title: "Your Fantasy Settings Together 🌟",
-      subtitle: "Where do your wildest dreams take place?",
+      title: 'Your Fantasy Settings Together 🌟',
+      subtitle: 'Where do your wildest dreams take place?',
       type: 'multiple',
       options: [
         { value: 'bedroom', label: 'Bedroom', icon: '🛏️', color: '#8B5CF6' },
@@ -180,37 +305,72 @@ export default function OnboardingScreen() {
         { value: 'shower', label: 'Shower', icon: '🚿', color: '#06B6D4' },
         { value: 'office', label: 'Office', icon: '💼', color: '#6B7280' },
         { value: 'outdoors', label: 'Outdoors', icon: '🌳', color: '#10B981' },
-        { value: 'luxury-hotel', label: 'Luxury Hotel', icon: '🏨', color: '#EC4899' },
+        {
+          value: 'luxury-hotel',
+          label: 'Luxury Hotel',
+          icon: '🏨',
+          color: '#EC4899',
+        },
         { value: 'car', label: 'Car', icon: '🚗', color: '#F97316' },
-        { value: 'public-place', label: 'Public Place', icon: '🎭', color: '#EF4444' }
-      ]
+        {
+          value: 'public-place',
+          label: 'Public Place',
+          icon: '🎭',
+          color: '#EF4444',
+        },
+      ],
     },
     {
       id: 'improvementGoal',
-      title: "What Would You Like to Improve Most? 🎯",
-      subtitle: "Your main goal for better intimacy",
+      title: 'What Would You Like to Improve Most? 🎯',
+      subtitle: 'Your main goal for better intimacy',
       type: 'single',
       options: [
-        { value: 'communication', label: 'Better Communication', description: 'Talk openly about needs', color: '#10B981' },
-        { value: 'variety', label: 'More Variety', description: 'Break out of routine', color: '#F59E0B' },
-        { value: 'emotional-connection', label: 'Emotional Connection', description: 'Deeper intimacy', color: '#EC4899' },
-        { value: 'frequency', label: 'Increase Frequency', description: 'More intimate time', color: '#8B5CF6' },
-        { value: 'quality', label: 'Better Quality', description: 'More satisfying experiences', color: '#EF4444' }
-      ]
+        {
+          value: 'communication',
+          label: 'Better Communication',
+          description: 'Talk openly about needs',
+          color: '#10B981',
+        },
+        {
+          value: 'variety',
+          label: 'More Variety',
+          description: 'Break out of routine',
+          color: '#F59E0B',
+        },
+        {
+          value: 'emotional-connection',
+          label: 'Emotional Connection',
+          description: 'Deeper intimacy',
+          color: '#EC4899',
+        },
+        {
+          value: 'frequency',
+          label: 'Increase Frequency',
+          description: 'More intimate time',
+          color: '#8B5CF6',
+        },
+        {
+          value: 'quality',
+          label: 'Better Quality',
+          description: 'More satisfying experiences',
+          color: '#EF4444',
+        },
+      ],
     },
     {
       id: 'enhancement',
-      title: "How Much Do You Want to Enhance Your Intimacy? 🔥",
-      subtitle: "Your commitment to improvement",
+      title: 'How Much Do You Want to Enhance Your Intimacy? 🔥',
+      subtitle: 'Your commitment to improvement',
       type: 'slider',
       minValue: 0,
       maxValue: 100,
       defaultValue: 50,
       labels: {
-        min: "Just a Little",
-        max: "Completely Transform"
-      }
-    }
+        min: 'Just a Little',
+        max: 'Completely Transform',
+      },
+    },
   ];
 
   // Questions for single people (after relationship status is selected)
@@ -218,27 +378,72 @@ export default function OnboardingScreen() {
     {
       id: 'singleGoal',
       title: "What's Your Main Goal? 🎯",
-      subtitle: "What are you looking to explore or improve?",
+      subtitle: 'What are you looking to explore or improve?',
       type: 'single',
       options: [
-        { value: 'self-discovery', label: 'Self-Discovery', description: 'Understanding my desires', color: '#10B981' },
-        { value: 'confidence-building', label: 'Confidence Building', description: 'Building self-confidence', color: '#F59E0B' },
-        { value: 'future-relationship', label: 'Future Relationship', description: 'Preparing for partnership', color: '#EC4899' },
-        { value: 'self-pleasure', label: 'Self-Pleasure', description: 'Enhancing solo experiences', color: '#8B5CF6' },
-        { value: 'exploration', label: 'Exploration', description: 'Trying new things', color: '#EF4444' }
-      ]
+        {
+          value: 'self-discovery',
+          label: 'Self-Discovery',
+          description: 'Understanding my desires',
+          color: '#10B981',
+        },
+        {
+          value: 'confidence-building',
+          label: 'Confidence Building',
+          description: 'Building self-confidence',
+          color: '#F59E0B',
+        },
+        {
+          value: 'future-relationship',
+          label: 'Future Relationship',
+          description: 'Preparing for partnership',
+          color: '#EC4899',
+        },
+        {
+          value: 'self-pleasure',
+          label: 'Self-Pleasure',
+          description: 'Enhancing solo experiences',
+          color: '#8B5CF6',
+        },
+        {
+          value: 'exploration',
+          label: 'Exploration',
+          description: 'Trying new things',
+          color: '#EF4444',
+        },
+      ],
     },
     {
       id: 'singleFrequency',
-      title: "How Often Do You Explore Intimacy? 🔥",
-      subtitle: "Your current solo exploration rhythm",
+      title: 'How Often Do You Explore Intimacy? 🔥',
+      subtitle: 'Your current solo exploration rhythm',
       type: 'single',
       options: [
-        { value: 'daily', label: 'Daily', description: 'Very active', color: '#EF4444' },
-        { value: 'weekly', label: 'Weekly', description: 'Regular exploration', color: '#F59E0B' },
-        { value: 'monthly', label: 'Monthly', description: 'Occasional', color: '#8B5CF6' },
-        { value: 'rarely', label: 'Rarely', description: 'Just starting out', color: '#6B7280' }
-      ]
+        {
+          value: 'daily',
+          label: 'Daily',
+          description: 'Very active',
+          color: '#EF4444',
+        },
+        {
+          value: 'weekly',
+          label: 'Weekly',
+          description: 'Regular exploration',
+          color: '#F59E0B',
+        },
+        {
+          value: 'monthly',
+          label: 'Monthly',
+          description: 'Occasional',
+          color: '#8B5CF6',
+        },
+        {
+          value: 'rarely',
+          label: 'Rarely',
+          description: 'Just starting out',
+          color: '#6B7280',
+        },
+      ],
     },
     {
       id: 'singleChallenge',
@@ -246,57 +451,127 @@ export default function OnboardingScreen() {
       subtitle: "We're here to help you overcome it",
       type: 'single',
       options: [
-        { value: 'self-confidence', label: 'Self-Confidence', description: 'Feeling comfortable with myself', color: '#10B981' },
-        { value: 'knowledge', label: 'Knowledge', description: 'Learning about my body', color: '#F59E0B' },
-        { value: 'exploration', label: 'Exploration', description: 'Trying new things', color: '#EC4899' },
-        { value: 'communication', label: 'Future Communication', description: 'Talking about needs', color: '#8B5CF6' },
-        { value: 'routine', label: 'Breaking Routine', description: 'Adding variety', color: '#06B6D4' }
-      ]
+        {
+          value: 'self-confidence',
+          label: 'Self-Confidence',
+          description: 'Feeling comfortable with myself',
+          color: '#10B981',
+        },
+        {
+          value: 'knowledge',
+          label: 'Knowledge',
+          description: 'Learning about my body',
+          color: '#F59E0B',
+        },
+        {
+          value: 'exploration',
+          label: 'Exploration',
+          description: 'Trying new things',
+          color: '#EC4899',
+        },
+        {
+          value: 'communication',
+          label: 'Future Communication',
+          description: 'Talking about needs',
+          color: '#8B5CF6',
+        },
+        {
+          value: 'routine',
+          label: 'Breaking Routine',
+          description: 'Adding variety',
+          color: '#06B6D4',
+        },
+      ],
     },
     {
       id: 'comfortLevel',
-      title: "How Comfortable Are You With Self-Exploration? 💬",
-      subtitle: "Rate your comfort with solo intimacy",
+      title: 'How Comfortable Are You With Self-Exploration? 💬',
+      subtitle: 'Rate your comfort with solo intimacy',
       type: 'slider',
       minValue: 0,
       maxValue: 10,
       defaultValue: 5,
       labels: {
-        min: "Very Uncomfortable",
-        max: "Very Comfortable"
-      }
+        min: 'Very Uncomfortable',
+        max: 'Very Comfortable',
+      },
     },
     {
       id: 'desire',
       title: "What's Your Desire Level? 🔥",
-      subtitle: "Help us understand your comfort zone",
+      subtitle: 'Help us understand your comfort zone',
       type: 'single',
       options: [
-        { value: 'mild', label: 'Mild & Playful', description: 'Gentle exploration', color: '#10B981' },
-        { value: 'spicy', label: 'Spicy & Adventurous', description: 'Push boundaries', color: '#F59E0B' },
-        { value: 'extreme', label: 'Extreme & Wild', description: 'No limits', color: '#EF4444' }
-      ]
+        {
+          value: 'mild',
+          label: 'Mild & Playful',
+          description: 'Gentle exploration',
+          color: '#10B981',
+        },
+        {
+          value: 'spicy',
+          label: 'Spicy & Adventurous',
+          description: 'Push boundaries',
+          color: '#F59E0B',
+        },
+        {
+          value: 'extreme',
+          label: 'Extreme & Wild',
+          description: 'No limits',
+          color: '#EF4444',
+        },
+      ],
     },
     {
       id: 'turnOns',
-      title: "What Turns You On? 💋",
-      subtitle: "Select all that excite you",
+      title: 'What Turns You On? 💋',
+      subtitle: 'Select all that excite you',
       type: 'multiple',
       options: [
-        { value: 'self-pleasure', label: 'Self-Pleasure', icon: '✨', color: '#EC4899' },
+        {
+          value: 'self-pleasure',
+          label: 'Self-Pleasure',
+          icon: '✨',
+          color: '#EC4899',
+        },
         { value: 'fantasy', label: 'Fantasy', icon: '🌟', color: '#8B5CF6' },
-        { value: 'sensory', label: 'Sensory Play', icon: '✨', color: '#06B6D4' },
+        {
+          value: 'sensory',
+          label: 'Sensory Play',
+          icon: '✨',
+          color: '#06B6D4',
+        },
         { value: 'roleplay', label: 'Roleplay', icon: '🎭', color: '#8B5CF6' },
-        { value: 'power-play', label: 'Power Dynamics', icon: '👑', color: '#8B5CF6' },
-        { value: 'public-play', label: 'Public Fantasy', icon: '🌆', color: '#10B981' },
-        { value: 'bondage', label: 'Light Bondage', icon: '🔗', color: '#EF4444' },
-        { value: 'teasing', label: 'Teasing & Denial', icon: '😈', color: '#F59E0B' }
-      ]
+        {
+          value: 'power-play',
+          label: 'Power Dynamics',
+          icon: '👑',
+          color: '#8B5CF6',
+        },
+        {
+          value: 'public-play',
+          label: 'Public Fantasy',
+          icon: '🌆',
+          color: '#10B981',
+        },
+        {
+          value: 'bondage',
+          label: 'Light Bondage',
+          icon: '🔗',
+          color: '#EF4444',
+        },
+        {
+          value: 'teasing',
+          label: 'Teasing & Denial',
+          icon: '😈',
+          color: '#F59E0B',
+        },
+      ],
     },
     {
       id: 'fantasy',
-      title: "Your Fantasy Settings 🌟",
-      subtitle: "Where do your wildest dreams take place?",
+      title: 'Your Fantasy Settings 🌟',
+      subtitle: 'Where do your wildest dreams take place?',
       type: 'multiple',
       options: [
         { value: 'bedroom', label: 'Bedroom', icon: '🛏️', color: '#8B5CF6' },
@@ -304,37 +579,72 @@ export default function OnboardingScreen() {
         { value: 'shower', label: 'Shower', icon: '🚿', color: '#06B6D4' },
         { value: 'office', label: 'Office', icon: '💼', color: '#6B7280' },
         { value: 'outdoors', label: 'Outdoors', icon: '🌳', color: '#10B981' },
-        { value: 'luxury-hotel', label: 'Luxury Hotel', icon: '🏨', color: '#EC4899' },
+        {
+          value: 'luxury-hotel',
+          label: 'Luxury Hotel',
+          icon: '🏨',
+          color: '#EC4899',
+        },
         { value: 'car', label: 'Car', icon: '🚗', color: '#F97316' },
-        { value: 'public-place', label: 'Public Place', icon: '🎭', color: '#EF4444' }
-      ]
+        {
+          value: 'public-place',
+          label: 'Public Place',
+          icon: '🎭',
+          color: '#EF4444',
+        },
+      ],
     },
     {
       id: 'improvementGoal',
-      title: "What Would You Like to Improve Most? 🎯",
-      subtitle: "Your main goal for better self-intimacy",
+      title: 'What Would You Like to Improve Most? 🎯',
+      subtitle: 'Your main goal for better self-intimacy',
       type: 'single',
       options: [
-        { value: 'self-confidence', label: 'Self-Confidence', description: 'Feel more comfortable', color: '#10B981' },
-        { value: 'variety', label: 'More Variety', description: 'Break out of routine', color: '#F59E0B' },
-        { value: 'knowledge', label: 'Self-Knowledge', description: 'Understand my body', color: '#EC4899' },
-        { value: 'frequency', label: 'Increase Frequency', description: 'More exploration time', color: '#8B5CF6' },
-        { value: 'quality', label: 'Better Quality', description: 'More satisfying experiences', color: '#EF4444' }
-      ]
+        {
+          value: 'self-confidence',
+          label: 'Self-Confidence',
+          description: 'Feel more comfortable',
+          color: '#10B981',
+        },
+        {
+          value: 'variety',
+          label: 'More Variety',
+          description: 'Break out of routine',
+          color: '#F59E0B',
+        },
+        {
+          value: 'knowledge',
+          label: 'Self-Knowledge',
+          description: 'Understand my body',
+          color: '#EC4899',
+        },
+        {
+          value: 'frequency',
+          label: 'Increase Frequency',
+          description: 'More exploration time',
+          color: '#8B5CF6',
+        },
+        {
+          value: 'quality',
+          label: 'Better Quality',
+          description: 'More satisfying experiences',
+          color: '#EF4444',
+        },
+      ],
     },
     {
       id: 'enhancement',
-      title: "How Much Do You Want to Enhance Your Self-Intimacy? 🔥",
-      subtitle: "Your commitment to improvement",
+      title: 'How Much Do You Want to Enhance Your Self-Intimacy? 🔥',
+      subtitle: 'Your commitment to improvement',
       type: 'slider',
       minValue: 0,
       maxValue: 100,
       defaultValue: 50,
       labels: {
-        min: "Just a Little",
-        max: "Completely Transform"
-      }
-    }
+        min: 'Just a Little',
+        max: 'Completely Transform',
+      },
+    },
   ];
 
   // Determine which questionnaire to use based on relationship status
@@ -343,12 +653,12 @@ export default function OnboardingScreen() {
     if (!answers.relationshipStatus) {
       return initialSteps;
     }
-    
+
     // After relationship status is selected, show appropriate flow
     if (answers.relationshipStatus === 'single') {
       return [...initialSteps, ...singleSteps];
     }
-    
+
     return [...initialSteps, ...coupleSteps];
   };
 
@@ -362,11 +672,17 @@ export default function OnboardingScreen() {
       // Calculate progress based on quiz steps and answers
       const currentSteps = getCurrentSteps();
       let answeredSteps = 0;
-      currentSteps.forEach(step => {
-        if (step.type === 'toggle' && currentStep >= currentSteps.indexOf(step)) {
+      currentSteps.forEach((step) => {
+        if (
+          step.type === 'toggle' &&
+          currentStep >= currentSteps.indexOf(step)
+        ) {
           // Count toggle questions only when user reaches that page
           answeredSteps++;
-        } else if (step.type === 'slider' && currentStep >= currentSteps.indexOf(step)) {
+        } else if (
+          step.type === 'slider' &&
+          currentStep >= currentSteps.indexOf(step)
+        ) {
           // Count slider questions when user reaches that page
           answeredSteps++;
         } else if (answers[step.id] !== undefined) {
@@ -379,7 +695,7 @@ export default function OnboardingScreen() {
       });
       const progressValue = (answeredSteps / currentSteps.length) * 100;
       setProgress(progressValue);
-      
+
       // Animate progress bar update
       Animated.timing(progressAnim, {
         toValue: progressValue,
@@ -387,7 +703,7 @@ export default function OnboardingScreen() {
         useNativeDriver: false,
       }).start();
     }
-    
+
     // Animate fade in and slide up
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -429,25 +745,28 @@ export default function OnboardingScreen() {
     // Remove fadeAnim.setValue(0) - let useEffect handle the animation
   };
 
-
-
   const handleAnswer = (stepId, value, isMultiple = false) => {
-    console.log('🔵 handleAnswer called:', { stepId, value, isMultiple, currentStep });
-    
+    console.log('🔵 handleAnswer called:', {
+      stepId,
+      value,
+      isMultiple,
+      currentStep,
+    });
+
     // Track answer selection
     const currentSteps = getCurrentSteps();
-    analytics.trackOnboardingStep(currentStep + 1, stepId, { 
-      answer: value, 
+    analytics.trackOnboardingStep(currentStep + 1, stepId, {
+      answer: value,
       is_multiple: isMultiple,
-      step_type: currentSteps[currentStep]?.type || 'unknown'
+      step_type: currentSteps[currentStep]?.type || 'unknown',
     });
 
     // If relationship status is being selected, reset to step 0 of the new flow
     if (stepId === 'relationshipStatus') {
       console.log('🔄 Relationship status selected, resetting flow');
       setCurrentStep(0);
-      setAnswers(prev => ({ ...prev, [stepId]: value }));
-      
+      setAnswers((prev) => ({ ...prev, [stepId]: value }));
+
       // Save incremental data after relationship status selection
       setTimeout(() => {
         console.log('💾 Saving relationship status data');
@@ -460,11 +779,11 @@ export default function OnboardingScreen() {
     if (isMultiple) {
       newAnswers = {
         ...answers,
-        [stepId]: answers[stepId] 
+        [stepId]: answers[stepId]
           ? answers[stepId].includes(value)
-            ? answers[stepId].filter(v => v !== value)
+            ? answers[stepId].filter((v) => v !== value)
             : [...answers[stepId], value]
-          : [value]
+          : [value],
       };
     } else if (typeof value === 'boolean') {
       // Handle toggle type questions
@@ -475,10 +794,10 @@ export default function OnboardingScreen() {
     } else {
       newAnswers = { ...answers, [stepId]: value };
     }
-    
+
     console.log('📝 New answers:', newAnswers);
     setAnswers(newAnswers);
-    
+
     // Save incremental data after each answer
     setTimeout(() => {
       console.log('💾 Saving incremental data for step:', currentStep);
@@ -489,18 +808,31 @@ export default function OnboardingScreen() {
   const nextStep = () => {
     const currentSteps = getCurrentSteps();
     if (currentStep < currentSteps.length - 1) {
-      analytics.trackFunnelStep('onboarding_funnel', 'step_completed', currentStep + 2, currentSteps.length + 1);
+      analytics.trackFunnelStep(
+        'onboarding_funnel',
+        'step_completed',
+        currentStep + 2,
+        currentSteps.length + 1
+      );
       fadeAnim.setValue(0);
       setCurrentStep(currentStep + 1);
-        } else {
-      analytics.trackFunnelStep('onboarding_funnel', 'quiz_completed', currentSteps.length + 1, currentSteps.length + 1);
+    } else {
+      analytics.trackFunnelStep(
+        'onboarding_funnel',
+        'quiz_completed',
+        currentSteps.length + 1,
+        currentSteps.length + 1
+      );
       generateIntimacyProfile();
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
-      analytics.trackOnboardingStep(currentStep, 'step_back', { from_step: currentStep + 1, to_step: currentStep });
+      analytics.trackOnboardingStep(currentStep, 'step_back', {
+        from_step: currentStep + 1,
+        to_step: currentStep,
+      });
       fadeAnim.setValue(0);
       setCurrentStep(currentStep - 1);
     }
@@ -508,11 +840,13 @@ export default function OnboardingScreen() {
 
   const canProceed = () => {
     if (showIntro) return true;
-    
+
     const currentSteps = getCurrentSteps();
     const currentStepData = currentSteps[currentStep];
     if (currentStepData.type === 'multiple') {
-      return answers[currentStepData.id] && answers[currentStepData.id].length > 0;
+      return (
+        answers[currentStepData.id] && answers[currentStepData.id].length > 0
+      );
     } else if (currentStepData.type === 'toggle') {
       return true; // Toggle questions are always considered answered (defaults to Yes)
     } else if (currentStepData.type === 'slider') {
@@ -528,45 +862,60 @@ export default function OnboardingScreen() {
       const isSingle = answers.relationshipStatus === 'single';
       const profile = {
         relationshipStatus: answers.relationshipStatus || 'dating',
-        intimacyFrequency: isSingle ? answers.singleFrequency : answers.intimacyFrequency,
-        biggestChallenge: isSingle ? answers.singleChallenge : answers.biggestChallenge,
+        intimacyFrequency: isSingle
+          ? answers.singleFrequency
+          : answers.intimacyFrequency,
+        biggestChallenge: isSingle
+          ? answers.singleChallenge
+          : answers.biggestChallenge,
         singleGoal: isSingle ? answers.singleGoal : null,
         comfortLevel: answers.comfortLevel || 5,
         desireLevel: answers.desire || 'mild',
         turnOns: answers.turnOns || [],
         fantasySettings: answers.fantasy || [],
         improvementGoal: answers.improvementGoal || 'communication',
-        enhancement: answers.enhancement !== undefined ? answers.enhancement : 50,
+        enhancement:
+          answers.enhancement !== undefined ? answers.enhancement : 50,
         persona: generatePersona(answers),
         premiumSuggestions: generatePremiumSuggestions(answers),
-        isSingle: isSingle
+        isSingle: isSingle,
       };
-      
+
       // Store profile in AsyncStorage (will be saved to Firebase after sign up)
       await AsyncStorage.setItem('userProfile', JSON.stringify(profile));
       await AsyncStorage.setItem('onboardingAnswers', JSON.stringify(answers));
       await AsyncStorage.setItem('hasCompletedOnboarding', 'false'); // Will be true after sign up
-      
+
       // Save questionnaire data to Firebase immediately for analytics, even if user drops off
-      await saveQuestionnaireDataToFirebase(answers, profile);
-      
+      // TODO: Implement saveQuestionnaireDataToFirebase function
+
       // Mark questionnaire as completed
       await markQuestionnaireCompleted(answers, profile);
-      
+
       console.log('Generated Profile:', profile);
-      console.log('Profile saved to AsyncStorage. User needs to sign up to save to Firebase.');
-      
+      console.log(
+        'Profile saved to AsyncStorage. User needs to sign up to save to Firebase.'
+      );
+
       // Track onboarding completion
       const currentSteps = getCurrentSteps();
       const completionTime = Math.round((Date.now() - startTime) / 1000);
-      analytics.trackOnboardingCompletion(currentSteps.length, completionTime, answers);
-      analytics.trackFunnelConversion('onboarding_funnel', 'profile_generated', { 
-        persona: profile.persona?.name || 'Unknown',
-        relationship_status: profile.relationshipStatus,
-        intimacy_frequency: profile.intimacyFrequency,
-        is_single: isSingle
-      });
-      
+      analytics.trackOnboardingCompletion(
+        currentSteps.length,
+        completionTime,
+        answers
+      );
+      analytics.trackFunnelConversion(
+        'onboarding_funnel',
+        'profile_generated',
+        {
+          persona: profile.persona?.name || 'Unknown',
+          relationship_status: profile.relationshipStatus,
+          intimacy_frequency: profile.intimacyFrequency,
+          is_single: isSingle,
+        }
+      );
+
       // Navigate to analysis screen
       router.replace('/analysis');
     } catch (error) {
@@ -580,9 +929,11 @@ export default function OnboardingScreen() {
   // Save questionnaire data incrementally as questions are answered
   const saveIncrementalQuestionnaireData = async (answers, currentStep) => {
     try {
-      const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
+      const { doc, setDoc, serverTimestamp } = await import(
+        'firebase/firestore'
+      );
       const { db } = await import('../config/firebase');
-      
+
       // Get or create anonymous ID
       let anonymousId = await AsyncStorage.getItem('anonymousId');
       if (!anonymousId) {
@@ -590,67 +941,83 @@ export default function OnboardingScreen() {
         await AsyncStorage.setItem('anonymousId', anonymousId);
         console.log('Created new anonymous ID:', anonymousId);
       }
-      
+
       // Create document reference
       const docRef = doc(db, 'questionnaire_responses', anonymousId);
-      
+
       // Calculate progress
       const currentSteps = getCurrentSteps();
       const totalSteps = currentSteps.length;
       const answeredSteps = Object.keys(answers).length;
       const progressPercentage = Math.round((answeredSteps / totalSteps) * 100);
-      
+
       // Determine user type based on relationship status
-      const userType = answers.relationshipStatus === 'single' ? 'single' : 'couple';
-      
+      const userType =
+        answers.relationshipStatus === 'single' ? 'single' : 'couple';
+
       console.log('Saving incremental data:', {
         anonymousId,
         answeredSteps,
         totalSteps,
         progressPercentage,
         currentStep,
-        userType
+        userType,
       });
-      
+
       // Save/update questionnaire data
-      await setDoc(docRef, {
-        anonymousId: anonymousId,
-        answers: answers,
-        currentStep: currentStep,
-        progressPercentage: progressPercentage,
-        answeredSteps: answeredSteps,
-        totalSteps: totalSteps,
-        userType: userType,
-        hasSignedUp: false,
-        userId: null,
-        lastUpdated: serverTimestamp(),
-        createdAt: serverTimestamp()
-      }, { merge: true }); // merge: true allows partial updates
-      
-      console.log(`✅ Questionnaire data updated: ${answeredSteps}/${totalSteps} questions (${progressPercentage}%)`);
-      
-    } catch (error) {
-      console.error('❌ Error saving incremental questionnaire data:', error);
-      
-      // If it's a permission error, store locally
-      if (error.code === 'permission-denied') {
-        console.warn('Firebase permission denied - storing questionnaire data locally');
-        
-        // Store locally for potential future sync
-        const anonymousId = await AsyncStorage.getItem('anonymousId') || `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        await AsyncStorage.setItem('anonymousId', anonymousId);
-        await AsyncStorage.setItem('questionnaireDataPending', JSON.stringify({
-          anonymousId,
-          answers,
-          currentStep,
-          progressPercentage: Math.round((Object.keys(answers).length / getCurrentSteps().length) * 100),
-          answeredSteps: Object.keys(answers).length,
-          totalSteps: getCurrentSteps().length,
-          userType: answers.relationshipStatus === 'single' ? 'single' : 'couple',
+      await setDoc(
+        docRef,
+        {
+          anonymousId: anonymousId,
+          answers: answers,
+          currentStep: currentStep,
+          progressPercentage: progressPercentage,
+          answeredSteps: answeredSteps,
+          totalSteps: totalSteps,
+          userType: userType,
           hasSignedUp: false,
           userId: null,
-          lastUpdated: new Date().toISOString()
-        }));
+          lastUpdated: serverTimestamp(),
+          createdAt: serverTimestamp(),
+        },
+        { merge: true }
+      ); // merge: true allows partial updates
+
+      console.log(
+        `✅ Questionnaire data updated: ${answeredSteps}/${totalSteps} questions (${progressPercentage}%)`
+      );
+    } catch (error) {
+      console.error('❌ Error saving incremental questionnaire data:', error);
+
+      // If it's a permission error, store locally
+      if (error.code === 'permission-denied') {
+        console.warn(
+          'Firebase permission denied - storing questionnaire data locally'
+        );
+
+        // Store locally for potential future sync
+        const anonymousId =
+          (await AsyncStorage.getItem('anonymousId')) ||
+          `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        await AsyncStorage.setItem('anonymousId', anonymousId);
+        await AsyncStorage.setItem(
+          'questionnaireDataPending',
+          JSON.stringify({
+            anonymousId,
+            answers,
+            currentStep,
+            progressPercentage: Math.round(
+              (Object.keys(answers).length / getCurrentSteps().length) * 100
+            ),
+            answeredSteps: Object.keys(answers).length,
+            totalSteps: getCurrentSteps().length,
+            userType:
+              answers.relationshipStatus === 'single' ? 'single' : 'couple',
+            hasSignedUp: false,
+            userId: null,
+            lastUpdated: new Date().toISOString(),
+          })
+        );
       }
     }
   };
@@ -658,21 +1025,23 @@ export default function OnboardingScreen() {
   // Mark questionnaire as completed
   const markQuestionnaireCompleted = async (answers, profile) => {
     try {
-      const { doc, updateDoc, serverTimestamp } = await import('firebase/firestore');
+      const { doc, updateDoc, serverTimestamp } = await import(
+        'firebase/firestore'
+      );
       const { db } = await import('../config/firebase');
-      
+
       const anonymousId = await AsyncStorage.getItem('anonymousId');
       if (anonymousId) {
         const docRef = doc(db, 'questionnaire_responses', anonymousId);
-        
+
         await updateDoc(docRef, {
           profile: profile,
           completedAt: serverTimestamp(),
           isCompleted: true,
           completionPercentage: 100,
-          lastUpdated: serverTimestamp()
+          lastUpdated: serverTimestamp(),
         });
-        
+
         console.log('Questionnaire marked as completed');
       }
     } catch (error) {
@@ -693,55 +1062,79 @@ export default function OnboardingScreen() {
       'passionate-adventurer': 'Passionate Adventurer',
       'mysterious-seductress': 'Mysterious Seductress',
       'wild-dreamer': 'Wild Dreamer',
-      'sensual-master': 'Sensual Master'
+      'sensual-master': 'Sensual Master',
     };
-    
+
     // Logic for single people
     if (answers.relationshipStatus === 'single') {
-      if (answers.singleGoal === 'self-discovery' && answers.desire === 'mild') {
+      if (
+        answers.singleGoal === 'self-discovery' &&
+        answers.desire === 'mild'
+      ) {
         return personas['self-explorer'];
-      } else if (answers.singleGoal === 'confidence-building' && answers.comfortLevel >= 7) {
+      } else if (
+        answers.singleGoal === 'confidence-building' &&
+        answers.comfortLevel >= 7
+      ) {
         return personas['confident-solo'];
-      } else if (answers.singleGoal === 'future-relationship' && answers.desire === 'spicy') {
+      } else if (
+        answers.singleGoal === 'future-relationship' &&
+        answers.desire === 'spicy'
+      ) {
         return personas['future-ready'];
-      } else if (answers.singleGoal === 'exploration' && answers.desire === 'extreme') {
+      } else if (
+        answers.singleGoal === 'exploration' &&
+        answers.desire === 'extreme'
+      ) {
         return personas['adventurous-single'];
-      } else if (answers.singleGoal === 'self-pleasure' && answers.comfortLevel >= 5) {
+      } else if (
+        answers.singleGoal === 'self-pleasure' &&
+        answers.comfortLevel >= 5
+      ) {
         return personas['mindful-solo'];
       }
       return personas['self-explorer']; // Default for single
     }
-    
+
     // Logic for couples (existing logic)
-    if (answers.desire === 'extreme' && answers.relationshipStatus === 'married') {
+    if (
+      answers.desire === 'extreme' &&
+      answers.relationshipStatus === 'married'
+    ) {
       return personas['wild-dreamer'];
-    } else if (answers.desire === 'spicy' && answers.turnOns?.includes('roleplay')) {
+    } else if (
+      answers.desire === 'spicy' &&
+      answers.turnOns?.includes('roleplay')
+    ) {
       return personas['passionate-adventurer'];
-    } else if (answers.desire === 'mild' && answers.turnOns?.includes('sensory')) {
+    } else if (
+      answers.desire === 'mild' &&
+      answers.turnOns?.includes('sensory')
+    ) {
       return personas['seductive-explorer'];
     }
-    
+
     return personas['seductive-explorer'];
   };
 
   const generatePremiumSuggestions = (answers) => {
     const suggestions = [];
-    
+
     if (answers.desire === 'extreme') {
       suggestions.push('Premium Extreme Fantasy Decks');
       suggestions.push('Advanced BDSM Tutorials');
     }
-    
+
     if (answers.turnOns?.includes('roleplay')) {
       suggestions.push('Custom Roleplay Scenarios');
       suggestions.push('Professional Scripts');
     }
-    
+
     if (answers.relationshipStatus === 'married') {
       suggestions.push("Couples' Intimacy Workbook");
       suggestions.push("Advanced Couples' Communication Techniques");
     }
-    
+
     return suggestions;
   };
 
@@ -750,20 +1143,24 @@ export default function OnboardingScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor="#000000" />
-        
+
         <LinearGradient
           colors={['#000000', '#1A0000', '#330000', '#4D0000']}
           style={styles.background}
         />
-        
-        <ScrollView ref={introScrollRef} style={styles.scrollView} showsVerticalScrollIndicator={false}>
-          <Animated.View 
+
+        <ScrollView
+          ref={introScrollRef}
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
+          <Animated.View
             style={[
               styles.content,
-              { 
+              {
                 opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }]
-              }
+                transform: [{ translateY: slideAnim }],
+              },
             ]}
           >
             {/* Header with Enticing Illustration */}
@@ -772,12 +1169,16 @@ export default function OnboardingScreen() {
               <View style={styles.imageSection}>
                 {/* Background gradient that flows with the page */}
                 <LinearGradient
-                  colors={['rgba(220, 20, 60, 0.05)', 'rgba(178, 34, 34, 0.08)', 'rgba(139, 0, 0, 0.12)']}
+                  colors={[
+                    'rgba(220, 20, 60, 0.05)',
+                    'rgba(178, 34, 34, 0.08)',
+                    'rgba(139, 0, 0, 0.12)',
+                  ]}
                   style={styles.sectionBackground}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                 />
-                
+
                 {/* Background hearts integrated into the design */}
                 <View style={styles.backgroundHeart1}>
                   <Svg width="48" height="48" viewBox="0 0 24 24">
@@ -843,7 +1244,7 @@ export default function OnboardingScreen() {
                     />
                   </Svg>
                 </View>
-                
+
                 {/* Hearts positioned around the image container */}
                 <View style={styles.heartAroundTopLeft}>
                   <Svg width="26" height="26" viewBox="0 0 24 24">
@@ -893,26 +1294,30 @@ export default function OnboardingScreen() {
                     />
                   </Svg>
                 </View>
-                
+
                 {/* Main image integrated into the page flow */}
                 <View style={styles.integratedImageContainer}>
                   {/* Enhanced glow effect behind image */}
                   <View style={styles.imageGlowEffect} />
-                  
+
                   <Image
                     source={require('../../assets/images/intimatepose.jpg')}
                     style={styles.integratedImage}
                     resizeMode="cover"
                   />
-                  
+
                   {/* Subtle overlay for better text readability */}
                   <LinearGradient
-                    colors={['transparent', 'rgba(0, 0, 0, 0.1)', 'rgba(0, 0, 0, 0.2)']}
+                    colors={[
+                      'transparent',
+                      'rgba(0, 0, 0, 0.1)',
+                      'rgba(0, 0, 0, 0.2)',
+                    ]}
                     style={styles.imageOverlay}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0, y: 1 }}
                   />
-                  
+
                   {/* Subtle border glow */}
                   <View style={styles.imageBorderGlow} />
                 </View>
@@ -925,7 +1330,8 @@ export default function OnboardingScreen() {
                 Let&apos;s Turn Up the Heat! 🔥
               </Text>
               <Text style={styles.heroSubtitle}>
-                Your journey to unforgettable passion starts here, tell us what truly excites you.
+                Your journey to unforgettable passion starts here, tell us what
+                truly excites you.
               </Text>
             </View>
 
@@ -935,34 +1341,48 @@ export default function OnboardingScreen() {
               <View style={styles.infoPoints}>
                 <View style={styles.infoPointRow}>
                   <Text style={styles.bulletPoint}>•</Text>
-                  <Text style={styles.infoPoint}>Uncover Your Desires, discover fantasies that will ignite your wildest dreams</Text>
+                  <Text style={styles.infoPoint}>
+                    Uncover Your Desires, discover fantasies that will ignite
+                    your wildest dreams
+                  </Text>
                 </View>
                 <View style={styles.infoPointRow}>
                   <Text style={styles.bulletPoint}>•</Text>
-                  <Text style={styles.infoPoint}>Trust Your Instincts, your gut feeling knows what truly excites you</Text>
+                  <Text style={styles.infoPoint}>
+                    Trust Your Instincts, your gut feeling knows what truly
+                    excites you
+                  </Text>
                 </View>
                 <View style={styles.infoPointRow}>
                   <Text style={styles.bulletPoint}>•</Text>
-                  <Text style={styles.infoPoint}>Expertly Crafted, designed by intimacy specialists to unlock your full potential</Text>
+                  <Text style={styles.infoPoint}>
+                    Expertly Crafted, designed by intimacy specialists to unlock
+                    your full potential
+                  </Text>
                 </View>
               </View>
             </View>
 
             {/* Start Quiz Button */}
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.startButton} onPress={handleStartQuiz}>
+              <TouchableOpacity
+                style={styles.startButton}
+                onPress={handleStartQuiz}
+              >
                 <LinearGradient
                   colors={['#DC143C', '#B22222', '#8B0000']}
                   style={styles.startButtonGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                 >
-                  <Text style={styles.startButtonText}>Begin the Adventure</Text>
-                  <Text style={styles.startButtonSubtext}>Your fantasy awaits…</Text>
+                  <Text style={styles.startButtonText}>
+                    Begin the Adventure
+                  </Text>
+                  <Text style={styles.startButtonSubtext}>
+                    Your fantasy awaits…
+                  </Text>
                 </LinearGradient>
               </TouchableOpacity>
-              
-
             </View>
 
             {/* Bottom Spacing */}
@@ -975,9 +1395,20 @@ export default function OnboardingScreen() {
 
   // Show quiz steps
   const currentStepData = onboardingSteps[currentStep];
-  console.log('Quiz rendering - showIntro:', showIntro, 'currentStep:', currentStep, 'onboardingSteps.length:', onboardingSteps.length);
-  console.log('currentStepData:', currentStepData ? 'exists' : 'undefined', currentStepData?.title || 'no title');
-  
+  console.log(
+    'Quiz rendering - showIntro:',
+    showIntro,
+    'currentStep:',
+    currentStep,
+    'onboardingSteps.length:',
+    onboardingSteps.length
+  );
+  console.log(
+    'currentStepData:',
+    currentStepData ? 'exists' : 'undefined',
+    currentStepData?.title || 'no title'
+  );
+
   // Safety check - if currentStepData is undefined, reset to step 0
   if (!currentStepData && !showIntro) {
     console.log('currentStepData is undefined, resetting to step 0');
@@ -987,45 +1418,53 @@ export default function OnboardingScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
-      
+
       <LinearGradient
         colors={['#000000', '#1A0000', '#330000', '#4D0000']}
         style={styles.background}
       />
-      
+
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.brandSection}>
-          <Animated.Text style={[styles.brandTitle, { opacity: glowAnim }]}>Velvet</Animated.Text>
+          <Animated.Text style={[styles.brandTitle, { opacity: glowAnim }]}>
+            Velvet
+          </Animated.Text>
           <Text style={styles.tagline}>
             Play deeper. Love <Text style={styles.boldText}>bolder</Text>.
           </Text>
         </View>
-        
-
       </View>
 
       {/* Progress Bar */}
       <View style={styles.progressContainer}>
         <LinearGradient
-          colors={['rgba(220, 20, 60, 0.08)', 'rgba(178, 34, 34, 0.06)', 'rgba(139, 0, 0, 0.12)']}
+          colors={[
+            'rgba(220, 20, 60, 0.08)',
+            'rgba(178, 34, 34, 0.06)',
+            'rgba(139, 0, 0, 0.12)',
+          ]}
           style={styles.progressBox}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
           <View style={styles.progressHeader}>
             <View style={styles.progressInline}>
-              <Animated.Text style={[
-                styles.progressPercentage,
-                {
-                  transform: [{
-                    scale: progressGlowAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [1, 1.02]
-                    })
-                  }]
-                }
-              ]}>
+              <Animated.Text
+                style={[
+                  styles.progressPercentage,
+                  {
+                    transform: [
+                      {
+                        scale: progressGlowAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [1, 1.02],
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              >
                 {Math.round(progress)}%
               </Animated.Text>
               <Text style={styles.progressLabel}>Complete</Text>
@@ -1033,12 +1472,17 @@ export default function OnboardingScreen() {
           </View>
           <View style={styles.progressBarContainer}>
             <View style={styles.progressBar}>
-              <Animated.View style={[styles.progressFill, { 
-                width: progressAnim.interpolate({
-                  inputRange: [0, 100],
-                  outputRange: ['0%', '100%']
-                })
-              }]}>
+              <Animated.View
+                style={[
+                  styles.progressFill,
+                  {
+                    width: progressAnim.interpolate({
+                      inputRange: [0, 100],
+                      outputRange: ['0%', '100%'],
+                    }),
+                  },
+                ]}
+              >
                 <LinearGradient
                   colors={['#DC143C', '#B22222', '#8B0000']}
                   style={styles.progressFillGradient}
@@ -1052,225 +1496,326 @@ export default function OnboardingScreen() {
       </View>
 
       {/* Content */}
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
-        <ScrollView 
+        <ScrollView
           ref={quizScrollRef}
-          style={styles.content} 
+          style={styles.content}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-        <Animated.View style={[styles.stepContainer, { opacity: fadeAnim }]}>
-          {currentStepData ? (
-            <>
-              <Text style={styles.stepTitle}>{currentStepData.title}</Text>
-              <Text style={styles.stepSubtitle}>{currentStepData.subtitle}</Text>
-            </>
-          ) : (
-            <Text style={styles.stepTitle}>Loading quiz...</Text>
-          )}
-          
-          {currentStepData ? (
-            <View style={styles.optionsContainer}>
-              {currentStepData.type === 'toggle' ? (
-              // Toggle component for toggle type questions
-              <View style={styles.toggleContainer}>
-                <Text style={styles.toggleLabel}>No</Text>
-                <TouchableOpacity
-                  style={[
-                    styles.toggleSwitch,
-                    (answers[currentStepData.id] !== false) && styles.toggleSwitchActive
-                  ]}
-                  onPress={() => handleAnswer(currentStepData.id, !(answers[currentStepData.id] !== false))}
-                >
-                  <View style={[
-                    styles.toggleThumb,
-                    (answers[currentStepData.id] !== false) && styles.toggleThumbActive
-                  ]} />
-                </TouchableOpacity>
-                <Text style={styles.toggleLabel}>Yes</Text>
-              </View>
-            ) : currentStepData.type === 'slider' ? (
-              // Layout matching reference image
-              <View style={styles.sliderContainer}>
-                {/* Current value displayed prominently above */}
-                <View style={styles.sliderValueDisplay}>
-                  <Text style={styles.sliderCurrentValue}>
-                    {Math.round(answers[currentStepData.id] || currentStepData.defaultValue || 0)}%
-                  </Text>
-                </View>
-                
-                {/* Labels positioned above the slider */}
-                <View style={styles.sliderLabelsContainer}>
-                  <Text style={styles.sliderMinLabel}>{currentStepData.labels.min}</Text>
-                  <Text style={styles.sliderMaxLabel}>{currentStepData.labels.max}</Text>
-                </View>
-                
-                {/* Massive slider with enhanced theme */}
-                <View style={styles.sliderWrapper}>
-                  <Slider
-                    style={styles.slider}
-                    minimumValue={0}
-                    maximumValue={100}
-                    step={1}
-                    value={answers[currentStepData.id] || currentStepData.defaultValue || 0}
-                    onValueChange={(value) => handleAnswer(currentStepData.id, value)}
-                    onSlidingComplete={(value) => handleAnswer(currentStepData.id, value)}
-                    minimumTrackTintColor="#FF6B9D"
-                    maximumTrackTintColor="rgba(255, 107, 157, 0.15)"
-                    thumbStyle={styles.sliderThumbStyle}
-                    trackStyle={styles.sliderTrackStyle}
-                    thumbTintColor="#FFFFFF"
-                  />
-                </View>
-              </View>
-            ) : currentStepData.id === 'fantasy' ? (
-              // Special grid layout for fantasy settings
-              <View style={styles.fantasyGrid}>
-                {currentStepData.options.map((option, index) => {
-                  const isSelected = answers[currentStepData.id]?.includes(option.value);
-                  
-                  return (
+          <Animated.View style={[styles.stepContainer, { opacity: fadeAnim }]}>
+            {currentStepData ? (
+              <>
+                <Text style={styles.stepTitle}>{currentStepData.title}</Text>
+                <Text style={styles.stepSubtitle}>
+                  {currentStepData.subtitle}
+                </Text>
+              </>
+            ) : (
+              <Text style={styles.stepTitle}>Loading quiz...</Text>
+            )}
+
+            {currentStepData ? (
+              <View style={styles.optionsContainer}>
+                {currentStepData.type === 'toggle' ? (
+                  // Toggle component for toggle type questions
+                  <View style={styles.toggleContainer}>
+                    <Text style={styles.toggleLabel}>No</Text>
                     <TouchableOpacity
-                      key={option.value}
                       style={[
-                        styles.fantasyCard,
-                        isSelected && styles.fantasyCardSelected,
-                        { borderColor: option.color }
+                        styles.toggleSwitch,
+                        answers[currentStepData.id] !== false &&
+                          styles.toggleSwitchActive,
                       ]}
-                      onPress={() => handleAnswer(currentStepData.id, option.value, true)}
+                      onPress={() =>
+                        handleAnswer(
+                          currentStepData.id,
+                          !(answers[currentStepData.id] !== false)
+                        )
+                      }
                     >
-                      <View style={styles.fantasyCardContent}>
-                        <View style={styles.fantasyCardHeader}>
-                          <Text style={styles.fantasyCardIcon}>{option.icon}</Text>
-                          <View style={styles.fantasyCardBadge}>
-                            <Text style={styles.fantasyCardBadgeText}>
-                              {isSelected ? 'Selected' : 'Tap'}
+                      <View
+                        style={[
+                          styles.toggleThumb,
+                          answers[currentStepData.id] !== false &&
+                            styles.toggleThumbActive,
+                        ]}
+                      />
+                    </TouchableOpacity>
+                    <Text style={styles.toggleLabel}>Yes</Text>
+                  </View>
+                ) : currentStepData.type === 'slider' ? (
+                  // Layout matching reference image
+                  <View style={styles.sliderContainer}>
+                    {/* Current value displayed prominently above */}
+                    <View style={styles.sliderValueDisplay}>
+                      <Text style={styles.sliderCurrentValue}>
+                        {Math.round(
+                          answers[currentStepData.id] ||
+                            currentStepData.defaultValue ||
+                            0
+                        )}
+                        %
+                      </Text>
+                    </View>
+
+                    {/* Labels positioned above the slider */}
+                    <View style={styles.sliderLabelsContainer}>
+                      <Text style={styles.sliderMinLabel}>
+                        {currentStepData.labels.min}
+                      </Text>
+                      <Text style={styles.sliderMaxLabel}>
+                        {currentStepData.labels.max}
+                      </Text>
+                    </View>
+
+                    {/* Massive slider with enhanced theme */}
+                    <View style={styles.sliderWrapper}>
+                      <Slider
+                        style={styles.slider}
+                        minimumValue={0}
+                        maximumValue={100}
+                        step={1}
+                        value={
+                          answers[currentStepData.id] ||
+                          currentStepData.defaultValue ||
+                          0
+                        }
+                        onValueChange={(value) =>
+                          handleAnswer(currentStepData.id, value)
+                        }
+                        onSlidingComplete={(value) =>
+                          handleAnswer(currentStepData.id, value)
+                        }
+                        minimumTrackTintColor="#FF6B9D"
+                        maximumTrackTintColor="rgba(255, 107, 157, 0.15)"
+                        thumbStyle={styles.sliderThumbStyle}
+                        trackStyle={styles.sliderTrackStyle}
+                        thumbTintColor="#FFFFFF"
+                      />
+                    </View>
+                  </View>
+                ) : currentStepData.id === 'fantasy' ? (
+                  // Special grid layout for fantasy settings
+                  <View style={styles.fantasyGrid}>
+                    {currentStepData.options.map((option, index) => {
+                      const isSelected = answers[currentStepData.id]?.includes(
+                        option.value
+                      );
+
+                      return (
+                        <TouchableOpacity
+                          key={option.value}
+                          style={[
+                            styles.fantasyCard,
+                            isSelected && styles.fantasyCardSelected,
+                            { borderColor: option.color },
+                          ]}
+                          onPress={() =>
+                            handleAnswer(currentStepData.id, option.value, true)
+                          }
+                        >
+                          <View style={styles.fantasyCardContent}>
+                            <View style={styles.fantasyCardHeader}>
+                              <Text style={styles.fantasyCardIcon}>
+                                {option.icon}
+                              </Text>
+                              <View style={styles.fantasyCardBadge}>
+                                <Text style={styles.fantasyCardBadgeText}>
+                                  {isSelected ? 'Selected' : 'Tap'}
+                                </Text>
+                              </View>
+                            </View>
+                            <View style={styles.fantasyCardBody}>
+                              <Text
+                                style={[
+                                  styles.fantasyCardLabel,
+                                  isSelected && styles.fantasyCardLabelSelected,
+                                ]}
+                              >
+                                {option.label}
+                              </Text>
+                            </View>
+                            <View style={styles.fantasyCardFooter}>
+                              {isSelected ? (
+                                <View
+                                  style={[
+                                    styles.fantasyCardCheckmark,
+                                    { backgroundColor: option.color },
+                                  ]}
+                                >
+                                  <Text style={styles.fantasyCardCheckmarkText}>
+                                    ✓
+                                  </Text>
+                                </View>
+                              ) : (
+                                <View style={styles.fantasyCardIndicator}>
+                                  <Text style={styles.fantasyCardIndicatorText}>
+                                    +
+                                  </Text>
+                                </View>
+                              )}
+                            </View>
+                          </View>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                ) : currentStepData.id === 'experience' ? (
+                  // Compact experience level layout
+                  <View style={styles.experienceCompactContainer}>
+                    {currentStepData.options.map((option, index) => {
+                      const isSelected =
+                        answers[currentStepData.id] === option.value;
+
+                      return (
+                        <TouchableOpacity
+                          key={option.value}
+                          style={[
+                            styles.experienceCompactCard,
+                            isSelected && styles.experienceCompactCardSelected,
+                            { borderColor: option.color },
+                          ]}
+                          onPress={() =>
+                            handleAnswer(currentStepData.id, option.value)
+                          }
+                        >
+                          <View style={styles.experienceCompactContent}>
+                            <View style={styles.experienceCompactLeft}>
+                              <View style={styles.experienceCompactLevel}>
+                                <Text style={styles.experienceCompactLevelText}>
+                                  {index + 1}
+                                </Text>
+                              </View>
+                              <Text style={styles.experienceCompactIcon}>
+                                {option.icon}
+                              </Text>
+                            </View>
+                            <View style={styles.experienceCompactCenter}>
+                              <Text
+                                style={[
+                                  styles.experienceCompactLabel,
+                                  isSelected &&
+                                    styles.experienceCompactLabelSelected,
+                                ]}
+                              >
+                                {option.label}
+                              </Text>
+                              {option.description && (
+                                <Text
+                                  style={[
+                                    styles.experienceCompactDescription,
+                                    isSelected &&
+                                      styles.experienceCompactDescriptionSelected,
+                                  ]}
+                                >
+                                  {option.description}
+                                </Text>
+                              )}
+                            </View>
+                            <View style={styles.experienceCompactRight}>
+                              {isSelected ? (
+                                <View
+                                  style={[
+                                    styles.experienceCompactCheckmark,
+                                    { backgroundColor: option.color },
+                                  ]}
+                                >
+                                  <Text
+                                    style={
+                                      styles.experienceCompactCheckmarkText
+                                    }
+                                  >
+                                    ✓
+                                  </Text>
+                                </View>
+                              ) : (
+                                <View style={styles.experienceCompactIndicator}>
+                                  <Text
+                                    style={
+                                      styles.experienceCompactIndicatorText
+                                    }
+                                  >
+                                    •
+                                  </Text>
+                                </View>
+                              )}
+                            </View>
+                          </View>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                ) : (
+                  // Regular layout for other questions
+                  currentStepData.options.map((option, index) => {
+                    const isSelected =
+                      currentStepData.type === 'multiple'
+                        ? answers[currentStepData.id]?.includes(option.value)
+                        : answers[currentStepData.id] === option.value;
+
+                    return (
+                      <TouchableOpacity
+                        key={option.value}
+                        style={[
+                          styles.option,
+                          isSelected && styles.optionSelected,
+                          { borderColor: option.color },
+                        ]}
+                        onPress={() =>
+                          handleAnswer(
+                            currentStepData.id,
+                            option.value,
+                            currentStepData.type === 'multiple'
+                          )
+                        }
+                      >
+                        <View style={styles.optionContent}>
+                          {option.icon && (
+                            <Text style={styles.optionIcon}>{option.icon}</Text>
+                          )}
+                          <View style={styles.optionTextContainer}>
+                            <Text
+                              style={[
+                                styles.optionLabel,
+                                isSelected && styles.optionLabelSelected,
+                              ]}
+                            >
+                              {option.label}
                             </Text>
+                            {option.description && (
+                              <Text style={styles.optionDescription}>
+                                {option.description}
+                              </Text>
+                            )}
                           </View>
                         </View>
-                        <View style={styles.fantasyCardBody}>
-                          <Text style={[styles.fantasyCardLabel, isSelected && styles.fantasyCardLabelSelected]}>
-                            {option.label}
-                          </Text>
-                        </View>
-                        <View style={styles.fantasyCardFooter}>
-                          {isSelected ? (
-                            <View style={[styles.fantasyCardCheckmark, { backgroundColor: option.color }]}>
-                              <Text style={styles.fantasyCardCheckmarkText}>✓</Text>
-                            </View>
-                          ) : (
-                            <View style={styles.fantasyCardIndicator}>
-                              <Text style={styles.fantasyCardIndicatorText}>+</Text>
-                            </View>
-                          )}
-                        </View>
-                      </View>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            ) : currentStepData.id === 'experience' ? (
-              // Compact experience level layout
-              <View style={styles.experienceCompactContainer}>
-                {currentStepData.options.map((option, index) => {
-                  const isSelected = answers[currentStepData.id] === option.value;
-                  
-                  return (
-                    <TouchableOpacity
-                      key={option.value}
-                      style={[
-                        styles.experienceCompactCard,
-                        isSelected && styles.experienceCompactCardSelected,
-                        { borderColor: option.color }
-                      ]}
-                      onPress={() => handleAnswer(currentStepData.id, option.value)}
-                    >
-                      <View style={styles.experienceCompactContent}>
-                        <View style={styles.experienceCompactLeft}>
-                          <View style={styles.experienceCompactLevel}>
-                            <Text style={styles.experienceCompactLevelText}>{index + 1}</Text>
+                        {isSelected && (
+                          <View
+                            style={[
+                              styles.checkmark,
+                              { backgroundColor: option.color },
+                            ]}
+                          >
+                            <Text style={styles.checkmarkText}>✓</Text>
                           </View>
-                          <Text style={styles.experienceCompactIcon}>{option.icon}</Text>
-                        </View>
-                        <View style={styles.experienceCompactCenter}>
-                          <Text style={[styles.experienceCompactLabel, isSelected && styles.experienceCompactLabelSelected]}>
-                            {option.label}
-                          </Text>
-                          {option.description && (
-                            <Text style={[styles.experienceCompactDescription, isSelected && styles.experienceCompactDescriptionSelected]}>
-                              {option.description}
-                            </Text>
-                          )}
-                        </View>
-                        <View style={styles.experienceCompactRight}>
-                          {isSelected ? (
-                            <View style={[styles.experienceCompactCheckmark, { backgroundColor: option.color }]}>
-                              <Text style={styles.experienceCompactCheckmarkText}>✓</Text>
-                            </View>
-                          ) : (
-                            <View style={styles.experienceCompactIndicator}>
-                              <Text style={styles.experienceCompactIndicatorText}>•</Text>
-                            </View>
-                          )}
-                        </View>
-                      </View>
-                    </TouchableOpacity>
-                  );
-                })}
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })
+                )}
               </View>
             ) : (
-              // Regular layout for other questions
-              currentStepData.options.map((option, index) => {
-                const isSelected = currentStepData.type === 'multiple'
-                  ? answers[currentStepData.id]?.includes(option.value)
-                  : answers[currentStepData.id] === option.value;
-                
-                return (
-                  <TouchableOpacity
-                    key={option.value}
-                    style={[
-                      styles.option,
-                      isSelected && styles.optionSelected,
-                      { borderColor: option.color }
-                    ]}
-                    onPress={() => handleAnswer(currentStepData.id, option.value, currentStepData.type === 'multiple')}
-                  >
-                    <View style={styles.optionContent}>
-                      {option.icon && (
-                        <Text style={styles.optionIcon}>{option.icon}</Text>
-                      )}
-                      <View style={styles.optionTextContainer}>
-                        <Text style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
-                          {option.label}
-                        </Text>
-                        {option.description && (
-                          <Text style={styles.optionDescription}>
-                            {option.description}
-                          </Text>
-                        )}
-                      </View>
-                    </View>
-                    {isSelected && (
-                      <View style={[styles.checkmark, { backgroundColor: option.color }]}>
-                        <Text style={styles.checkmarkText}>✓</Text>
-                      </View>
-                    )}
-                  </TouchableOpacity>
-                );
-              })
+              <View style={styles.optionsContainer}>
+                <Text style={styles.stepSubtitle}>Loading options...</Text>
+              </View>
             )}
-            </View>
-          ) : (
-            <View style={styles.optionsContainer}>
-              <Text style={styles.stepSubtitle}>Loading options...</Text>
-            </View>
-          )}
-        </Animated.View>
+          </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -1281,33 +1826,38 @@ export default function OnboardingScreen() {
             <Text style={styles.backButtonText}>← Back</Text>
           </TouchableOpacity>
         )}
-        
 
-        
         <TouchableOpacity
-          style={[styles.nextButton, !canProceed() && styles.nextButtonDisabled]}
+          style={[
+            styles.nextButton,
+            !canProceed() && styles.nextButtonDisabled,
+          ]}
           onPress={nextStep}
           disabled={!canProceed()}
         >
           <LinearGradient
-            colors={canProceed() ? ['#DC143C', '#B22222', '#8B0000'] : ['#6B7280', '#4B5563']}
+            colors={
+              canProceed()
+                ? ['#DC143C', '#B22222', '#8B0000']
+                : ['#6B7280', '#4B5563']
+            }
             style={styles.nextButtonGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
             <Text style={styles.nextButtonText}>
               {currentStep === onboardingSteps.length - 1 ? 'Submit' : 'Next'}
-                </Text>
+            </Text>
           </LinearGradient>
-            </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
-    );
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
+  container: {
+    flex: 1,
     backgroundColor: '#000000',
   },
   background: {
@@ -1510,7 +2060,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#CD5C5C',
   },
-    heroSection: {
+  heroSection: {
     paddingHorizontal: 20,
     paddingBottom: 15,
     alignItems: 'center',
@@ -1534,7 +2084,7 @@ const styles = StyleSheet.create({
     maxWidth: 320,
     fontWeight: '400',
   },
-    infoBox: {
+  infoBox: {
     backgroundColor: 'rgba(220, 20, 60, 0.1)',
     borderRadius: 20,
     padding: 16,
@@ -1752,7 +2302,7 @@ const styles = StyleSheet.create({
   experienceCompactContainer: {
     gap: 12,
   },
-    option: {
+  option: {
     backgroundColor: 'rgba(220, 20, 60, 0.08)',
     borderRadius: 20,
     padding: 24,
@@ -1838,7 +2388,7 @@ const styles = StyleSheet.create({
     elevation: 6,
     transform: [{ scale: 1.01 }],
   },
-    optionSelected: {
+  optionSelected: {
     backgroundColor: 'rgba(220, 20, 60, 0.12)',
     borderColor: '#DC143C',
     borderWidth: 3,
@@ -2361,13 +2911,13 @@ const styles = StyleSheet.create({
     minWidth: 100,
     alignItems: 'center',
   },
-    backButtonText: {
+  backButtonText: {
     color: '#E5E7EB',
     fontSize: 16,
     fontWeight: '600',
     letterSpacing: 0.5,
   },
-    nextButton: {
+  nextButton: {
     flex: 1,
     borderRadius: 25,
     overflow: 'hidden',
@@ -2384,9 +2934,9 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     color: '#FFFFFF',
-        fontSize: 16,
+    fontSize: 16,
     fontWeight: '600',
-    },
+  },
 
   sliderValueDisplay: {
     alignItems: 'center',

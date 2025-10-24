@@ -3,6 +3,7 @@
 ## 🔥 Firebase Integration Overview
 
 The Velvet app is already configured with Firebase for:
+
 - **User Authentication** (Email/Password)
 - **User Profile Management** (Premium status tracking)
 - **Data Persistence** (Firestore database)
@@ -68,12 +69,12 @@ service cloud.firestore {
 
 ```javascript
 const firebaseConfig = {
-  apiKey: "your-actual-api-key",
-  authDomain: "your-project-id.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project-id.appspot.com",
-  messagingSenderId: "your-messaging-sender-id",
-  appId: "your-app-id"
+  apiKey: 'your-actual-api-key',
+  authDomain: 'your-project-id.firebaseapp.com',
+  projectId: 'your-project-id',
+  storageBucket: 'your-project-id.appspot.com',
+  messagingSenderId: 'your-messaging-sender-id',
+  appId: 'your-app-id',
 };
 ```
 
@@ -96,12 +97,14 @@ src/
 ## 🔐 Authentication Features
 
 ### User Management
+
 - **Sign Up**: Create new accounts with email/password
 - **Sign In**: Authenticate existing users
 - **Profile Management**: Store user data in Firestore
 - **Premium Status**: Track premium user status
 
 ### Data Structure
+
 ```javascript
 // User document in Firestore
 {
@@ -117,6 +120,7 @@ src/
 ## 🎯 Premium Features
 
 The app automatically tracks premium status:
+
 - **Free Users**: Basic access to content
 - **Premium Users**: Enhanced features and content
 - **Upgrade Function**: Built-in premium upgrade functionality
@@ -131,11 +135,13 @@ The app automatically tracks premium status:
 ## 🔧 Development vs Production
 
 ### Development
+
 - Use test mode Firestore rules
 - Enable all authentication methods
 - Use development Firebase project
 
 ### Production
+
 - Implement strict Firestore security rules
 - Enable only necessary authentication methods
 - Use production Firebase project
@@ -169,6 +175,7 @@ The app automatically tracks premium status:
 ### Debug Mode
 
 Enable Firebase debug mode in development:
+
 ```javascript
 // Add to firebase.js for development
 if (__DEV__) {
@@ -186,6 +193,7 @@ if (__DEV__) {
 ## 🎉 Next Steps
 
 After setup:
+
 1. Test all authentication flows
 2. Implement premium feature gating
 3. Add user profile management

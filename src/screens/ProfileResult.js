@@ -28,7 +28,7 @@ export default function ProfileResultScreen() {
   const [userProfile, setUserProfile] = useState(null);
   const [analysis, setAnalysis] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -37,13 +37,17 @@ export default function ProfileResultScreen() {
   const glowAnim = useRef(new Animated.Value(0.3)).current;
   const shimmerAnim = useRef(new Animated.Value(0)).current;
 
-
   useEffect(() => {
     loadUserProfile();
     startEnhancedAnimations();
     // Track screen view
     analytics.trackScreen('profile_result', 'ProfileResultScreen');
-    analytics.trackFunnelStep('onboarding_funnel', 'profile_result_viewed', 5, 5);
+    analytics.trackFunnelStep(
+      'onboarding_funnel',
+      'profile_result_viewed',
+      5,
+      5
+    );
   }, []);
 
   // Prevent any back navigation from profile result
@@ -54,7 +58,10 @@ export default function ProfileResultScreen() {
         return true; // Return true to prevent default back behavior
       };
 
-      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress
+      );
 
       return () => {
         subscription.remove();
@@ -124,23 +131,26 @@ export default function ProfileResultScreen() {
     try {
       const profileData = await AsyncStorage.getItem('userProfile');
       const answersData = await AsyncStorage.getItem('onboardingAnswers');
-      
+
       if (profileData && answersData) {
         const profile = JSON.parse(profileData);
         const answers = JSON.parse(answersData);
-        
+
         setUserProfile(profile);
-        
+
         // Generate comprehensive analysis
         const comprehensiveAnalysis = generateComprehensiveAnalysis(answers);
         setAnalysis(comprehensiveAnalysis);
-        
+
         // Save analysis to AsyncStorage for later use
-        await AsyncStorage.setItem('analysisData', JSON.stringify(comprehensiveAnalysis));
-        
+        await AsyncStorage.setItem(
+          'analysisData',
+          JSON.stringify(comprehensiveAnalysis)
+        );
+
         console.log('Generated comprehensive analysis:', comprehensiveAnalysis);
       }
-      
+
       setIsLoading(false);
     } catch (error) {
       console.error('Error loading user profile:', error);
@@ -150,7 +160,9 @@ export default function ProfileResultScreen() {
 
   const handleContinueToSignup = () => {
     // Track signup continuation
-    analytics.trackJourney('signup_continue_clicked', { source: 'profile_result' });
+    analytics.trackJourney('signup_continue_clicked', {
+      source: 'profile_result',
+    });
     analytics.trackFunnelStep('signup_funnel', 'profile_result_continue', 2, 3);
     // Navigate to signup-details using replace to clear the stack
     router.replace('/signup-details');
@@ -158,11 +170,17 @@ export default function ProfileResultScreen() {
 
   const handleStartExploring = () => {
     // Track exploration start
-    analytics.trackJourney('start_exploring_clicked', { source: 'profile_result' });
-    analytics.trackFunnelConversion('onboarding_funnel', 'exploration_started', {
-      persona: analysis?.persona?.name || 'Unknown',
-      user_authenticated: !!user
+    analytics.trackJourney('start_exploring_clicked', {
+      source: 'profile_result',
     });
+    analytics.trackFunnelConversion(
+      'onboarding_funnel',
+      'exploration_started',
+      {
+        persona: analysis?.persona?.name || 'Unknown',
+        user_authenticated: !!user,
+      }
+    );
     // Navigate to home page for logged-in users
     router.replace('/home');
   };
@@ -172,7 +190,7 @@ export default function ProfileResultScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor="#000000" />
-        
+
         <LinearGradient
           colors={['#000000', '#1A0000', '#330000', '#4D0000']}
           style={styles.background}
@@ -181,14 +199,16 @@ export default function ProfileResultScreen() {
         />
 
         <View style={styles.loadingContainer}>
-          <Image 
-            source={require('../../assets/images/logo.png')} 
+          <Image
+            source={require('../../assets/images/logo.png')}
             style={styles.loadingLogo}
             resizeMode="contain"
           />
           <Text style={styles.loadingTitle}>Analyzing Your Profile</Text>
-          <Text style={styles.loadingSubtitle}>Discovering your unique desires...</Text>
-          
+          <Text style={styles.loadingSubtitle}>
+            Discovering your unique desires...
+          </Text>
+
           <View style={styles.sparkleContainer}>
             <Text style={styles.sparkle}>✨</Text>
             <Text style={styles.sparkle}>💫</Text>
@@ -202,7 +222,7 @@ export default function ProfileResultScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
-      
+
       <LinearGradient
         colors={['#000000', '#1A0000', '#330000', '#4D0000']}
         style={styles.background}
@@ -212,39 +232,61 @@ export default function ProfileResultScreen() {
 
       {/* Floating Elements */}
       <View style={styles.floatingElements}>
-        <View style={[styles.floatingCircle, { top: height * 0.1, left: width * 0.1 }]} />
-        <View style={[styles.floatingCircle, { top: height * 0.3, right: width * 0.15 }]} />
-        <View style={[styles.floatingCircle, { bottom: height * 0.2, left: width * 0.2 }]} />
-        <View style={[styles.floatingCircle, { top: height * 0.6, left: width * 0.7 }]} />
-      </View>
-      
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Hero Header */}
-        <Animated.View 
+        <View
           style={[
-            styles.heroHeader, 
-            { 
+            styles.floatingCircle,
+            { top: height * 0.1, left: width * 0.1 },
+          ]}
+        />
+        <View
+          style={[
+            styles.floatingCircle,
+            { top: height * 0.3, right: width * 0.15 },
+          ]}
+        />
+        <View
+          style={[
+            styles.floatingCircle,
+            { bottom: height * 0.2, left: width * 0.2 },
+          ]}
+        />
+        <View
+          style={[
+            styles.floatingCircle,
+            { top: height * 0.6, left: width * 0.7 },
+          ]}
+        />
+      </View>
+
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Hero Header */}
+        <Animated.View
+          style={[
+            styles.heroHeader,
+            {
               opacity: fadeAnim,
-              transform: [
-                { translateY: slideAnim },
-                { scale: scaleAnim }
-              ]
-            }
+              transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
+            },
           ]}
         >
           <View style={styles.heroContent}>
-            <Animated.Text 
+            <Animated.Text
               style={[
                 styles.heroTitle,
                 {
-                  transform: [{ scale: pulseAnim }]
-                }
+                  transform: [{ scale: pulseAnim }],
+                },
               ]}
             >
               Your Intimacy Profile ✨
             </Animated.Text>
-            <Text style={styles.heroSubtitle}>Discover your unique desires</Text>
-            
+            <Text style={styles.heroSubtitle}>
+              Discover your unique desires
+            </Text>
+
             {/* Intimate Pose Image */}
             <View style={styles.imageContainer}>
               <Image
@@ -253,7 +295,7 @@ export default function ProfileResultScreen() {
                 resizeMode="cover"
               />
             </View>
-            
+
             <View style={styles.sparkleContainer}>
               <Text style={styles.sparkle}>✨</Text>
               <Text style={styles.sparkle}>💫</Text>
@@ -264,24 +306,28 @@ export default function ProfileResultScreen() {
 
         {/* Persona Card */}
         {analysis?.persona && (
-          <Animated.View 
+          <Animated.View
             style={[
-              styles.personaCard, 
-              { 
-                opacity: fadeAnim, 
-                transform: [{ translateY: slideAnim }] 
-              }
+              styles.personaCard,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: slideAnim }],
+              },
             ]}
           >
             <View style={styles.cardHeader}>
               <Text style={styles.cardTitle}>Your Intimacy Persona</Text>
-              <Text style={styles.cardSubtitle}>Based on your unique responses</Text>
+              <Text style={styles.cardSubtitle}>
+                Based on your unique responses
+              </Text>
             </View>
 
             <View style={styles.personaContent}>
               <Text style={styles.personaName}>{analysis.persona.name}</Text>
-              <Text style={styles.personaDescription}>{analysis.persona.description}</Text>
-              
+              <Text style={styles.personaDescription}>
+                {analysis.persona.description}
+              </Text>
+
               <View style={styles.traitsContainer}>
                 {analysis.traits.slice(0, 5).map((trait, index) => (
                   <View key={index} style={styles.traitTag}>
@@ -295,45 +341,51 @@ export default function ProfileResultScreen() {
 
         {/* Insights Section */}
         {analysis?.insights && analysis.insights.length > 0 && (
-          <Animated.View 
+          <Animated.View
             style={[
-              styles.insightsSection, 
-              { 
-                opacity: fadeAnim, 
-                transform: [{ translateY: slideAnim }] 
-              }
+              styles.insightsSection,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: slideAnim }],
+              },
             ]}
           >
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>What We Discovered About You</Text>
+              <Text style={styles.sectionTitle}>
+                What We Discovered About You
+              </Text>
             </View>
 
             {analysis.insights.slice(0, 3).map((insight, index) => (
-              <Animated.View 
+              <Animated.View
                 key={index}
                 style={[
                   styles.insightCard,
                   {
                     opacity: fadeAnim,
-                    transform: [{
-                      translateX: slideAnim.interpolate({
-                        inputRange: [0, 50],
-                        outputRange: [0, index % 2 === 0 ? 10 : -10]
-                      })
-                    }]
-                  }
+                    transform: [
+                      {
+                        translateX: slideAnim.interpolate({
+                          inputRange: [0, 50],
+                          outputRange: [0, index % 2 === 0 ? 10 : -10],
+                        }),
+                      },
+                    ],
+                  },
                 ]}
               >
                 <View style={styles.insightHeader}>
                   <Text style={styles.insightTitle}>{insight.title}</Text>
                 </View>
-                
+
                 <Text style={styles.insightText}>{insight.insight}</Text>
-                
+
                 {insight.tips && insight.tips.length > 0 && (
                   <View style={styles.tipsContainer}>
                     {insight.tips.slice(0, 2).map((tip, tipIndex) => (
-                      <Text key={tipIndex} style={styles.tipText}>• {tip}</Text>
+                      <Text key={tipIndex} style={styles.tipText}>
+                        • {tip}
+                      </Text>
                     ))}
                   </View>
                 )}
@@ -344,13 +396,13 @@ export default function ProfileResultScreen() {
 
         {/* Recommendations Section */}
         {analysis?.recommendations && analysis.recommendations.length > 0 && (
-          <Animated.View 
+          <Animated.View
             style={[
-              styles.recommendationsSection, 
-              { 
-                opacity: fadeAnim, 
-                transform: [{ translateY: slideAnim }] 
-              }
+              styles.recommendationsSection,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: slideAnim }],
+              },
             ]}
           >
             <View style={styles.sectionHeader}>
@@ -358,57 +410,67 @@ export default function ProfileResultScreen() {
             </View>
 
             <View style={styles.recommendationsGrid}>
-              {analysis.recommendations.slice(0, 6).map((recommendation, index) => (
-                <Animated.View 
-                  key={index}
-                  style={[
-                    styles.recommendationCard,
-                    {
-                      opacity: fadeAnim,
-                      transform: [{
-                        translateX: slideAnim.interpolate({
-                          inputRange: [0, 50],
-                          outputRange: [0, index % 2 === 0 ? 15 : -15]
-                        })
-                      }]
-                    }
-                  ]}
-                >
-                  <Text style={styles.recommendationText}>{recommendation}</Text>
-                </Animated.View>
-              ))}
+              {analysis.recommendations
+                .slice(0, 6)
+                .map((recommendation, index) => (
+                  <Animated.View
+                    key={index}
+                    style={[
+                      styles.recommendationCard,
+                      {
+                        opacity: fadeAnim,
+                        transform: [
+                          {
+                            translateX: slideAnim.interpolate({
+                              inputRange: [0, 50],
+                              outputRange: [0, index % 2 === 0 ? 15 : -15],
+                            }),
+                          },
+                        ],
+                      },
+                    ]}
+                  >
+                    <Text style={styles.recommendationText}>
+                      {recommendation}
+                    </Text>
+                  </Animated.View>
+                ))}
             </View>
           </Animated.View>
         )}
 
         {/* Personalized Message */}
         {analysis?.personalizedMessage && (
-          <Animated.View 
+          <Animated.View
             style={[
-              styles.messageSection, 
-              { 
-                opacity: fadeAnim, 
-                transform: [{ translateY: slideAnim }] 
-              }
+              styles.messageSection,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: slideAnim }],
+              },
             ]}
           >
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.messageCard,
                 {
-                  transform: [{
-                    translateY: pulseAnim.interpolate({
-                      inputRange: [1, 1.05],
-                      outputRange: [0, -5]
-                    })
-                  }]
-                }
+                  transform: [
+                    {
+                      translateY: pulseAnim.interpolate({
+                        inputRange: [1, 1.05],
+                        outputRange: [0, -5],
+                      }),
+                    },
+                  ],
+                },
               ]}
             >
               <View style={styles.messageHeader}>
-                <Text style={styles.messageTitle}>Your Personalized Insight</Text>
+                <Text style={styles.messageTitle}>
+                  Your Personalized Insight
+                </Text>
               </View>
-              
+
               <Text style={styles.messageText}>
                 {analysis.personalizedMessage}
               </Text>
@@ -421,17 +483,17 @@ export default function ProfileResultScreen() {
       </ScrollView>
 
       {/* Sticky Button */}
-      <Animated.View 
+      <Animated.View
         style={[
           styles.stickyButtonContainer,
           {
             opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }]
-          }
+            transform: [{ translateY: slideAnim }],
+          },
         ]}
       >
-        <TouchableOpacity 
-          style={styles.continueButton} 
+        <TouchableOpacity
+          style={styles.continueButton}
           onPress={user ? handleStartExploring : handleContinueToSignup}
         >
           <LinearGradient
@@ -444,23 +506,29 @@ export default function ProfileResultScreen() {
               style={[
                 styles.shimmer,
                 {
-                  transform: [{ 
-                    translateX: shimmerAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [-200, 250],
-                    }) 
-                  }],
+                  transform: [
+                    {
+                      translateX: shimmerAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [-200, 250],
+                      }),
+                    },
+                  ],
                 },
               ]}
             >
               <LinearGradient
-                colors={['transparent', 'rgba(255, 255, 255, 0.3)', 'transparent']}
+                colors={[
+                  'transparent',
+                  'rgba(255, 255, 255, 0.3)',
+                  'transparent',
+                ]}
                 style={styles.shimmerGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
               />
             </Animated.View>
-            
+
             <Text style={styles.continueButtonText}>
               {user ? 'Start Exploring 🚀' : 'Continue to Create Account ✨'}
             </Text>
@@ -499,7 +567,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
-  
+
   // Hero Header
   heroHeader: {
     paddingTop: 40,

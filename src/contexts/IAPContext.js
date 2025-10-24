@@ -11,7 +11,7 @@ const IAPContext = createContext({
   restorePurchases: () => {},
   hasActiveSubscription: () => {},
   isProductPurchased: () => {},
-  error: null
+  error: null,
 });
 
 export const useIAP = () => {
@@ -27,10 +27,10 @@ export const IAPProvider = ({ children }) => {
 
   useEffect(() => {
     initializeIAP();
-    
+
     // Set up purchase listener
     const unsubscribe = IAPService.addPurchaseListener(handlePurchaseUpdate);
-    
+
     return () => {
       unsubscribe();
     };
@@ -40,7 +40,7 @@ export const IAPProvider = ({ children }) => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const initialized = await IAPService.initialize();
       if (initialized) {
         setIsInitialized(true);
@@ -83,32 +83,32 @@ export const IAPProvider = ({ children }) => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       console.log('Purchasing product:', productId);
-      
+
       // Find the product to get display info
-      const product = products.find(p => p.productId === productId);
+      const product = products.find((p) => p.productId === productId);
       if (!product) {
         throw new Error('Product not found');
       }
 
       // Make the purchase
       const purchase = await IAPService.purchaseProduct(productId);
-      
+
       if (purchase) {
         // Validate the purchase
         const validation = await IAPService.validatePurchase(purchase);
-        
+
         if (validation.isValid) {
           // Upgrade user to premium with purchase data
           await upgradeToPremium(purchase);
-          
+
           Alert.alert(
             'Purchase Successful! 🎉',
             `Welcome to Velvet Premium! You now have access to all exclusive content.`,
             [{ text: 'Start Exploring' }]
           );
-          
+
           return { success: true, purchase };
         } else {
           throw new Error('Purchase validation failed');
@@ -119,10 +119,10 @@ export const IAPProvider = ({ children }) => {
     } catch (error) {
       console.error('Purchase error:', error);
       setError(error.message);
-      
+
       // Show user-friendly error message
       let errorMessage = 'Purchase failed. Please try again.';
-      
+
       if (error.message.includes('User cancelled')) {
         errorMessage = 'Purchase was cancelled.';
       } else if (error.message.includes('not available')) {
@@ -130,9 +130,9 @@ export const IAPProvider = ({ children }) => {
       } else if (error.message.includes('already purchased')) {
         errorMessage = 'You have already purchased this product.';
       }
-      
+
       Alert.alert('Purchase Failed', errorMessage);
-      
+
       return { success: false, error: error.message };
     } finally {
       setIsLoading(false);
@@ -143,26 +143,28 @@ export const IAPProvider = ({ children }) => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       console.log('Restoring purchases...');
       const purchases = await IAPService.restorePurchases();
-      
+
       if (purchases && purchases.length > 0) {
         // Check if any of the restored purchases are premium subscriptions
-        const hasPremiumSubscription = purchases.some(purchase => 
-          purchase.productId.includes('premium') || 
-          purchase.productId.includes('monthly') || 
-          purchase.productId.includes('yearly')
+        const hasPremiumSubscription = purchases.some(
+          (purchase) =>
+            purchase.productId.includes('premium') ||
+            purchase.productId.includes('monthly') ||
+            purchase.productId.includes('yearly')
         );
-        
+
         if (hasPremiumSubscription) {
           // Find the most recent premium purchase
-          const premiumPurchase = purchases.find(purchase => 
-            purchase.productId.includes('premium') || 
-            purchase.productId.includes('monthly') || 
-            purchase.productId.includes('yearly')
+          const premiumPurchase = purchases.find(
+            (purchase) =>
+              purchase.productId.includes('premium') ||
+              purchase.productId.includes('monthly') ||
+              purchase.productId.includes('yearly')
           );
-          
+
           await upgradeToPremium(premiumPurchase);
           Alert.alert(
             'Purchases Restored! 🎉',
@@ -176,7 +178,7 @@ export const IAPProvider = ({ children }) => {
             [{ text: 'OK' }]
           );
         }
-        
+
         return { success: true, purchases };
       } else {
         Alert.alert(
@@ -189,7 +191,10 @@ export const IAPProvider = ({ children }) => {
     } catch (error) {
       console.error('Restore purchases error:', error);
       setError(error.message);
-      Alert.alert('Restore Failed', 'Failed to restore purchases. Please try again.');
+      Alert.alert(
+        'Restore Failed',
+        'Failed to restore purchases. Please try again.'
+      );
       return { success: false, error: error.message };
     } finally {
       setIsLoading(false);
@@ -216,11 +221,12 @@ export const IAPProvider = ({ children }) => {
 
   const handlePurchaseUpdate = (purchase) => {
     console.log('Purchase update received in context:', purchase);
-    
+
     // Handle the purchase update
-    if (purchase.responseCode === 0) { // OK response code
+    if (purchase.responseCode === 0) {
+      // OK response code
       // Validate and process the purchase
-      IAPService.validatePurchase(purchase).then(validation => {
+      IAPService.validatePurchase(purchase).then((validation) => {
         if (validation.isValid) {
           upgradeToPremium(purchase);
         }
@@ -236,12 +242,8 @@ export const IAPProvider = ({ children }) => {
     restorePurchases,
     hasActiveSubscription,
     isProductPurchased,
-    error
+    error,
   };
 
-  return (
-    <IAPContext.Provider value={value}>
-      {children}
-    </IAPContext.Provider>
-  );
+  return <IAPContext.Provider value={value}>{children}</IAPContext.Provider>;
 };

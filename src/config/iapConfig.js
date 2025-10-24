@@ -3,9 +3,9 @@ export const IAP_CONFIG = {
   // Product IDs - these must match your App Store Connect / Google Play Console
   PRODUCT_IDS: {
     MONTHLY: 'com.velvet.premium.monthly',
-    YEARLY: 'com.velvet.premium.yearly'
+    YEARLY: 'com.velvet.premium.yearly',
   },
-  
+
   // Product configurations
   PRODUCTS: {
     'com.velvet.premium.monthly': {
@@ -19,8 +19,8 @@ export const IAP_CONFIG = {
         'Unlimited access to all content',
         'Premium dice games',
         'Exclusive categories',
-        'Priority support'
-      ]
+        'Priority support',
+      ],
     },
     'com.velvet.premium.yearly': {
       id: 'com.velvet.premium.yearly',
@@ -33,29 +33,29 @@ export const IAP_CONFIG = {
         'Everything in Monthly',
         'Exclusive yearly content',
         'Early access to new features',
-        'Premium support'
-      ]
-    }
+        'Premium support',
+      ],
+    },
   },
-  
+
   // Validation settings
   VALIDATION: {
     // Enable server-side validation (recommended for production)
     ENABLE_SERVER_VALIDATION: false,
-    
+
     // Server validation endpoint (if enabled)
     VALIDATION_ENDPOINT: 'https://your-server.com/validate-purchase',
-    
+
     // Local validation settings
     ENABLE_LOCAL_VALIDATION: true,
-    
+
     // Cache validation results
     CACHE_VALIDATION: true,
-    
+
     // Validation timeout (ms)
-    VALIDATION_TIMEOUT: 10000
+    VALIDATION_TIMEOUT: 10000,
   },
-  
+
   // Error messages
   ERROR_MESSAGES: {
     PRODUCT_NOT_FOUND: 'Product not found. Please try again later.',
@@ -66,15 +66,15 @@ export const IAP_CONFIG = {
     VALIDATION_FAILED: 'Purchase validation failed.',
     RESTORE_FAILED: 'Failed to restore purchases.',
     NO_PURCHASES_FOUND: 'No previous purchases found.',
-    IAP_NOT_AVAILABLE: 'In-app purchases are not available on this device.'
+    IAP_NOT_AVAILABLE: 'In-app purchases are not available on this device.',
   },
-  
+
   // Success messages
   SUCCESS_MESSAGES: {
     PURCHASE_SUCCESS: 'Purchase successful! Welcome to Premium!',
     RESTORE_SUCCESS: 'Purchases restored successfully!',
-    VALIDATION_SUCCESS: 'Purchase validated successfully!'
-  }
+    VALIDATION_SUCCESS: 'Purchase validated successfully!',
+  },
 };
 
 // Helper functions
@@ -96,5 +96,8 @@ export const getErrorMessage = (errorCode) => {
 };
 
 export const getSuccessMessage = (messageCode) => {
-  return IAP_CONFIG.SUCCESS_MESSAGES[messageCode] || 'Operation completed successfully!';
+  return (
+    IAP_CONFIG.SUCCESS_MESSAGES[messageCode] ||
+    'Operation completed successfully!'
+  );
 };

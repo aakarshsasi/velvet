@@ -1,29 +1,39 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useIAP } from '../contexts/IAPContext';
 import MockIAPService from '../services/MockIAPService';
 
 export default function IAPTestComponent() {
-  const { 
-    products, 
-    isLoading, 
-    isInitialized, 
-    purchaseProduct, 
-    restorePurchases, 
-    error 
+  const {
+    products,
+    isLoading,
+    isInitialized,
+    purchaseProduct,
+    restorePurchases,
+    error,
   } = useIAP();
-  
+
   const [testResults, setTestResults] = useState([]);
   const [simulateErrors, setSimulateErrors] = useState(false);
   const [simulateDelay, setSimulateDelay] = useState(true);
 
   const addTestResult = (message, type = 'info') => {
-    setTestResults(prev => [...prev, { 
-      id: Date.now(), 
-      message, 
-      type, 
-      timestamp: new Date().toLocaleTimeString() 
-    }]);
+    setTestResults((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        message,
+        type,
+        timestamp: new Date().toLocaleTimeString(),
+      },
+    ]);
   };
 
   const testPurchase = async (productId) => {
@@ -82,11 +92,11 @@ export default function IAPTestComponent() {
     Alert.alert(
       'Debug Info',
       `Initialized: ${debugInfo.isInitialized}\n` +
-      `Products: ${debugInfo.productsCount}\n` +
-      `Purchases: ${debugInfo.purchasesCount}\n` +
-      `Listeners: ${debugInfo.listenersCount}\n` +
-      `Simulate Errors: ${debugInfo.simulateErrors}\n` +
-      `Simulate Delay: ${debugInfo.simulateDelay}`,
+        `Products: ${debugInfo.productsCount}\n` +
+        `Purchases: ${debugInfo.purchasesCount}\n` +
+        `Listeners: ${debugInfo.listenersCount}\n` +
+        `Simulate Errors: ${debugInfo.simulateErrors}\n` +
+        `Simulate Delay: ${debugInfo.simulateDelay}`,
       [{ text: 'OK' }]
     );
   };
@@ -103,7 +113,7 @@ export default function IAPTestComponent() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>IAP Test Component</Text>
-      
+
       <View style={styles.statusContainer}>
         <Text style={styles.status}>
           Status: {isInitialized ? '✅ Initialized' : '❌ Not Initialized'}
@@ -111,15 +121,13 @@ export default function IAPTestComponent() {
         <Text style={styles.status}>
           Loading: {isLoading ? '⏳ Yes' : '✅ No'}
         </Text>
-        <Text style={styles.status}>
-          Products: {products.length} available
-        </Text>
+        <Text style={styles.status}>Products: {products.length} available</Text>
         {error && <Text style={styles.error}>Error: {error}</Text>}
       </View>
 
       <View style={styles.productsContainer}>
         <Text style={styles.sectionTitle}>Available Products:</Text>
-        {products.map(product => (
+        {products.map((product) => (
           <View key={product.productId} style={styles.productItem}>
             <Text style={styles.productName}>{product.title}</Text>
             <Text style={styles.productPrice}>{product.price}</Text>
@@ -142,17 +150,14 @@ export default function IAPTestComponent() {
         <Text style={styles.buttonText}>Test Restore Purchases</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.clearButton}
-        onPress={clearResults}
-      >
+      <TouchableOpacity style={styles.clearButton} onPress={clearResults}>
         <Text style={styles.buttonText}>Clear Results</Text>
       </TouchableOpacity>
 
       {/* Mock Service Controls */}
       <View style={styles.mockControlsContainer}>
         <Text style={styles.sectionTitle}>Mock Service Controls:</Text>
-        
+
         <View style={styles.controlRow}>
           <Text style={styles.controlLabel}>Simulate Errors:</Text>
           <Switch
@@ -173,10 +178,7 @@ export default function IAPTestComponent() {
           />
         </View>
 
-        <TouchableOpacity
-          style={styles.debugButton}
-          onPress={showDebugInfo}
-        >
+        <TouchableOpacity style={styles.debugButton} onPress={showDebugInfo}>
           <Text style={styles.buttonText}>Show Debug Info</Text>
         </TouchableOpacity>
 
@@ -190,8 +192,11 @@ export default function IAPTestComponent() {
 
       <View style={styles.resultsContainer}>
         <Text style={styles.sectionTitle}>Test Results:</Text>
-        {testResults.map(result => (
-          <View key={result.id} style={[styles.resultItem, styles[`result${result.type}`]]}>
+        {testResults.map((result) => (
+          <View
+            key={result.id}
+            style={[styles.resultItem, styles[`result${result.type}`]]}
+          >
             <Text style={styles.resultTime}>{result.timestamp}</Text>
             <Text style={styles.resultMessage}>{result.message}</Text>
           </View>

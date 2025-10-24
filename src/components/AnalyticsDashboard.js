@@ -1,13 +1,13 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import {
-    Alert,
-    Dimensions,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Alert,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import useAnalytics from '../hooks/useAnalytics';
@@ -25,7 +25,7 @@ export default function AnalyticsDashboard() {
     topCategories: [],
     userJourney: [],
     dropOffPoints: [],
-    premiumConversions: 0
+    premiumConversions: 0,
   });
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function AnalyticsDashboard() {
         { name: 'Foreplay', views: 380, conversion: 12.1 },
         { name: 'Roleplay', views: 320, conversion: 15.3 },
         { name: 'Sensory Play', views: 280, conversion: 9.8 },
-        { name: 'Public Play', views: 250, conversion: 6.4 }
+        { name: 'Public Play', views: 250, conversion: 6.4 },
       ],
       userJourney: [
         { step: 'Welcome Screen', users: 1000, dropOff: 0 },
@@ -55,21 +55,33 @@ export default function AnalyticsDashboard() {
         { step: 'Quiz Completion', users: 720, dropOff: 15.3 },
         { step: 'Profile Generated', users: 680, dropOff: 5.6 },
         { step: 'Signup', users: 450, dropOff: 33.8 },
-        { step: 'Home Screen', users: 420, dropOff: 6.7 }
+        { step: 'Home Screen', users: 420, dropOff: 6.7 },
       ],
       dropOffPoints: [
-        { screen: 'Signup Details', dropOffRate: 25.3, reason: 'Form complexity' },
-        { screen: 'Payment Screen', dropOffRate: 18.7, reason: 'Payment method issues' },
-        { screen: 'Onboarding Step 3', dropOffRate: 12.4, reason: 'Question sensitivity' }
+        {
+          screen: 'Signup Details',
+          dropOffRate: 25.3,
+          reason: 'Form complexity',
+        },
+        {
+          screen: 'Payment Screen',
+          dropOffRate: 18.7,
+          reason: 'Payment method issues',
+        },
+        {
+          screen: 'Onboarding Step 3',
+          dropOffRate: 12.4,
+          reason: 'Question sensitivity',
+        },
       ],
-      premiumConversions: 125
+      premiumConversions: 125,
     });
   };
 
   const handleRefresh = () => {
     analytics.trackCustomEvent('analytics_dashboard_refresh', {
       user_id: user?.uid,
-      is_premium: isPremium
+      is_premium: isPremium,
     });
     loadAnalyticsData();
   };
@@ -77,7 +89,7 @@ export default function AnalyticsDashboard() {
   const handleExportData = () => {
     analytics.trackCustomEvent('analytics_data_export', {
       user_id: user?.uid,
-      data_type: 'dashboard_summary'
+      data_type: 'dashboard_summary',
     });
     Alert.alert('Export', 'Analytics data export feature coming soon!');
   };
@@ -93,14 +105,34 @@ export default function AnalyticsDashboard() {
   const JourneyStep = ({ step, users, dropOff, isLast = false }) => (
     <View style={styles.journeyStep}>
       <View style={styles.stepIndicator}>
-        <View style={[styles.stepDot, { backgroundColor: dropOff > 20 ? '#EF4444' : dropOff > 10 ? '#F59E0B' : '#10B981' }]} />
+        <View
+          style={[
+            styles.stepDot,
+            {
+              backgroundColor:
+                dropOff > 20 ? '#EF4444' : dropOff > 10 ? '#F59E0B' : '#10B981',
+            },
+          ]}
+        />
         {!isLast && <View style={styles.stepLine} />}
       </View>
       <View style={styles.stepContent}>
         <Text style={styles.stepName}>{step}</Text>
         <Text style={styles.stepUsers}>{users.toLocaleString()} users</Text>
         {dropOff > 0 && (
-          <Text style={[styles.stepDropOff, { color: dropOff > 20 ? '#EF4444' : dropOff > 10 ? '#F59E0B' : '#6B7280' }]}>
+          <Text
+            style={[
+              styles.stepDropOff,
+              {
+                color:
+                  dropOff > 20
+                    ? '#EF4444'
+                    : dropOff > 10
+                      ? '#F59E0B'
+                      : '#6B7280',
+              },
+            ]}
+          >
             {dropOff}% drop-off
           </Text>
         )}
@@ -124,7 +156,10 @@ export default function AnalyticsDashboard() {
           <TouchableOpacity style={styles.actionButton} onPress={handleRefresh}>
             <Text style={styles.actionButtonText}>🔄 Refresh</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton} onPress={handleExportData}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={handleExportData}
+          >
             <Text style={styles.actionButtonText}>📊 Export</Text>
           </TouchableOpacity>
         </View>
@@ -168,10 +203,14 @@ export default function AnalyticsDashboard() {
               <View key={index} style={styles.categoryItem}>
                 <View style={styles.categoryInfo}>
                   <Text style={styles.categoryName}>{category.name}</Text>
-                  <Text style={styles.categoryViews}>{category.views} views</Text>
+                  <Text style={styles.categoryViews}>
+                    {category.views} views
+                  </Text>
                 </View>
                 <View style={styles.categoryStats}>
-                  <Text style={styles.categoryConversion}>{category.conversion}%</Text>
+                  <Text style={styles.categoryConversion}>
+                    {category.conversion}%
+                  </Text>
                   <Text style={styles.categoryLabel}>conversion</Text>
                 </View>
               </View>
@@ -203,7 +242,12 @@ export default function AnalyticsDashboard() {
               <View key={index} style={styles.dropOffItem}>
                 <View style={styles.dropOffHeader}>
                   <Text style={styles.dropOffScreen}>{point.screen}</Text>
-                  <Text style={[styles.dropOffRate, { color: point.dropOffRate > 20 ? '#EF4444' : '#F59E0B' }]}>
+                  <Text
+                    style={[
+                      styles.dropOffRate,
+                      { color: point.dropOffRate > 20 ? '#EF4444' : '#F59E0B' },
+                    ]}
+                  >
                     {point.dropOffRate}%
                   </Text>
                 </View>
@@ -236,12 +280,24 @@ export default function AnalyticsDashboard() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Recent Events</Text>
           <View style={styles.eventsLog}>
-            <Text style={styles.eventItem}>📱 Welcome screen viewed - 1,250 times</Text>
-            <Text style={styles.eventItem}>🎯 Onboarding completed - 720 times</Text>
-            <Text style={styles.eventItem}>💳 Premium upgrade attempted - 150 times</Text>
-            <Text style={styles.eventItem}>✅ Payment successful - 125 times</Text>
-            <Text style={styles.eventItem}>🏠 Home screen viewed - 2,100 times</Text>
-            <Text style={styles.eventItem}>🎴 Category explored - 3,400 times</Text>
+            <Text style={styles.eventItem}>
+              📱 Welcome screen viewed - 1,250 times
+            </Text>
+            <Text style={styles.eventItem}>
+              🎯 Onboarding completed - 720 times
+            </Text>
+            <Text style={styles.eventItem}>
+              💳 Premium upgrade attempted - 150 times
+            </Text>
+            <Text style={styles.eventItem}>
+              ✅ Payment successful - 125 times
+            </Text>
+            <Text style={styles.eventItem}>
+              🏠 Home screen viewed - 2,100 times
+            </Text>
+            <Text style={styles.eventItem}>
+              🎴 Category explored - 3,400 times
+            </Text>
           </View>
         </View>
       </View>

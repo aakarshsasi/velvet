@@ -1,5 +1,5 @@
-import HomeScreen from "../src/screens/Home";
-import { Stack } from "expo-router";
+import HomeScreen from '../src/screens/Home';
+import { Stack } from 'expo-router';
 
 export default function Page() {
   return (

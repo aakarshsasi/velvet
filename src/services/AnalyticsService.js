@@ -17,7 +17,7 @@ class AnalyticsService {
   static trackAppLaunch() {
     this.trackEvent('app_launch', {
       timestamp: new Date().toISOString(),
-      platform: 'ios'
+      platform: 'ios',
     });
   }
 
@@ -39,7 +39,7 @@ class AnalyticsService {
   static trackScreen(screenName) {
     this.trackEvent('screen_view', {
       screen_name: screenName,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -71,7 +71,7 @@ class AnalyticsService {
   static linkAnonymousUser(userId) {
     this.trackEvent('user_linked', {
       user_id: userId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
     return Promise.resolve();
   }
@@ -82,7 +82,7 @@ class AnalyticsService {
       method,
       success,
       error: error ? error.message : null,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -91,13 +91,13 @@ class AnalyticsService {
       method,
       success,
       error: error ? error.message : null,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
   static trackSignOut() {
     this.trackEvent('sign_out', {
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -108,7 +108,7 @@ class AnalyticsService {
       error_stack: error.stack,
       context,
       type,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -119,7 +119,7 @@ class AnalyticsService {
       method,
       value,
       currency,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -128,7 +128,7 @@ class AnalyticsService {
       context,
       method,
       error: error.message || error,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -142,14 +142,14 @@ class AnalyticsService {
   // Session tracking
   static trackSessionStart() {
     this.trackEvent('session_start', {
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
   static trackSessionEnd(duration) {
     this.trackEvent('session_end', {
       duration,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -158,7 +158,7 @@ class AnalyticsService {
     this.trackEvent('screen_view', {
       screen_name: screenName,
       screen_class: screenClass,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -167,7 +167,7 @@ class AnalyticsService {
     this.trackEvent('user_journey', {
       step,
       data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -177,7 +177,7 @@ class AnalyticsService {
       step_number: stepNumber,
       step_name: stepName,
       answers,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -186,7 +186,7 @@ class AnalyticsService {
       total_steps: totalSteps,
       completion_time: completionTime,
       answers,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -195,7 +195,7 @@ class AnalyticsService {
       step_number: stepNumber,
       step_name: stepName,
       time_spent: timeSpent,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -203,13 +203,13 @@ class AnalyticsService {
     this.trackEvent('onboarding_abandon', {
       step,
       reason,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
   static trackOnboardingStart() {
     this.trackEvent('onboarding_start', {
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -218,7 +218,7 @@ class AnalyticsService {
     this.trackEvent('category_view', {
       category,
       subcategory,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -228,7 +228,7 @@ class AnalyticsService {
       content_id: contentId,
       action,
       metadata,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -237,7 +237,7 @@ class AnalyticsService {
       card_id: cardId,
       category,
       position,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -245,20 +245,20 @@ class AnalyticsService {
     this.trackEvent('feature_interest', {
       feature,
       interest_level: interestLevel,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
   static trackWelcomeScreenView() {
     this.trackEvent('welcome_screen_view', {
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
   static trackSignupAttempt(method) {
     this.trackEvent('signup_attempt', {
       method,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -266,7 +266,7 @@ class AnalyticsService {
     this.trackEvent('signup_abandon', {
       step,
       reason,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -274,7 +274,7 @@ class AnalyticsService {
     this.trackEvent('content_preview', {
       content_type: contentType,
       content_id: contentId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -282,7 +282,7 @@ class AnalyticsService {
     this.trackEvent('premium_upgrade_attempt', {
       source,
       method,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -290,7 +290,7 @@ class AnalyticsService {
   static trackDiceGameStart(category) {
     this.trackEvent('dice_game_start', {
       category,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -299,14 +299,14 @@ class AnalyticsService {
       category,
       result,
       time_spent: timeSpent,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
   static trackSpinWheelStart(category) {
     this.trackEvent('spin_wheel_start', {
       category,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -315,14 +315,14 @@ class AnalyticsService {
       category,
       result,
       time_spent: timeSpent,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
   // Profile analysis tracking
   static trackProfileAnalysisStart() {
     this.trackEvent('profile_analysis_start', {
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -330,7 +330,7 @@ class AnalyticsService {
     this.trackEvent('profile_analysis_complete', {
       profile_data: profileData,
       analysis_time: analysisTime,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -340,7 +340,7 @@ class AnalyticsService {
       metric,
       value,
       unit,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -352,7 +352,7 @@ class AnalyticsService {
       step_number: stepNumber,
       total_steps: totalSteps,
       data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -361,7 +361,7 @@ class AnalyticsService {
       funnel_name: funnelName,
       conversion_point: conversionPoint,
       data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -369,7 +369,7 @@ class AnalyticsService {
   static trackCustomEvent(eventName, parameters) {
     this.trackEvent(eventName, {
       ...parameters,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 }

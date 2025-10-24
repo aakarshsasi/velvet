@@ -2,16 +2,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-    Alert,
-    Animated,
-    Dimensions,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Animated,
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { useIAP } from '../contexts/IAPContext';
@@ -22,12 +22,18 @@ const { width, height } = Dimensions.get('window');
 export default function PaymentScreen() {
   const router = useRouter();
   const { upgradeToPremium } = useAuth();
-  const { products, isLoading: iapLoading, purchaseProduct, restorePurchases, isInitialized } = useIAP();
+  const {
+    products,
+    isLoading: iapLoading,
+    purchaseProduct,
+    restorePurchases,
+    isInitialized,
+  } = useIAP();
   const analytics = useAnalytics();
   const [selectedPlan, setSelectedPlan] = useState('monthly');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('iap');
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
   // Animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -38,9 +44,9 @@ export default function PaymentScreen() {
     startAnimations();
     // Track screen view
     analytics.trackScreen('payment', 'PaymentScreen');
-    analytics.trackJourney('payment_screen_viewed', { 
+    analytics.trackJourney('payment_screen_viewed', {
       selected_plan: selectedPlan,
-      selected_payment_method: selectedPaymentMethod
+      selected_payment_method: selectedPaymentMethod,
     });
     // Track feature interest for premium upgrade
     analytics.trackFeatureInterest('premium_upgrade', 'payment_screen_view');
@@ -96,7 +102,7 @@ export default function PaymentScreen() {
   // Get plans from IAP products or use defaults
   const getPlans = () => {
     if (products && products.length > 0) {
-      return products.map(product => {
+      return products.map((product) => {
         const isYearly = product.productId.includes('yearly');
         return {
           id: isYearly ? 'yearly' : 'monthly',
@@ -104,15 +110,17 @@ export default function PaymentScreen() {
           name: isYearly ? 'Yearly' : 'Monthly',
           price: product.price,
           period: isYearly ? '/year' : '/month',
-          description: isYearly ? 'Best value - Save 17%' : 'Perfect for exploring',
-          features: isYearly 
+          description: isYearly
+            ? 'Best value - Save 17%'
+            : 'Perfect for exploring',
+          features: isYearly
             ? ['Everything in Monthly', 'Exclusive content', 'Early access']
             : ['Unlimited access', 'Premium content', 'Priority support'],
           popular: isYearly,
         };
       });
     }
-    
+
     // Fallback plans if IAP products not loaded
     return [
       {
@@ -132,7 +140,11 @@ export default function PaymentScreen() {
         price: '₹2,999',
         period: '/year',
         description: 'Best value - Save 17%',
-        features: ['Everything in Monthly', 'Exclusive content', 'Early access'],
+        features: [
+          'Everything in Monthly',
+          'Exclusive content',
+          'Early access',
+        ],
         popular: true,
       },
     ];
@@ -145,23 +157,23 @@ export default function PaymentScreen() {
     {
       icon: '🔥',
       title: 'Unlimited Access',
-      description: 'Explore all intimate content without restrictions'
+      description: 'Explore all intimate content without restrictions',
     },
     {
       icon: '💎',
       title: 'Exclusive Content',
-      description: 'Premium games, challenges, and experiences'
+      description: 'Premium games, challenges, and experiences',
     },
     {
       icon: '🎯',
       title: 'Personalized Experience',
-      description: 'AI-powered recommendations just for you'
+      description: 'AI-powered recommendations just for you',
     },
     {
       icon: '🔒',
       title: 'Privacy First',
-      description: 'Your data is encrypted and secure'
-    }
+      description: 'Your data is encrypted and secure',
+    },
   ];
 
   // FOMO hooks about intimacy importance
@@ -170,44 +182,47 @@ export default function PaymentScreen() {
       {
         number: '67%',
         label: 'of couples report intimacy issues',
-        description: 'Don\'t become another statistic'
+        description: "Don't become another statistic",
       },
       {
         number: '3x',
         label: 'more likely to stay together',
-        description: 'Couples who prioritize intimacy'
+        description: 'Couples who prioritize intimacy',
       },
       {
         number: '89%',
         label: 'wish they started earlier',
-        description: 'Couples who improved their intimacy'
-      }
+        description: 'Couples who improved their intimacy',
+      },
     ],
     fomoMessages: [
       {
         icon: '⏰',
         title: 'Every Day You Wait',
-        message: 'Your relationship grows more distant. The longer you wait, the harder it becomes to reconnect.'
+        message:
+          'Your relationship grows more distant. The longer you wait, the harder it becomes to reconnect.',
       },
       {
         icon: '💔',
         title: 'The Cost of Inaction',
-        message: 'Studies show that intimacy issues are the #1 cause of relationship breakdowns. Don\'t let this be you.'
+        message:
+          "Studies show that intimacy issues are the #1 cause of relationship breakdowns. Don't let this be you.",
       },
       {
         icon: '🔥',
         title: 'The Passion Gap',
-        message: 'Without effort, passion fades. The couples who thrive are those who actively work on their intimacy.'
-      }
-    ]
+        message:
+          'Without effort, passion fades. The couples who thrive are those who actively work on their intimacy.',
+      },
+    ],
   };
 
   // Urgency and scarcity elements
   const urgencyData = {
     limitedTime: true,
-    discountEnds: "48 hours",
-    usersOnline: "127",
-    lastPurchase: "12 minutes ago"
+    discountEnds: '48 hours',
+    usersOnline: '127',
+    lastPurchase: '12 minutes ago',
   };
 
   const paymentMethods = [
@@ -236,17 +251,31 @@ export default function PaymentScreen() {
     // Handle restore purchases
     if (selectedPaymentMethod === 'restore') {
       setIsProcessing(true);
-      analytics.trackFunnelStep('premium_conversion_funnel', 'restore_attempted', 2, 3);
-      
+      analytics.trackFunnelStep(
+        'premium_conversion_funnel',
+        'restore_attempted',
+        2,
+        3
+      );
+
       try {
         const result = await restorePurchases();
         if (result.success) {
-          analytics.trackFunnelConversion('premium_conversion_funnel', 'restore_success', {
-            plan: selectedPlan,
-            payment_method: selectedPaymentMethod
-          });
+          analytics.trackFunnelConversion(
+            'premium_conversion_funnel',
+            'restore_success',
+            {
+              plan: selectedPlan,
+              payment_method: selectedPaymentMethod,
+            }
+          );
         } else {
-          analytics.trackFunnelStep('premium_conversion_funnel', 'restore_failed', 3, 3);
+          analytics.trackFunnelStep(
+            'premium_conversion_funnel',
+            'restore_failed',
+            3,
+            3
+          );
         }
       } catch (error) {
         analytics.trackError(error, 'restore_purchases', 'error');
@@ -260,31 +289,48 @@ export default function PaymentScreen() {
     // Handle IAP purchase
     if (selectedPaymentMethod === 'iap') {
       if (!isInitialized) {
-        Alert.alert('Error', 'In-app purchases are not available. Please try again later.');
+        Alert.alert(
+          'Error',
+          'In-app purchases are not available. Please try again later.'
+        );
         return;
       }
 
       setIsProcessing(true);
-      analytics.trackFunnelStep('premium_conversion_funnel', 'payment_attempted', 2, 3);
+      analytics.trackFunnelStep(
+        'premium_conversion_funnel',
+        'payment_attempted',
+        2,
+        3
+      );
 
       try {
-        const selectedPlanData = plans.find(p => p.id === selectedPlan);
+        const selectedPlanData = plans.find((p) => p.id === selectedPlan);
         if (!selectedPlanData) {
           throw new Error('Selected plan not found');
         }
 
         const result = await purchaseProduct(selectedPlanData.productId);
-        
+
         if (result.success) {
           // Track successful payment
           const planValue = selectedPlan === 'monthly' ? 9.99 : 99.99;
-          analytics.trackPremiumUpgradeSuccess('payment_screen', selectedPaymentMethod, planValue, 'USD');
-          analytics.trackFunnelConversion('premium_conversion_funnel', 'payment_success', {
-            plan: selectedPlan,
-            payment_method: selectedPaymentMethod,
-            value: planValue
-          });
-          
+          analytics.trackPremiumUpgradeSuccess(
+            'payment_screen',
+            selectedPaymentMethod,
+            planValue,
+            'USD'
+          );
+          analytics.trackFunnelConversion(
+            'premium_conversion_funnel',
+            'payment_success',
+            {
+              plan: selectedPlan,
+              payment_method: selectedPaymentMethod,
+              value: planValue,
+            }
+          );
+
           // Navigate to home after successful purchase
           setTimeout(() => {
             router.replace('/home');
@@ -293,11 +339,20 @@ export default function PaymentScreen() {
           throw new Error(result.error || 'Purchase failed');
         }
       } catch (error) {
-        analytics.trackPremiumUpgradeFailure('payment_screen', selectedPaymentMethod, error);
-        analytics.trackFunnelStep('premium_conversion_funnel', 'payment_failed', 3, 3);
+        analytics.trackPremiumUpgradeFailure(
+          'payment_screen',
+          selectedPaymentMethod,
+          error
+        );
+        analytics.trackFunnelStep(
+          'premium_conversion_funnel',
+          'payment_failed',
+          3,
+          3
+        );
         analytics.trackError(error, 'payment_processing', 'error');
         console.error('Payment error:', error);
-        
+
         // Error alert is handled in IAP context
       } finally {
         setIsProcessing(false);
@@ -307,18 +362,20 @@ export default function PaymentScreen() {
 
   // Render premium benefits section
   const renderBenefitsSection = () => (
-    <Animated.View 
+    <Animated.View
       style={[
         styles.section,
         {
           opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }]
-        }
+          transform: [{ translateY: slideAnim }],
+        },
       ]}
     >
       <Text style={styles.sectionTitle}>Why Choose Velvet Premium?</Text>
-      <Text style={styles.sectionSubtitle}>Join thousands of couples who&apos;ve transformed their intimacy</Text>
-      
+      <Text style={styles.sectionSubtitle}>
+        Join thousands of couples who&apos;ve transformed their intimacy
+      </Text>
+
       <View style={styles.benefitsGrid}>
         {premiumBenefits.map((benefit, index) => (
           <View key={index} style={styles.benefitCard}>
@@ -333,18 +390,20 @@ export default function PaymentScreen() {
 
   // Render intimacy importance section
   const renderIntimacyImportance = () => (
-    <Animated.View 
+    <Animated.View
       style={[
         styles.section,
         {
           opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }]
-        }
+          transform: [{ translateY: slideAnim }],
+        },
       ]}
     >
       <Text style={styles.sectionTitle}>The Truth About Intimacy</Text>
-      <Text style={styles.sectionSubtitle}>Don&apos;t let your relationship become another statistic</Text>
-      
+      <Text style={styles.sectionSubtitle}>
+        Don&apos;t let your relationship become another statistic
+      </Text>
+
       <View style={styles.intimacyStatsContainer}>
         {intimacyHooks.stats.map((stat, index) => (
           <View key={index} style={styles.intimacyStatCard}>
@@ -353,7 +412,9 @@ export default function PaymentScreen() {
             </View>
             <View style={styles.statContentContainer}>
               <Text style={styles.intimacyStatLabel}>{stat.label}</Text>
-              <Text style={styles.intimacyStatDescription}>{stat.description}</Text>
+              <Text style={styles.intimacyStatDescription}>
+                {stat.description}
+              </Text>
             </View>
           </View>
         ))}
@@ -375,13 +436,13 @@ export default function PaymentScreen() {
 
   // Render urgency section
   const renderUrgencySection = () => (
-    <Animated.View 
+    <Animated.View
       style={[
         styles.urgencySection,
         {
           opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }]
-        }
+          transform: [{ translateY: slideAnim }],
+        },
       ]}
     >
       <LinearGradient
@@ -413,7 +474,7 @@ export default function PaymentScreen() {
         analytics.trackContentInteraction('payment_plan', plan.id, 'select', {
           plan_name: plan.name,
           plan_price: plan.price,
-          plan_popular: plan.popular || false
+          plan_popular: plan.popular || false,
         });
         setSelectedPlan(plan.id);
       }}
@@ -423,7 +484,7 @@ export default function PaymentScreen() {
           <Text style={styles.popularBadgeText}>MOST POPULAR</Text>
         </View>
       )}
-      
+
       <LinearGradient
         colors={
           selectedPlan === plan.id
@@ -434,7 +495,7 @@ export default function PaymentScreen() {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       />
-      
+
       <View style={styles.planContent}>
         <View style={styles.planHeader}>
           <Text style={styles.planName}>{plan.name}</Text>
@@ -443,9 +504,9 @@ export default function PaymentScreen() {
             <Text style={styles.planPeriod}>{plan.period}</Text>
           </View>
         </View>
-        
+
         <Text style={styles.planDescription}>{plan.description}</Text>
-        
+
         <View style={styles.planFeatures}>
           {plan.features.map((feature, index) => (
             <View key={index} style={styles.featureItem}>
@@ -455,7 +516,7 @@ export default function PaymentScreen() {
           ))}
         </View>
       </View>
-      
+
       {selectedPlan === plan.id && (
         <View style={styles.selectedIndicator}>
           <Text style={styles.selectedIcon}>✓</Text>
@@ -472,10 +533,15 @@ export default function PaymentScreen() {
         selectedPaymentMethod === method.id && styles.paymentMethodSelected,
       ]}
       onPress={() => {
-        analytics.trackContentInteraction('payment_method', method.id, 'select', {
-          method_name: method.name,
-          method_type: method.type
-        });
+        analytics.trackContentInteraction(
+          'payment_method',
+          method.id,
+          'select',
+          {
+            method_name: method.name,
+            method_type: method.type,
+          }
+        );
         setSelectedPaymentMethod(method.id);
       }}
     >
@@ -489,14 +555,16 @@ export default function PaymentScreen() {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       />
-      
+
       <View style={styles.paymentMethodContent}>
         <View style={styles.paymentMethodIcon}>
           <Text style={styles.paymentMethodEmoji}>{method.icon}</Text>
         </View>
         <View style={styles.paymentMethodInfo}>
           <Text style={styles.paymentMethodName}>{method.name}</Text>
-          <Text style={styles.paymentMethodDescription}>{method.description}</Text>
+          <Text style={styles.paymentMethodDescription}>
+            {method.description}
+          </Text>
         </View>
         {selectedPaymentMethod === method.id && (
           <View style={styles.paymentMethodCheck}>
@@ -510,7 +578,7 @@ export default function PaymentScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
-      
+
       {/* Background Gradient */}
       <LinearGradient
         colors={['#000000', '#1A0000', '#330000', '#4D0000', '#660000']}
@@ -521,76 +589,81 @@ export default function PaymentScreen() {
 
       {/* Floating Elements */}
       <View style={styles.floatingElements}>
-        <Animated.View 
+        <Animated.View
           style={[
-            styles.floatingCircle, 
-            { 
-              top: 100, 
+            styles.floatingCircle,
+            {
+              top: 100,
               left: 50,
               opacity: glowAnim,
-              transform: [{ scale: pulseAnim }]
-            }
-          ]} 
+              transform: [{ scale: pulseAnim }],
+            },
+          ]}
         />
-        <Animated.View 
+        <Animated.View
           style={[
-            styles.floatingCircle, 
-            { 
-              top: 300, 
+            styles.floatingCircle,
+            {
+              top: 300,
               right: 60,
               opacity: glowAnim.interpolate({
                 inputRange: [0.3, 1],
-                outputRange: [0.2, 0.6]
+                outputRange: [0.2, 0.6],
               }),
-              transform: [{ scale: pulseAnim.interpolate({
-                inputRange: [1, 1.05],
-                outputRange: [0.8, 1.2]
-              })}]
-            }
-          ]} 
+              transform: [
+                {
+                  scale: pulseAnim.interpolate({
+                    inputRange: [1, 1.05],
+                    outputRange: [0.8, 1.2],
+                  }),
+                },
+              ],
+            },
+          ]}
         />
       </View>
 
       {/* Header */}
-      <Animated.View 
+      <Animated.View
         style={[
           styles.header,
           {
             opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }]
-          }
+            transform: [{ translateY: slideAnim }],
+          },
         ]}
       >
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
-        
+
         <View style={styles.headerContent}>
           <Text style={styles.headerTitle}>Upgrade to Premium</Text>
         </View>
       </Animated.View>
 
-      <ScrollView 
-        style={styles.scrollView} 
+      <ScrollView
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
         {/* Hero Section */}
-        <Animated.View 
+        <Animated.View
           style={[
             styles.heroSection,
             {
               opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }]
-            }
+              transform: [{ translateY: slideAnim }],
+            },
           ]}
         >
           <Text style={styles.heroTitle}>Unlock Your Intimate Journey</Text>
           <Text style={styles.heroSubtitle}>
-            Join thousands of couples who&apos;ve discovered deeper connection through Velvet Premium
+            Join thousands of couples who&apos;ve discovered deeper connection
+            through Velvet Premium
           </Text>
         </Animated.View>
 
@@ -604,85 +677,95 @@ export default function PaymentScreen() {
         {renderIntimacyImportance()}
 
         {/* Plans Section */}
-        <Animated.View 
+        <Animated.View
           style={[
             styles.section,
             {
               opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }]
-            }
+              transform: [{ translateY: slideAnim }],
+            },
           ]}
         >
           <Text style={styles.sectionTitle}>Choose Your Plan</Text>
-          <Text style={styles.sectionSubtitle}>Select the perfect plan for your journey</Text>
-          
-          <View style={styles.plansContainer}>
-            {plans.map(renderPlanCard)}
-          </View>
+          <Text style={styles.sectionSubtitle}>
+            Select the perfect plan for your journey
+          </Text>
+
+          <View style={styles.plansContainer}>{plans.map(renderPlanCard)}</View>
         </Animated.View>
 
         {/* Payment Methods Section */}
-        <Animated.View 
+        <Animated.View
           style={[
             styles.section,
             {
               opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }]
-            }
+              transform: [{ translateY: slideAnim }],
+            },
           ]}
         >
           <Text style={styles.sectionTitle}>Payment Method</Text>
           <Text style={styles.sectionSubtitle}>How would you like to pay?</Text>
-          
+
           <View style={styles.paymentMethodsContainer}>
             {paymentMethods.map(renderPaymentMethod)}
           </View>
         </Animated.View>
 
-
         {/* Security Notice */}
-        <Animated.View 
+        <Animated.View
           style={[
             styles.securityNotice,
             {
               opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }]
-            }
+              transform: [{ translateY: slideAnim }],
+            },
           ]}
         >
           <Text style={styles.securityIcon}>🔒</Text>
           <Text style={styles.securityText}>
-            Your payment is secure and encrypted. We never store your payment details.
+            Your payment is secure and encrypted. We never store your payment
+            details.
           </Text>
         </Animated.View>
       </ScrollView>
 
       {/* Payment Button */}
-      <Animated.View 
+      <Animated.View
         style={[
           styles.paymentButtonContainer,
           {
             opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }]
-          }
+            transform: [{ translateY: slideAnim }],
+          },
         ]}
       >
-        <TouchableOpacity 
-          style={[styles.paymentButton, (isProcessing || iapLoading) && styles.paymentButtonDisabled]}
+        <TouchableOpacity
+          style={[
+            styles.paymentButton,
+            (isProcessing || iapLoading) && styles.paymentButtonDisabled,
+          ]}
           onPress={handlePayment}
           disabled={isProcessing || iapLoading || !isInitialized}
         >
           <LinearGradient
-            colors={(isProcessing || iapLoading) ? ['#6B7280', '#4B5563'] : ['#DC143C', '#B22222', '#8B0000']}
+            colors={
+              isProcessing || iapLoading
+                ? ['#6B7280', '#4B5563']
+                : ['#DC143C', '#B22222', '#8B0000']
+            }
             style={styles.paymentButtonGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
             <Text style={styles.paymentButtonText}>
-              {iapLoading ? 'Loading...' : 
-               isProcessing ? 'Processing...' : 
-               selectedPaymentMethod === 'restore' ? 'Restore Purchases' :
-               `Start My Premium Journey - ${plans.find(p => p.id === selectedPlan)?.price}`}
+              {iapLoading
+                ? 'Loading...'
+                : isProcessing
+                  ? 'Processing...'
+                  : selectedPaymentMethod === 'restore'
+                    ? 'Restore Purchases'
+                    : `Start My Premium Journey - ${plans.find((p) => p.id === selectedPlan)?.price}`}
             </Text>
           </LinearGradient>
         </TouchableOpacity>

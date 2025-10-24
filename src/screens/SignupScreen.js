@@ -3,18 +3,18 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-    Alert,
-    Animated,
-    Dimensions,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Alert,
+  Animated,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import useAnalytics from '../hooks/useAnalytics';
@@ -25,14 +25,14 @@ export default function SignupScreen() {
   const router = useRouter();
   const { signUp, markOnboardingCompleted } = useAuth();
   const analytics = useAnalytics();
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [onboardingData, setOnboardingData] = useState(null);
-  
+
   // Animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -42,7 +42,7 @@ export default function SignupScreen() {
     startAnimations();
     loadOnboardingData();
     checkAuthStatus();
-    
+
     // Track signup screen view
     analytics.trackScreen('signup', 'SignupScreen');
     analytics.trackSignupAttempt('email');
@@ -58,7 +58,9 @@ export default function SignupScreen() {
 
   const checkAuthStatus = async () => {
     try {
-      const hasCompletedOnboarding = await AsyncStorage.getItem('hasCompletedOnboarding');
+      const hasCompletedOnboarding = await AsyncStorage.getItem(
+        'hasCompletedOnboarding'
+      );
       if (hasCompletedOnboarding === 'true') {
         // User has already completed onboarding and is signed in, go to home
         router.replace('/home');
@@ -87,11 +89,11 @@ export default function SignupScreen() {
     try {
       const userProfile = await AsyncStorage.getItem('userProfile');
       const onboardingAnswers = await AsyncStorage.getItem('onboardingAnswers');
-      
+
       if (userProfile && onboardingAnswers) {
         setOnboardingData({
           profile: JSON.parse(userProfile),
-          answers: JSON.parse(onboardingAnswers)
+          answers: JSON.parse(onboardingAnswers),
         });
       }
     } catch (error) {
@@ -120,15 +122,15 @@ export default function SignupScreen() {
     try {
       // Sign up the user
       const user = await signUp(email, password, displayName);
-      
+
       if (user && onboardingData) {
         // Now save the onboarding data to Firebase
         await markOnboardingCompleted();
-        
+
         // Clear AsyncStorage
         await AsyncStorage.removeItem('onboardingAnswers');
         await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
-        
+
         // Navigate to profile result
         router.replace('/profile-result');
       }
@@ -147,7 +149,7 @@ export default function SignupScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
-      
+
       <LinearGradient
         colors={['#000000', '#1A0000', '#330000', '#4D0000']}
         style={styles.background}
@@ -157,142 +159,185 @@ export default function SignupScreen() {
 
       {/* Floating Elements */}
       <View style={styles.floatingElements}>
-        <View style={[styles.floatingCircle, { top: height * 0.1, left: width * 0.1 }]} />
-        <View style={[styles.floatingCircle, { top: height * 0.3, right: width * 0.15 }]} />
-        <View style={[styles.floatingCircle, { bottom: height * 0.2, left: width * 0.2 }]} />
+        <View
+          style={[
+            styles.floatingCircle,
+            { top: height * 0.1, left: width * 0.1 },
+          ]}
+        />
+        <View
+          style={[
+            styles.floatingCircle,
+            { top: height * 0.3, right: width * 0.15 },
+          ]}
+        />
+        <View
+          style={[
+            styles.floatingCircle,
+            { bottom: height * 0.2, left: width * 0.2 },
+          ]}
+        />
       </View>
 
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
-        <ScrollView 
-          style={styles.scrollView} 
+        <ScrollView
+          style={styles.scrollView}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <Animated.View 
+          <Animated.View
             style={[
               styles.content,
-              { 
+              {
                 opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }]
-              }
+                transform: [{ translateY: slideAnim }],
+              },
             ]}
           >
-          {/* Header */}
-          <View style={styles.header}>
-            <Animated.Text 
-              style={[
-                styles.title,
-                {
-                  transform: [{ scale: pulseAnim }]
-                }
-              ]}
-            >
-              Your Intimacy Profile ✨
-            </Animated.Text>
-            <Text style={styles.subtitle}>
-              We&apos;ve analyzed your responses and created a personalized profile just for you. Ready to unlock your intimate potential?
-            </Text>
-          </View>
-
-          {/* Personalized Insights */}
-          {onboardingData && (
-            <View style={styles.insightsContainer}>
-              <Text style={styles.insightsTitle}>Your Personalized Insights</Text>
-              
-              {/* Profile Summary */}
-              <View style={styles.profileCard}>
-                <Text style={styles.profileTitle}>Your Intimacy Profile</Text>
-                <View style={styles.profileRow}>
-                  <Text style={styles.profileLabel}>Desire Level:</Text>
-                  <Text style={styles.profileValue}>
-                    {onboardingData.profile.desireLevel?.charAt(0).toUpperCase() + onboardingData.profile.desireLevel?.slice(1)}
-                  </Text>
-                </View>
-                <View style={styles.profileRow}>
-                  <Text style={styles.profileLabel}>Relationship:</Text>
-                  <Text style={styles.profileValue}>
-                    {onboardingData.profile.relationshipStatus?.charAt(0).toUpperCase() + onboardingData.profile.relationshipStatus?.slice(1)}
-                  </Text>
-                </View>
-                <View style={styles.profileRow}>
-                  <Text style={styles.profileLabel}>Frequency:</Text>
-                  <Text style={styles.profileValue}>
-                    {onboardingData.profile.intimacyFrequency?.charAt(0).toUpperCase() + onboardingData.profile.intimacyFrequency?.slice(1)}
-                  </Text>
-                </View>
-                <View style={styles.profileRow}>
-                  <Text style={styles.profileLabel}>Persona:</Text>
-                  <Text style={styles.profileValue}>
-                    {onboardingData.profile.persona}
-                  </Text>
-                </View>
-              </View>
-
-              {/* Key Insights */}
-              <View style={styles.insightsCard}>
-                <Text style={styles.insightsCardTitle}>What We Discovered About You</Text>
-                <View style={styles.insightItem}>
-                  <Text style={styles.insightIcon}>🔥</Text>
-                  <Text style={styles.insightText}>
-                    You&apos;re a {onboardingData.profile.persona} who loves {onboardingData.profile.turnOns?.join(', ')} experiences
-                  </Text>
-                </View>
-                <View style={styles.insightItem}>
-                  <Text style={styles.insightIcon}>💫</Text>
-                  <Text style={styles.insightText}>
-                    Your biggest challenge is {onboardingData.profile.biggestChallenge?.replace('-', ' ')} - we&apos;ll help you overcome it
-                  </Text>
-                </View>
-                <View style={styles.insightItem}>
-                  <Text style={styles.insightIcon}>✨</Text>
-                  <Text style={styles.insightText}>
-                    You want to focus on {onboardingData.profile.improvementGoal?.replace('-', ' ')} - perfect for your journey
-                  </Text>
-                </View>
-              </View>
-            </View>
-          )}
-
-          {/* Call to Action */}
-          <View style={styles.ctaContainer}>
-            <Text style={styles.ctaTitle}>Ready to Begin Your Journey? 🚀</Text>
-            <Text style={styles.ctaSubtitle}>
-              Create your account to save your personalized profile and unlock exclusive content tailored just for you.
-            </Text>
-
-            {/* Continue Button */}
-            <TouchableOpacity 
-              style={styles.continueButton} 
-              onPress={() => router.push('/signup-details')}
-            >
-              <LinearGradient
-                colors={['#DC143C', '#B22222', '#8B0000']}
-                style={styles.continueButtonGradient}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
+            {/* Header */}
+            <View style={styles.header}>
+              <Animated.Text
+                style={[
+                  styles.title,
+                  {
+                    transform: [{ scale: pulseAnim }],
+                  },
+                ]}
               >
-                <Text style={styles.continueButtonText}>
-                  Continue to Create Account
-                </Text>
-                <Text style={styles.continueButtonSubtext}>
-                  It only takes 30 seconds
-                </Text>
-              </LinearGradient>
-            </TouchableOpacity>
-
-            {/* Sign In Link */}
-            <View style={styles.signInContainer}>
-              <Text style={styles.signInText}>Already have an account? </Text>
-              <TouchableOpacity onPress={handleSignIn}>
-                <Text style={styles.signInLink}>Sign in</Text>
-              </TouchableOpacity>
+                Your Intimacy Profile ✨
+              </Animated.Text>
+              <Text style={styles.subtitle}>
+                We&apos;ve analyzed your responses and created a personalized
+                profile just for you. Ready to unlock your intimate potential?
+              </Text>
             </View>
-          </View>
+
+            {/* Personalized Insights */}
+            {onboardingData && (
+              <View style={styles.insightsContainer}>
+                <Text style={styles.insightsTitle}>
+                  Your Personalized Insights
+                </Text>
+
+                {/* Profile Summary */}
+                <View style={styles.profileCard}>
+                  <Text style={styles.profileTitle}>Your Intimacy Profile</Text>
+                  <View style={styles.profileRow}>
+                    <Text style={styles.profileLabel}>Desire Level:</Text>
+                    <Text style={styles.profileValue}>
+                      {onboardingData.profile.desireLevel
+                        ?.charAt(0)
+                        .toUpperCase() +
+                        onboardingData.profile.desireLevel?.slice(1)}
+                    </Text>
+                  </View>
+                  <View style={styles.profileRow}>
+                    <Text style={styles.profileLabel}>Relationship:</Text>
+                    <Text style={styles.profileValue}>
+                      {onboardingData.profile.relationshipStatus
+                        ?.charAt(0)
+                        .toUpperCase() +
+                        onboardingData.profile.relationshipStatus?.slice(1)}
+                    </Text>
+                  </View>
+                  <View style={styles.profileRow}>
+                    <Text style={styles.profileLabel}>Frequency:</Text>
+                    <Text style={styles.profileValue}>
+                      {onboardingData.profile.intimacyFrequency
+                        ?.charAt(0)
+                        .toUpperCase() +
+                        onboardingData.profile.intimacyFrequency?.slice(1)}
+                    </Text>
+                  </View>
+                  <View style={styles.profileRow}>
+                    <Text style={styles.profileLabel}>Persona:</Text>
+                    <Text style={styles.profileValue}>
+                      {onboardingData.profile.persona}
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Key Insights */}
+                <View style={styles.insightsCard}>
+                  <Text style={styles.insightsCardTitle}>
+                    What We Discovered About You
+                  </Text>
+                  <View style={styles.insightItem}>
+                    <Text style={styles.insightIcon}>🔥</Text>
+                    <Text style={styles.insightText}>
+                      You&apos;re a {onboardingData.profile.persona} who loves{' '}
+                      {onboardingData.profile.turnOns?.join(', ')} experiences
+                    </Text>
+                  </View>
+                  <View style={styles.insightItem}>
+                    <Text style={styles.insightIcon}>💫</Text>
+                    <Text style={styles.insightText}>
+                      Your biggest challenge is{' '}
+                      {onboardingData.profile.biggestChallenge?.replace(
+                        '-',
+                        ' '
+                      )}{' '}
+                      - we&apos;ll help you overcome it
+                    </Text>
+                  </View>
+                  <View style={styles.insightItem}>
+                    <Text style={styles.insightIcon}>✨</Text>
+                    <Text style={styles.insightText}>
+                      You want to focus on{' '}
+                      {onboardingData.profile.improvementGoal?.replace(
+                        '-',
+                        ' '
+                      )}{' '}
+                      - perfect for your journey
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            )}
+
+            {/* Call to Action */}
+            <View style={styles.ctaContainer}>
+              <Text style={styles.ctaTitle}>
+                Ready to Begin Your Journey? 🚀
+              </Text>
+              <Text style={styles.ctaSubtitle}>
+                Create your account to save your personalized profile and unlock
+                exclusive content tailored just for you.
+              </Text>
+
+              {/* Continue Button */}
+              <TouchableOpacity
+                style={styles.continueButton}
+                onPress={() => router.push('/signup-details')}
+              >
+                <LinearGradient
+                  colors={['#DC143C', '#B22222', '#8B0000']}
+                  style={styles.continueButtonGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                >
+                  <Text style={styles.continueButtonText}>
+                    Continue to Create Account
+                  </Text>
+                  <Text style={styles.continueButtonSubtext}>
+                    It only takes 30 seconds
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              {/* Sign In Link */}
+              <View style={styles.signInContainer}>
+                <Text style={styles.signInText}>Already have an account? </Text>
+                <TouchableOpacity onPress={handleSignIn}>
+                  <Text style={styles.signInLink}>Sign in</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>

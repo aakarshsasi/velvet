@@ -2,15 +2,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import useAnalytics from '../hooks/useAnalytics';
@@ -21,7 +21,7 @@ export default function LoginScreen() {
   const [displayName, setDisplayName] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   const { signIn, signUp } = useAuth();
   const router = useRouter();
   const analytics = useAnalytics();
@@ -49,18 +49,18 @@ export default function LoginScreen() {
         analytics.trackSignUp('email', true);
         analytics.trackFunnelStep('signup_funnel', 'signup_attempt', 1, 3);
         await signUp(email, password, displayName);
-        analytics.trackFunnelConversion('signup_funnel', 'signup_success', { 
-          email_domain: email.split('@')[1] 
+        analytics.trackFunnelConversion('signup_funnel', 'signup_success', {
+          email_domain: email.split('@')[1],
         });
         Alert.alert('Success', 'Account created successfully!', [
-          { text: 'OK', onPress: () => router.replace('/') }
+          { text: 'OK', onPress: () => router.replace('/') },
         ]);
       } else {
         analytics.trackSignIn('email', true);
         analytics.trackFunnelStep('login_funnel', 'login_attempt', 1, 2);
         await signIn(email, password);
-        analytics.trackFunnelConversion('login_funnel', 'login_success', { 
-          email_domain: email.split('@')[1] 
+        analytics.trackFunnelConversion('login_funnel', 'login_success', {
+          email_domain: email.split('@')[1],
         });
         // Close the login screen and let the app's routing logic handle the redirect
         router.replace('/');
@@ -88,13 +88,12 @@ export default function LoginScreen() {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       />
-      
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
         >
@@ -148,7 +147,10 @@ export default function LoginScreen() {
             </View>
 
             <TouchableOpacity
-              style={[styles.submitButton, loading && styles.submitButtonDisabled]}
+              style={[
+                styles.submitButton,
+                loading && styles.submitButtonDisabled,
+              ]}
               onPress={handleSubmit}
               disabled={loading}
             >
@@ -157,7 +159,11 @@ export default function LoginScreen() {
                 style={styles.submitButtonGradient}
               >
                 <Text style={styles.submitButtonText}>
-                  {loading ? 'Please wait...' : (isSignUp ? 'Sign Up' : 'Sign In')}
+                  {loading
+                    ? 'Please wait...'
+                    : isSignUp
+                      ? 'Sign Up'
+                      : 'Sign In'}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>

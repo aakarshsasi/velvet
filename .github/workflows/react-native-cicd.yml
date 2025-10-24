@@ -4,16 +4,16 @@ on:
   push:
     branches: [main, master]
     paths-ignore:
-      - "**.md"
-      - "LICENSE"
-      - "docs/**"
+      - '**.md'
+      - 'LICENSE'
+      - 'docs/**'
   pull_request:
     branches: [main, master]
   workflow_dispatch:
     inputs:
       buildType:
         type: choice
-        description: "Build type to run"
+        description: 'Build type to run'
         options:
           - ios
           - all
@@ -48,7 +48,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
@@ -94,7 +94,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
@@ -134,7 +134,7 @@ jobs:
           echo "Files in current directory: $(ls -la)"
           echo "Checking app.json build number:"
           cat app.json | grep -A 5 -B 5 "buildNumber"
-          
+
           # Test bundling first
           echo "Testing bundling..."
           npx expo export --platform ios --output-dir ./test-bundle || {
@@ -142,11 +142,11 @@ jobs:
             exit 1
           }
           echo "Bundling test passed!"
-          
+
           # Extract build number from app.json
           BUILD_NUMBER=$(cat app.json | grep -o '"buildNumber": "[^"]*"' | cut -d'"' -f4)
           echo "Building with build number: $BUILD_NUMBER"
-          
+
           # Now run the actual build with build-specific filename
           echo "Starting EAS build..."
           eas build --platform ios --profile production --local --non-interactive --output=./app-ios-build-${BUILD_NUMBER}.ipa || {
@@ -183,7 +183,7 @@ jobs:
           IPA_FILE="./app-ios-build-${BUILD_NUMBER}.ipa"
           echo "Uploading build $BUILD_NUMBER to GitHub Releases..."
           echo "IPA file: $IPA_FILE"
-          
+
           # Create release and upload file
           gh release create v${{ github.run_number }} \
             --title "Release v${{ github.run_number }}" \

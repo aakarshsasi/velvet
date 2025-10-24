@@ -1,12 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import {
-    Alert,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function PremiumUpgrade({ onUpgradePress }) {

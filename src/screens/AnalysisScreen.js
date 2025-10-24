@@ -3,14 +3,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-    Animated,
-    BackHandler,
-    Dimensions,
-    SafeAreaView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    View,
+  Animated,
+  BackHandler,
+  Dimensions,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import useAnalytics from '../hooks/useAnalytics';
 
@@ -22,7 +22,7 @@ export default function AnalysisScreen() {
   const [progress, setProgress] = useState(0);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
-  
+
   // Animation values
   const fadeAnim = useRef(new Animated.Value(1)).current; // Start visible
   const progressAnim = useRef(new Animated.Value(0)).current;
@@ -30,11 +30,11 @@ export default function AnalysisScreen() {
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   const analysisMessages = [
-    "Analyzing your responses...",
-    "Calculating compatibility matrix...",
-    "Generating personalized insights...",
-    "Creating your intimacy profile...",
-    "Almost ready..."
+    'Analyzing your responses...',
+    'Calculating compatibility matrix...',
+    'Generating personalized insights...',
+    'Creating your intimacy profile...',
+    'Almost ready...',
   ];
 
   useEffect(() => {
@@ -54,7 +54,10 @@ export default function AnalysisScreen() {
         return true; // Return true to prevent default back behavior
       };
 
-      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress
+      );
 
       return () => {
         subscription.remove();
@@ -80,23 +83,23 @@ export default function AnalysisScreen() {
       { progress: 55, messageIndex: 2, delay: 2000 },
       { progress: 75, messageIndex: 3, delay: 2000 },
       { progress: 90, messageIndex: 4, delay: 2000 },
-      { progress: 100, messageIndex: 4, delay: 1500 }
+      { progress: 100, messageIndex: 4, delay: 1500 },
     ];
 
     let currentStep = 0;
-    
+
     const animateProgress = () => {
       if (currentStep < analysisSteps.length) {
         const step = analysisSteps[currentStep];
-        
+
         Animated.timing(progressAnim, {
           toValue: step.progress,
           duration: 2000,
           useNativeDriver: false,
         }).start();
-        
+
         setProgress(step.progress);
-        
+
         // Only fade the message text, not the entire screen
         Animated.timing(fadeAnim, {
           toValue: 0,
@@ -104,23 +107,28 @@ export default function AnalysisScreen() {
           useNativeDriver: true,
         }).start(() => {
           setCurrentMessageIndex(step.messageIndex);
-          
+
           Animated.timing(fadeAnim, {
             toValue: 1,
             duration: 300,
             useNativeDriver: true,
           }).start();
         });
-        
+
         currentStep++;
-        
+
         if (currentStep < analysisSteps.length) {
           setTimeout(animateProgress, step.delay);
         } else {
           setTimeout(() => {
             // Track analysis completion
             analytics.trackProfileAnalysisComplete(userProfile, 15); // Assuming 15 seconds analysis time
-            analytics.trackFunnelStep('onboarding_funnel', 'analysis_completed', 4, 5);
+            analytics.trackFunnelStep(
+              'onboarding_funnel',
+              'analysis_completed',
+              4,
+              5
+            );
             router.replace('/profile-result');
           }, 2000);
         }
@@ -133,7 +141,7 @@ export default function AnalysisScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
-      
+
       <LinearGradient
         colors={['#000000', '#1A0000', '#330000', '#4D0000']}
         style={styles.background}
@@ -143,50 +151,58 @@ export default function AnalysisScreen() {
 
       {/* Floating Elements */}
       <View style={styles.floatingElements}>
-        <Animated.View 
+        <Animated.View
           style={[
-            styles.floatingCircle, 
-            { 
-              top: height * 0.15, 
+            styles.floatingCircle,
+            {
+              top: height * 0.15,
               left: width * 0.1,
               opacity: glowAnim,
-              transform: [{ scale: pulseAnim }]
-            }
-          ]} 
+              transform: [{ scale: pulseAnim }],
+            },
+          ]}
         />
-        <Animated.View 
+        <Animated.View
           style={[
-            styles.floatingCircle, 
-            { 
-              top: height * 0.3, 
+            styles.floatingCircle,
+            {
+              top: height * 0.3,
               right: width * 0.15,
               opacity: glowAnim.interpolate({
                 inputRange: [0.3, 1],
-                outputRange: [0.2, 0.6]
+                outputRange: [0.2, 0.6],
               }),
-              transform: [{ scale: pulseAnim.interpolate({
-                inputRange: [1, 1.05],
-                outputRange: [0.8, 1.2]
-              })}]
-            }
-          ]} 
+              transform: [
+                {
+                  scale: pulseAnim.interpolate({
+                    inputRange: [1, 1.05],
+                    outputRange: [0.8, 1.2],
+                  }),
+                },
+              ],
+            },
+          ]}
         />
-        <Animated.View 
+        <Animated.View
           style={[
-            styles.floatingCircle, 
-            { 
-              bottom: height * 0.25, 
+            styles.floatingCircle,
+            {
+              bottom: height * 0.25,
               left: width * 0.2,
               opacity: glowAnim.interpolate({
                 inputRange: [0.3, 1],
-                outputRange: [0.3, 0.7]
+                outputRange: [0.3, 0.7],
               }),
-              transform: [{ scale: pulseAnim.interpolate({
-                inputRange: [1, 1.05],
-                outputRange: [0.9, 1.1]
-              })}]
-            }
-          ]} 
+              transform: [
+                {
+                  scale: pulseAnim.interpolate({
+                    inputRange: [1, 1.05],
+                    outputRange: [0.9, 1.1],
+                  }),
+                },
+              ],
+            },
+          ]}
         />
       </View>
 
@@ -194,22 +210,24 @@ export default function AnalysisScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>Analyzing Your Profile</Text>
-          <Text style={styles.subtitle}>Discovering your unique desires...</Text>
+          <Text style={styles.subtitle}>
+            Discovering your unique desires...
+          </Text>
         </View>
 
         {/* Progress Section */}
         <View style={styles.progressSection}>
           <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
-              <Animated.View 
+              <Animated.View
                 style={[
                   styles.progressFill,
                   {
                     width: progressAnim.interpolate({
                       inputRange: [0, 100],
-                      outputRange: ['0%', '100%']
-                    })
-                  }
+                      outputRange: ['0%', '100%'],
+                    }),
+                  },
                 ]}
               />
             </View>
@@ -217,18 +235,20 @@ export default function AnalysisScreen() {
           </View>
 
           <View style={styles.messageContainer}>
-            <Animated.Text 
+            <Animated.Text
               style={[
                 styles.message,
                 {
                   opacity: fadeAnim,
-                  transform: [{
-                    translateY: fadeAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [10, 0]
-                    })
-                  }]
-                }
+                  transform: [
+                    {
+                      translateY: fadeAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [10, 0],
+                      }),
+                    },
+                  ],
+                },
               ]}
             >
               {analysisMessages[currentMessageIndex]}

@@ -1,7 +1,13 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export default function FantasyBuilderRoute() {
   return (
@@ -10,25 +16,30 @@ export default function FantasyBuilderRoute() {
         colors={['#000000', '#1A0000', '#330000', '#4D0000']}
         style={styles.background}
       />
-      
+
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
-        
+
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>Fantasy Builder</Text>
         </View>
-        
+
         <View style={styles.headerRight} />
       </View>
-      
+
       <View style={styles.content}>
         <Text style={styles.title}>Fantasy Builder</Text>
         <Text style={styles.subtitle}>Coming Soon!</Text>
         <Text style={styles.description}>
-          Create and customize your own intimate fantasies. This powerful feature is under development and will allow you to build personalized experiences tailored to your desires.
+          Create and customize your own intimate fantasies. This powerful
+          feature is under development and will allow you to build personalized
+          experiences tailored to your desires.
         </Text>
       </View>
     </SafeAreaView>

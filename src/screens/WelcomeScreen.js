@@ -31,7 +31,9 @@ export default function WelcomeScreen() {
     // Track screen view for anonymous users
     analytics.trackWelcomeScreenView();
     analytics.trackScreen('welcome', 'WelcomeScreen');
-    analytics.trackJourney('welcome_screen_viewed', { user_authenticated: !!user });
+    analytics.trackJourney('welcome_screen_viewed', {
+      user_authenticated: !!user,
+    });
   }, []);
 
   // Welcome screen should only show for non-authenticated users
@@ -116,7 +118,7 @@ export default function WelcomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
-      
+
       {/* Background Gradient */}
       <LinearGradient
         colors={['#000000', '#1A0000', '#330000', '#4D0000']}
@@ -127,10 +129,30 @@ export default function WelcomeScreen() {
 
       {/* Floating Elements */}
       <View style={styles.floatingElements}>
-        <View style={[styles.floatingCircle, { top: height * 0.1, left: width * 0.1 }]} />
-        <View style={[styles.floatingCircle, { top: height * 0.3, right: width * 0.15 }]} />
-        <View style={[styles.floatingCircle, { bottom: height * 0.2, left: width * 0.2 }]} />
-        <View style={[styles.floatingCircle, { top: height * 0.6, left: width * 0.7 }]} />
+        <View
+          style={[
+            styles.floatingCircle,
+            { top: height * 0.1, left: width * 0.1 },
+          ]}
+        />
+        <View
+          style={[
+            styles.floatingCircle,
+            { top: height * 0.3, right: width * 0.15 },
+          ]}
+        />
+        <View
+          style={[
+            styles.floatingCircle,
+            { bottom: height * 0.2, left: width * 0.2 },
+          ]}
+        />
+        <View
+          style={[
+            styles.floatingCircle,
+            { top: height * 0.6, left: width * 0.7 },
+          ]}
+        />
       </View>
 
       {/* Main Content */}
@@ -176,7 +198,7 @@ export default function WelcomeScreen() {
                   />
                 </Svg>
               </Animated.View>
-              
+
               {/* Rest of the text */}
               <Text style={styles.brandTitleRest}>elvet</Text>
             </View>
@@ -253,21 +275,29 @@ export default function WelcomeScreen() {
                 style={[
                   styles.shimmer,
                   {
-                    transform: [{ translateX: shimmerAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [-200, 250],
-                    }) }],
+                    transform: [
+                      {
+                        translateX: shimmerAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [-200, 250],
+                        }),
+                      },
+                    ],
                   },
                 ]}
               >
                 <LinearGradient
-                  colors={['transparent', 'rgba(255, 255, 255, 0.3)', 'transparent']}
+                  colors={[
+                    'transparent',
+                    'rgba(255, 255, 255, 0.3)',
+                    'transparent',
+                  ]}
                   style={styles.shimmerGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                 />
               </Animated.View>
-              
+
               <Text style={styles.buttonText}>Begin Your Journey</Text>
               <Text style={styles.buttonSubtext}>Discover what awaits</Text>
             </LinearGradient>
@@ -276,7 +306,9 @@ export default function WelcomeScreen() {
 
         {/* Elegant Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Your intimate adventure starts here</Text>
+          <Text style={styles.footerText}>
+            Your intimate adventure starts here
+          </Text>
         </View>
 
         {/* Existing Member Sign In */}

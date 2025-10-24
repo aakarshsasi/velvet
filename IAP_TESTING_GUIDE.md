@@ -32,25 +32,25 @@ class MockIAPService {
         title: 'Monthly Premium',
         price: '₹299',
         description: 'Monthly subscription to Velvet Premium',
-        type: 'subscription'
+        type: 'subscription',
       },
       {
         productId: 'com.velvet.premium.yearly',
         title: 'Yearly Premium',
         price: '₹2,999',
         description: 'Yearly subscription to Velvet Premium',
-        type: 'subscription'
-      }
+        type: 'subscription',
+      },
     ];
     return this.products;
   }
 
   async purchaseProduct(productId) {
     console.log('Mock purchase:', productId);
-    
+
     // Simulate purchase delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     // Mock successful purchase
     const mockPurchase = {
       productId,
@@ -58,14 +58,14 @@ class MockIAPService {
       purchaseTime: Date.now(),
       purchaseToken: `mock_token_${Date.now()}`,
       orderId: `mock_order_${Date.now()}`,
-      responseCode: 0 // OK
+      responseCode: 0, // OK
     };
-    
+
     this.purchases.push(mockPurchase);
-    
+
     // Notify listeners
-    this.listeners.forEach(listener => listener(mockPurchase));
-    
+    this.listeners.forEach((listener) => listener(mockPurchase));
+
     return mockPurchase;
   }
 
@@ -91,7 +91,7 @@ class MockIAPService {
   }
 
   async isProductPurchased(productId) {
-    return this.purchases.some(p => p.productId === productId);
+    return this.purchases.some((p) => p.productId === productId);
   }
 
   async disconnect() {
@@ -125,16 +125,19 @@ import IAPService from '../services/IAPServiceFactory'; // Instead of direct imp
 ## Method 2: Local Development with Expo Go
 
 ### 1. Start Development Server
+
 ```bash
 npx expo start
 ```
 
 ### 2. Test on Physical Device
+
 - Install Expo Go on your device
 - Scan QR code to open app
 - Test IAP flow with mock service
 
 ### 3. Test on Simulator/Emulator
+
 - Press `i` for iOS simulator
 - Press `a` for Android emulator
 - Test IAP flow with mock service
@@ -142,11 +145,13 @@ npx expo start
 ## Method 3: Web Testing (Limited IAP Support)
 
 ### 1. Start Web Development
+
 ```bash
 npx expo start --web
 ```
 
 ### 2. Test UI Flow
+
 - Test payment screen UI
 - Test plan selection
 - Test mock purchase flow
@@ -155,11 +160,13 @@ npx expo start --web
 ## Method 4: Unit Testing
 
 ### 1. Install Testing Dependencies
+
 ```bash
 npm install --save-dev jest @testing-library/react-native
 ```
 
 ### 2. Create Test Files
+
 ```javascript
 // __tests__/IAPService.test.js
 import MockIAPService from '../src/services/MockIAPService';
@@ -177,7 +184,9 @@ describe('IAP Service', () => {
   });
 
   test('should handle mock purchase', async () => {
-    const purchase = await MockIAPService.purchaseProduct('com.velvet.premium.monthly');
+    const purchase = await MockIAPService.purchaseProduct(
+      'com.velvet.premium.monthly'
+    );
     expect(purchase.productId).toBe('com.velvet.premium.monthly');
     expect(purchase.responseCode).toBe(0);
   });
@@ -187,6 +196,7 @@ describe('IAP Service', () => {
 ## Method 5: Integration Testing with Expo Go
 
 ### 1. Add Test Mode Toggle
+
 ```javascript
 // src/components/IAPTestComponent.js - Add this to your existing component
 const [testMode, setTestMode] = useState(true);
@@ -202,12 +212,13 @@ const toggleTestMode = () => {
   <Text style={styles.buttonText}>
     {testMode ? 'Switch to Real IAP' : 'Switch to Mock IAP'}
   </Text>
-</TouchableOpacity>
+</TouchableOpacity>;
 ```
 
 ## Method 6: Debug Console Testing
 
 ### 1. Add Debug Commands
+
 ```javascript
 // Add to your IAP context
 const debugCommands = {
@@ -222,7 +233,7 @@ const debugCommands = {
   setPremiumStatus: (status) => {
     console.log('Setting premium status:', status);
     // Update premium status
-  }
+  },
 };
 
 // Expose to global for console access
@@ -232,6 +243,7 @@ if (__DEV__) {
 ```
 
 ### 2. Use in Console
+
 ```javascript
 // In your app's console:
 iapDebug.simulatePurchase('com.velvet.premium.monthly');
@@ -242,6 +254,7 @@ iapDebug.setPremiumStatus(true);
 ## Testing Checklist
 
 ### UI Testing
+
 - [ ] Payment screen loads correctly
 - [ ] Plan selection works
 - [ ] Payment method selection works
@@ -251,6 +264,7 @@ iapDebug.setPremiumStatus(true);
 - [ ] Navigation works after purchase
 
 ### Flow Testing
+
 - [ ] Mock purchase completes successfully
 - [ ] User gets upgraded to premium
 - [ ] Premium features unlock
@@ -259,6 +273,7 @@ iapDebug.setPremiumStatus(true);
 - [ ] Analytics events fire
 
 ### Edge Cases
+
 - [ ] Network errors
 - [ ] Invalid product IDs
 - [ ] Purchase cancellation
@@ -268,11 +283,13 @@ iapDebug.setPremiumStatus(true);
 ## Production Testing (When Ready)
 
 ### 1. TestFlight (iOS)
+
 - Upload to TestFlight
 - Use sandbox Apple ID
 - Test real IAP in sandbox
 
 ### 2. Internal Testing (Android)
+
 - Upload to Google Play Console
 - Add test accounts
 - Test real IAP in test environment
@@ -280,6 +297,7 @@ iapDebug.setPremiumStatus(true);
 ## Mock Service Features
 
 The mock service should simulate:
+
 - ✅ Product loading
 - ✅ Purchase flow
 - ✅ Purchase validation

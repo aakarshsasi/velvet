@@ -38,7 +38,7 @@ export default function DiceGame() {
       color: '#FF6B9D',
       isPremium: false,
       actions: ['Kiss', 'Massage', 'Caress', 'Nibble', 'Stroke', 'Whisper to'],
-      targets: ['Neck', 'Lips', 'Ears', 'Shoulders', 'Back', 'Arms']
+      targets: ['Neck', 'Lips', 'Ears', 'Shoulders', 'Back', 'Arms'],
     },
     naughty: {
       name: 'Naughty',
@@ -47,7 +47,14 @@ export default function DiceGame() {
       color: '#FF6B35',
       isPremium: true,
       actions: ['Lick', 'Bite', 'Suck', 'Tease', 'Spank', 'Grind against'],
-      targets: ['Thighs', 'Butt', 'Chest', 'Inner thighs', 'Nipples', 'Lower back']
+      targets: [
+        'Thighs',
+        'Butt',
+        'Chest',
+        'Inner thighs',
+        'Nipples',
+        'Lower back',
+      ],
     },
     expert: {
       name: 'Expert',
@@ -55,9 +62,23 @@ export default function DiceGame() {
       description: 'Wild & Daring',
       color: '#8B5CF6',
       isPremium: true,
-      actions: ['Tongue-tease', 'Nibble on', 'Ice-play with', 'Blindfold and touch', 'Feather-tickle', 'Deep kiss'],
-      targets: ['Cock/Pussy', 'Asshole', 'Inner thighs', 'Tits', 'Balls/Clit', 'Collarbone']
-    }
+      actions: [
+        'Tongue-tease',
+        'Nibble on',
+        'Ice-play with',
+        'Blindfold and touch',
+        'Feather-tickle',
+        'Deep kiss',
+      ],
+      targets: [
+        'Cock/Pussy',
+        'Asshole',
+        'Inner thighs',
+        'Tits',
+        'Balls/Clit',
+        'Collarbone',
+      ],
+    },
   };
 
   React.useEffect(() => {
@@ -87,7 +108,7 @@ export default function DiceGame() {
   const isCategoryAccessible = (categoryKey) => {
     const category = categories[categoryKey];
     if (!category.isPremium) return true; // Sensual is always free
-    
+
     // Premium categories are only accessible if user is premium
     return isPremium;
   };
@@ -99,15 +120,15 @@ export default function DiceGame() {
 
   const rollDice = () => {
     if (isRolling) return;
-    
+
     // Check if current category is accessible
     if (!isCategoryAccessible(selectedCategory)) {
       showPremiumUpgradeModal();
       return;
     }
-    
+
     setIsRolling(true);
-    
+
     // Shake animation
     Animated.sequence([
       Animated.timing(shakeAnimation, {
@@ -149,24 +170,32 @@ export default function DiceGame() {
     // Generate results after animation
     setTimeout(() => {
       const currentCategory = categories[selectedCategory];
-      const randomAction = currentCategory.actions[Math.floor(Math.random() * currentCategory.actions.length)];
-      const randomTarget = currentCategory.targets[Math.floor(Math.random() * currentCategory.targets.length)];
-      
+      const randomAction =
+        currentCategory.actions[
+          Math.floor(Math.random() * currentCategory.actions.length)
+        ];
+      const randomTarget =
+        currentCategory.targets[
+          Math.floor(Math.random() * currentCategory.targets.length)
+        ];
+
       setActionResult(randomAction);
       setTargetResult(randomTarget);
-      setRollCount(prev => prev + 1); // Increment roll count
+      setRollCount((prev) => prev + 1); // Increment roll count
       setIsRolling(false);
     }, 600);
   };
 
   const getCategoryColor = (category) => {
-    return selectedCategory === category ? categories[category].color : '#6B7280';
+    return selectedCategory === category
+      ? categories[category].color
+      : '#6B7280';
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
-      
+
       <LinearGradient
         colors={['#DC143C', '#B22222', '#8B0000', '#4D0000']}
         style={styles.background}
@@ -174,36 +203,47 @@ export default function DiceGame() {
 
       {/* Dynamic background patterns based on category */}
       <View style={styles.backgroundPatterns}>
-        <View style={[
-          styles.pattern1, 
-          { backgroundColor: categories[selectedCategory].color + '15' }
-        ]} />
-        <View style={[
-          styles.pattern2, 
-          { backgroundColor: categories[selectedCategory].color + '12' }
-        ]} />
-        <View style={[
-          styles.pattern3, 
-          { backgroundColor: categories[selectedCategory].color + '10' }
-        ]} />
-        <View style={[
-          styles.pattern4, 
-          { backgroundColor: categories[selectedCategory].color + '08' }
-        ]} />
+        <View
+          style={[
+            styles.pattern1,
+            { backgroundColor: categories[selectedCategory].color + '15' },
+          ]}
+        />
+        <View
+          style={[
+            styles.pattern2,
+            { backgroundColor: categories[selectedCategory].color + '12' },
+          ]}
+        />
+        <View
+          style={[
+            styles.pattern3,
+            { backgroundColor: categories[selectedCategory].color + '10' },
+          ]}
+        />
+        <View
+          style={[
+            styles.pattern4,
+            { backgroundColor: categories[selectedCategory].color + '08' },
+          ]}
+        />
       </View>
 
       {/* Header - Similar to deck page */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
-        
+
         <View style={styles.headerCenter}>
           <Text style={styles.categoryName}>Dice Game</Text>
         </View>
-        
-        <TouchableOpacity 
-          style={styles.menuButton} 
+
+        <TouchableOpacity
+          style={styles.menuButton}
           onPress={() => setShowMenu(true)}
         >
           <Text style={styles.menuIcon}>☰</Text>
@@ -214,13 +254,15 @@ export default function DiceGame() {
       <View style={styles.categoryDisplay}>
         <Text style={styles.categoryText}>
           {categories[selectedCategory].name}
-          {!isCategoryAccessible(selectedCategory) && categories[selectedCategory].isPremium && ' 🔒'}
+          {!isCategoryAccessible(selectedCategory) &&
+            categories[selectedCategory].isPremium &&
+            ' 🔒'}
         </Text>
         <Text style={styles.categorySubtext}>
-          {!isCategoryAccessible(selectedCategory) && categories[selectedCategory].isPremium 
-            ? 'Premium category - Upgrade to unlock' 
-            : 'Your current vibe'
-          }
+          {!isCategoryAccessible(selectedCategory) &&
+          categories[selectedCategory].isPremium
+            ? 'Premium category - Upgrade to unlock'
+            : 'Your current vibe'}
         </Text>
       </View>
 
@@ -228,34 +270,60 @@ export default function DiceGame() {
       <View style={styles.diceResults}>
         <View style={styles.diceColumn}>
           <View style={styles.diceContainer} key={`action-${selectedCategory}`}>
-            <Text style={[styles.diceLabel, { 
-              color: selectedCategory === 'expert' ? '#8B5CF6' : categories[selectedCategory].color 
-            }]}>
+            <Text
+              style={[
+                styles.diceLabel,
+                {
+                  color:
+                    selectedCategory === 'expert'
+                      ? '#8B5CF6'
+                      : categories[selectedCategory].color,
+                },
+              ]}
+            >
               Action
             </Text>
-            <View style={[
-              styles.resultCard,
-              {
-                backgroundColor: selectedCategory === 'expert' ? '#F3F0FF' : 
-                                categories[selectedCategory].color === '#FF6B9D' ? '#FFF0F5' : 
-                                categories[selectedCategory].color === '#FF6B35' ? '#FFF8F0' : '#FFF0F0',
-                borderColor: selectedCategory === 'expert' ? '#8B5CF6' : categories[selectedCategory].color,
-                shadowColor: selectedCategory === 'expert' ? '#8B5CF6' : categories[selectedCategory].color,
-              }
-            ]}>
-              <Animated.Text 
+            <View
+              style={[
+                styles.resultCard,
+                {
+                  backgroundColor:
+                    selectedCategory === 'expert'
+                      ? '#F3F0FF'
+                      : categories[selectedCategory].color === '#FF6B9D'
+                        ? '#FFF0F5'
+                        : categories[selectedCategory].color === '#FF6B35'
+                          ? '#FFF8F0'
+                          : '#FFF0F0',
+                  borderColor:
+                    selectedCategory === 'expert'
+                      ? '#8B5CF6'
+                      : categories[selectedCategory].color,
+                  shadowColor:
+                    selectedCategory === 'expert'
+                      ? '#8B5CF6'
+                      : categories[selectedCategory].color,
+                },
+              ]}
+            >
+              <Animated.Text
                 style={[
                   styles.resultText,
                   {
-                    color: selectedCategory === 'expert' ? '#8B5CF6' : categories[selectedCategory].color,
+                    color:
+                      selectedCategory === 'expert'
+                        ? '#8B5CF6'
+                        : categories[selectedCategory].color,
                     transform: [
                       { translateX: shakeAnimation },
-                      { scale: rollAnimation.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 1.05]
-                      })}
-                    ]
-                  }
+                      {
+                        scale: rollAnimation.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [1, 1.05],
+                        }),
+                      },
+                    ],
+                  },
                 ]}
               >
                 {actionResult || 'Roll to see'}
@@ -264,34 +332,60 @@ export default function DiceGame() {
           </View>
 
           <View style={styles.diceContainer} key={`target-${selectedCategory}`}>
-            <Text style={[styles.diceLabel, { 
-              color: selectedCategory === 'expert' ? '#8B5CF6' : categories[selectedCategory].color 
-            }]}>
+            <Text
+              style={[
+                styles.diceLabel,
+                {
+                  color:
+                    selectedCategory === 'expert'
+                      ? '#8B5CF6'
+                      : categories[selectedCategory].color,
+                },
+              ]}
+            >
               Target
             </Text>
-            <View style={[
-              styles.resultCard,
-              {
-                backgroundColor: selectedCategory === 'expert' ? '#F3F0FF' : 
-                                categories[selectedCategory].color === '#FF6B9D' ? '#FFF0F5' : 
-                                categories[selectedCategory].color === '#FF6B35' ? '#FFF8F0' : '#FFF0F0',
-                borderColor: selectedCategory === 'expert' ? '#8B5CF6' : categories[selectedCategory].color,
-                shadowColor: selectedCategory === 'expert' ? '#8B5CF6' : categories[selectedCategory].color,
-              }
-            ]}>
-              <Animated.Text 
+            <View
+              style={[
+                styles.resultCard,
+                {
+                  backgroundColor:
+                    selectedCategory === 'expert'
+                      ? '#F3F0FF'
+                      : categories[selectedCategory].color === '#FF6B9D'
+                        ? '#FFF0F5'
+                        : categories[selectedCategory].color === '#FF6B35'
+                          ? '#FFF8F0'
+                          : '#FFF0F0',
+                  borderColor:
+                    selectedCategory === 'expert'
+                      ? '#8B5CF6'
+                      : categories[selectedCategory].color,
+                  shadowColor:
+                    selectedCategory === 'expert'
+                      ? '#8B5CF6'
+                      : categories[selectedCategory].color,
+                },
+              ]}
+            >
+              <Animated.Text
                 style={[
                   styles.resultText,
                   {
-                    color: selectedCategory === 'expert' ? '#8B5CF6' : categories[selectedCategory].color,
+                    color:
+                      selectedCategory === 'expert'
+                        ? '#8B5CF6'
+                        : categories[selectedCategory].color,
                     transform: [
                       { translateX: shakeAnimation },
-                      { scale: rollAnimation.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 1.05]
-                      })}
-                    ]
-                  }
+                      {
+                        scale: rollAnimation.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [1, 1.05],
+                        }),
+                      },
+                    ],
+                  },
                 ]}
               >
                 {targetResult || 'Roll to see'}
@@ -303,27 +397,35 @@ export default function DiceGame() {
 
       {/* Roll Button */}
       <View style={styles.rollButtonContainer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[
-            styles.rollButton, 
+            styles.rollButton,
             isRolling && styles.rollButtonRolling,
-            { borderColor: categories[selectedCategory].color }
-          ]} 
+            { borderColor: categories[selectedCategory].color },
+          ]}
           onPress={rollDice}
           disabled={isRolling}
         >
           <LinearGradient
-            colors={isRolling ? ['#6B7280', '#4B5563'] : 
-                    [categories[selectedCategory].color, categories[selectedCategory].color + 'DD']}
+            colors={
+              isRolling
+                ? ['#6B7280', '#4B5563']
+                : [
+                    categories[selectedCategory].color,
+                    categories[selectedCategory].color + 'DD',
+                  ]
+            }
             style={styles.rollButtonGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
             <Text style={styles.rollButtonIcon}>🎲</Text>
-            <Text style={[
-              styles.rollButtonText,
-              { color: isRolling ? '#6B7280' : '#FFFFFF' }
-            ]}>
+            <Text
+              style={[
+                styles.rollButtonText,
+                { color: isRolling ? '#6B7280' : '#FFFFFF' },
+              ]}
+            >
               {isRolling ? 'Rolling...' : 'ROLL DICE'}
             </Text>
           </LinearGradient>
@@ -345,7 +447,7 @@ export default function DiceGame() {
             >
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Choose Your Vibe</Text>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.closeButton}
                   onPress={() => setShowMenu(false)}
                 >
@@ -358,13 +460,14 @@ export default function DiceGame() {
                   const isAccessible = isCategoryAccessible(category);
                   const isPremiumCategory = categories[category].isPremium;
                   const isLockedForRolling = !isAccessible && isPremiumCategory;
-                  
+
                   return (
                     <TouchableOpacity
                       key={category}
                       style={[
                         styles.categoryItem,
-                        selectedCategory === category && styles.categoryItemSelected
+                        selectedCategory === category &&
+                          styles.categoryItemSelected,
                       ]}
                       onPress={() => {
                         console.log('Changing category to:', category);
@@ -375,22 +478,24 @@ export default function DiceGame() {
                         setTargetResult(null);
                       }}
                     >
-                      <Text style={styles.categoryItemIcon}>{categories[category].icon}</Text>
+                      <Text style={styles.categoryItemIcon}>
+                        {categories[category].icon}
+                      </Text>
                       <View style={styles.categoryItemText}>
-                        <Text style={[
-                          styles.categoryItemName,
-                          selectedCategory === category && styles.categoryItemNameSelected
-                        ]}>
+                        <Text
+                          style={[
+                            styles.categoryItemName,
+                            selectedCategory === category &&
+                              styles.categoryItemNameSelected,
+                          ]}
+                        >
                           {categories[category].name}
                           {isLockedForRolling && ' 🔒'}
                         </Text>
-                        <Text style={[
-                          styles.categoryItemDescription
-                        ]}>
-                          {isLockedForRolling 
-                            ? `${categories[category].description} - Premium (Locked)` 
-                            : categories[category].description
-                          }
+                        <Text style={[styles.categoryItemDescription]}>
+                          {isLockedForRolling
+                            ? `${categories[category].description} - Premium (Locked)`
+                            : categories[category].description}
                         </Text>
                       </View>
                       {isLockedForRolling && (
@@ -414,42 +519,45 @@ export default function DiceGame() {
         animationType="slide"
         onRequestClose={() => setShowPremiumModal(false)}
       >
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
           onPress={() => setShowPremiumModal(false)}
         >
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.premiumModalContent}
             activeOpacity={1}
             onPress={(e) => e.stopPropagation()}
           >
             {/* Drag Handle */}
             <View style={styles.dragHandle} />
-            
+
             <LinearGradient
               colors={['#DC143C', '#B22222', '#8B0000']}
               style={styles.modalGradient}
             >
               <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>🔥 Unlock Premium Categories</Text>
-                <TouchableOpacity 
+                <Text style={styles.modalTitle}>
+                  🔥 Unlock Premium Categories
+                </Text>
+                <TouchableOpacity
                   style={styles.closeButton}
                   onPress={() => setShowPremiumModal(false)}
                 >
                   <Text style={styles.closeButtonText}>✕</Text>
                 </TouchableOpacity>
               </View>
-              
+
               <View style={styles.premiumModalBody}>
                 <Text style={styles.premiumModalDescription}>
-                  Premium categories are completely locked! Upgrade to unlock Naughty and Expert categories and start rolling the dice!
+                  Premium categories are completely locked! Upgrade to unlock
+                  Naughty and Expert categories and start rolling the dice!
                 </Text>
-                <PremiumUpgrade 
+                <PremiumUpgrade
                   onUpgradePress={() => {
                     setShowPremiumModal(false);
                     router.push('/payment');
-                  }} 
+                  }}
                 />
               </View>
             </LinearGradient>

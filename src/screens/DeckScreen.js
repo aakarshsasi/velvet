@@ -2,16 +2,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
-    Animated,
-    Dimensions,
-    Image,
-    Modal,
-    SafeAreaView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  Image,
+  Modal,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import PremiumUpgrade from '../components/PremiumUpgrade';
 import { useAuth } from '../contexts/AuthContext';
@@ -29,12 +29,12 @@ export default function DeckScreen() {
   const [showCardReveal, setShowCardReveal] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [shuffledDeck, setShuffledDeck] = useState(null);
-  
+
   const glowAnim = useRef(new Animated.Value(0.3)).current;
   const cardRevealAnim = useRef(new Animated.Value(0)).current;
   const cardScaleAnim = useRef(new Animated.Value(0.8)).current;
   const cardOpacityAnim = useRef(new Animated.Value(0)).current;
-  
+
   // Enhanced animation values for card transitions
   const cardSlideAnim = useRef(new Animated.Value(0)).current;
   const cardRotateAnim = useRef(new Animated.Value(0)).current;
@@ -103,7 +103,8 @@ export default function DeckScreen() {
       {
         id: 1,
         title: 'Taboo Fantasy Unleashed',
-        description: 'Describe your filthiest fantasy to your partner—bondage, public sex, or forbidden role-play—in vivid, explicit detail while locking eyes and tracing their jawline with your fingers.',
+        description:
+          'Describe your filthiest fantasy to your partner—bondage, public sex, or forbidden role-play—in vivid, explicit detail while locking eyes and tracing their jawline with your fingers.',
         difficulty: 'Medium',
         duration: '8 min',
         icon: '😈',
@@ -112,7 +113,8 @@ export default function DeckScreen() {
       {
         id: 2,
         title: 'Thigh Edge Tease',
-        description: 'Run your fingers up their inner thigh, stopping a breath away from their throbbing cock or dripping pussy, teasing the edge of their underwear without crossing it.',
+        description:
+          'Run your fingers up their inner thigh, stopping a breath away from their throbbing cock or dripping pussy, teasing the edge of their underwear without crossing it.',
         difficulty: 'Medium',
         duration: '7 min',
         icon: '🔥',
@@ -121,7 +123,8 @@ export default function DeckScreen() {
       {
         id: 3,
         title: 'Lip Chase Torment',
-        description: 'Hover your lips over theirs, brushing lightly, then bite their bottom lip sharply, pulling back to make them lean in desperate for more.',
+        description:
+          'Hover your lips over theirs, brushing lightly, then bite their bottom lip sharply, pulling back to make them lean in desperate for more.',
         difficulty: 'Easy',
         duration: '5 min',
         icon: '💋',
@@ -130,7 +133,8 @@ export default function DeckScreen() {
       {
         id: 4,
         title: 'Blindfold Power Play',
-        description: 'Blindfold them tightly, then explore their body with bold hands—pinching nipples, slapping their ass lightly, grazing their crotch, making them squirm with anticipation.',
+        description:
+          'Blindfold them tightly, then explore their body with bold hands—pinching nipples, slapping their ass lightly, grazing their crotch, making them squirm with anticipation.',
         difficulty: 'Hard',
         duration: '10 min',
         icon: '😈',
@@ -139,7 +143,8 @@ export default function DeckScreen() {
       {
         id: 5,
         title: 'Earlobe Hunger',
-        description: 'Lick a slow, wet trail up their neck, then suck their earlobe with deliberate heat, letting your teeth graze as you tease their sensitive skin.',
+        description:
+          'Lick a slow, wet trail up their neck, then suck their earlobe with deliberate heat, letting your teeth graze as you tease their sensitive skin.',
         difficulty: 'Easy',
         duration: '5 min',
         icon: '👂',
@@ -148,7 +153,8 @@ export default function DeckScreen() {
       {
         id: 6,
         title: 'Nipple Flick Frenzy',
-        description: 'Lift their shirt and flick your tongue around their nipples, teasing without sucking, letting your breath drive them wild with unfulfilled need.',
+        description:
+          'Lift their shirt and flick your tongue around their nipples, teasing without sucking, letting your breath drive them wild with unfulfilled need.',
         difficulty: 'Medium',
         duration: '7 min',
         icon: '😘',
@@ -157,7 +163,8 @@ export default function DeckScreen() {
       {
         id: 7,
         title: 'Lap Grind Takeover',
-        description: 'Straddle them with authority, grinding your hips in slow, deep circles against their swelling arousal, daring them to grab you and escalate.',
+        description:
+          'Straddle them with authority, grinding your hips in slow, deep circles against their swelling arousal, daring them to grab you and escalate.',
         difficulty: 'Hard',
         duration: '8 min',
         icon: '🍑',
@@ -166,7 +173,8 @@ export default function DeckScreen() {
       {
         id: 8,
         title: 'Underwear Breach Assault',
-        description: 'Slide your hand inside their underwear, stroking their clit or shaft with feather-light touches, teasing them into a frenzy without giving full satisfaction.',
+        description:
+          'Slide your hand inside their underwear, stroking their clit or shaft with feather-light touches, teasing them into a frenzy without giving full satisfaction.',
         difficulty: 'Hard',
         duration: '6 min',
         icon: '👙',
@@ -175,7 +183,8 @@ export default function DeckScreen() {
       {
         id: 9,
         title: 'Neck Pulse Ravish',
-        description: 'Kiss and suck their neck where their pulse pounds, biting softly to mark their skin while pressing your body close to feel their reaction.',
+        description:
+          'Kiss and suck their neck where their pulse pounds, biting softly to mark their skin while pressing your body close to feel their reaction.',
         difficulty: 'Medium',
         duration: '6 min',
         icon: '👅',
@@ -184,7 +193,8 @@ export default function DeckScreen() {
       {
         id: 10,
         title: 'Collarbone Claim Bite',
-        description: 'Lick their collarbone with possessive intent, then bite firmly to leave a faint mark, grinding your hips subtly to amplify the heat.',
+        description:
+          'Lick their collarbone with possessive intent, then bite firmly to leave a faint mark, grinding your hips subtly to amplify the heat.',
         difficulty: 'Medium',
         duration: '6 min',
         icon: '😈',
@@ -193,7 +203,8 @@ export default function DeckScreen() {
       {
         id: 11,
         title: 'Ass Worship Massage',
-        description: 'Massage their lower back, slipping hands under their waistband to knead their ass cheeks, dipping daringly between to tease forbidden zones.',
+        description:
+          'Massage their lower back, slipping hands under their waistband to knead their ass cheeks, dipping daringly between to tease forbidden zones.',
         difficulty: 'Medium',
         duration: '7 min',
         icon: '💆',
@@ -202,7 +213,8 @@ export default function DeckScreen() {
       {
         id: 12,
         title: 'Kinky Confession Swap',
-        description: 'Take turns revealing your most depraved sexual secret—public fucking, domination, or taboo toys—while groping their ass, chest, or crotch to make it feel dangerously real.',
+        description:
+          'Take turns revealing your most depraved sexual secret—public fucking, domination, or taboo toys—while groping their ass, chest, or crotch to make it feel dangerously real.',
         difficulty: 'Hard',
         duration: '10 min',
         icon: '😈',
@@ -211,7 +223,8 @@ export default function DeckScreen() {
       {
         id: 13,
         title: 'Hip Clash Lock',
-        description: 'Pull them into a tight embrace, grinding your hips hard against their growing arousal, letting the friction build unbearable tension.',
+        description:
+          'Pull them into a tight embrace, grinding your hips hard against their growing arousal, letting the friction build unbearable tension.',
         difficulty: 'Medium',
         duration: '6 min',
         icon: '💃',
@@ -220,7 +233,8 @@ export default function DeckScreen() {
       {
         id: 14,
         title: 'Nipple Twist Torture',
-        description: 'Pinch and twist their nipples through clothes (or bare), applying just enough pressure to draw gasps, teasing without full release.',
+        description:
+          'Pinch and twist their nipples through clothes (or bare), applying just enough pressure to draw gasps, teasing without full release.',
         difficulty: 'Hard',
         duration: '7 min',
         icon: '😘',
@@ -229,7 +243,8 @@ export default function DeckScreen() {
       {
         id: 15,
         title: 'Public Risk Grind',
-        description: 'Drag them into a slow, dirty dance, bodies pressed scandalously close, hands gripping their ass as you grind with reckless abandon.',
+        description:
+          'Drag them into a slow, dirty dance, bodies pressed scandalously close, hands gripping their ass as you grind with reckless abandon.',
         difficulty: 'Hard',
         duration: '8 min',
         icon: '💃',
@@ -238,7 +253,8 @@ export default function DeckScreen() {
       {
         id: 16,
         title: 'Ice Cube Seduction',
-        description: 'Trail an ice cube over their neck, chest, and inner thighs, chasing it with your hot tongue to create a maddening contrast of sensations.',
+        description:
+          'Trail an ice cube over their neck, chest, and inner thighs, chasing it with your hot tongue to create a maddening contrast of sensations.',
         difficulty: 'Hard',
         duration: '8 min',
         icon: '🧊',
@@ -247,7 +263,8 @@ export default function DeckScreen() {
       {
         id: 17,
         title: 'Belt Bind Tease',
-        description: 'Use a belt to loosely tie their wrists, then kiss and touch their body, avoiding their most sensitive spots to build desperate anticipation.',
+        description:
+          'Use a belt to loosely tie their wrists, then kiss and touch their body, avoiding their most sensitive spots to build desperate anticipation.',
         difficulty: 'Hard',
         duration: '9 min',
         icon: '😈',
@@ -256,7 +273,8 @@ export default function DeckScreen() {
       {
         id: 18,
         title: 'Breath Play Edge',
-        description: 'With consent, lightly press your hand to their throat to feel their pulse, kissing their neck and jaw to heighten their arousal.',
+        description:
+          'With consent, lightly press your hand to their throat to feel their pulse, kissing their neck and jaw to heighten their arousal.',
         difficulty: 'Hard',
         duration: '7 min',
         icon: '😘',
@@ -265,7 +283,8 @@ export default function DeckScreen() {
       {
         id: 19,
         title: 'Clothed Crotch Rub',
-        description: 'Rub their crotch through their clothes with slow, deliberate pressure, feeling their hardness or wetness grow as you tease without mercy.',
+        description:
+          'Rub their crotch through their clothes with slow, deliberate pressure, feeling their hardness or wetness grow as you tease without mercy.',
         difficulty: 'Hard',
         duration: '6 min',
         icon: '🔥',
@@ -274,18 +293,20 @@ export default function DeckScreen() {
       {
         id: 20,
         title: 'Mirror Fuck Fantasy',
-        description: 'Position them in front of a mirror, hands roaming their body as you both watch, teasing their erogenous zones while describing how you\'d fuck them while staring at their reflection.',
+        description:
+          "Position them in front of a mirror, hands roaming their body as you both watch, teasing their erogenous zones while describing how you'd fuck them while staring at their reflection.",
         difficulty: 'Hard',
         duration: '8 min',
         icon: '😈',
         color: '#EC4899',
       },
     ],
-    'foreplay': [
+    foreplay: [
       {
         id: 1,
         title: 'Passionate Kiss',
-        description: 'Kiss your partner passionately for 20 seconds without using hands.',
+        description:
+          'Kiss your partner passionately for 20 seconds without using hands.',
         difficulty: 'Easy',
         duration: '1 min',
         icon: '💋',
@@ -294,7 +315,8 @@ export default function DeckScreen() {
       {
         id: 2,
         title: 'Feather Touch',
-        description: 'Explore your partner\'s body with feather-light touches over clothing.',
+        description:
+          "Explore your partner's body with feather-light touches over clothing.",
         difficulty: 'Medium',
         duration: '10 min',
         icon: '🪶',
@@ -303,7 +325,7 @@ export default function DeckScreen() {
       {
         id: 3,
         title: 'Lip Nibble',
-        description: 'Nibble gently on your partner\'s lower lip during a kiss.',
+        description: "Nibble gently on your partner's lower lip during a kiss.",
         difficulty: 'Medium',
         duration: '3 min',
         icon: '😘',
@@ -312,7 +334,8 @@ export default function DeckScreen() {
       {
         id: 4,
         title: 'Collarbone Trace',
-        description: 'Use your tongue to trace patterns on your partner\'s collarbone.',
+        description:
+          "Use your tongue to trace patterns on your partner's collarbone.",
         difficulty: 'Medium',
         duration: '5 min',
         icon: '👅',
@@ -321,7 +344,8 @@ export default function DeckScreen() {
       {
         id: 5,
         title: 'Thigh Massage',
-        description: 'Massage your partner\'s thighs slowly, inching closer but not touching intimately.',
+        description:
+          "Massage your partner's thighs slowly, inching closer but not touching intimately.",
         difficulty: 'Medium',
         duration: '8 min',
         icon: '💆',
@@ -330,7 +354,8 @@ export default function DeckScreen() {
       {
         id: 6,
         title: 'Wrist Fantasies',
-        description: 'Whisper fantasies while kissing your partner\'s inner wrist.',
+        description:
+          "Whisper fantasies while kissing your partner's inner wrist.",
         difficulty: 'Medium',
         duration: '5 min',
         icon: '💭',
@@ -339,7 +364,8 @@ export default function DeckScreen() {
       {
         id: 7,
         title: 'Earlobe Lick',
-        description: 'Lick your partner\'s earlobe softly and breathe warmly into their ear.',
+        description:
+          "Lick your partner's earlobe softly and breathe warmly into their ear.",
         difficulty: 'Medium',
         duration: '4 min',
         icon: '👂',
@@ -348,7 +374,8 @@ export default function DeckScreen() {
       {
         id: 8,
         title: 'Chest Trail',
-        description: 'Trail kisses from your partner\'s mouth down to their chest, stopping at the collar.',
+        description:
+          "Trail kisses from your partner's mouth down to their chest, stopping at the collar.",
         difficulty: 'Medium',
         duration: '6 min',
         icon: '💋',
@@ -357,7 +384,7 @@ export default function DeckScreen() {
       {
         id: 9,
         title: 'Finger Suck',
-        description: 'Gently suck on your partner\'s fingers one by one.',
+        description: "Gently suck on your partner's fingers one by one.",
         difficulty: 'Medium',
         duration: '5 min',
         icon: '👄',
@@ -366,7 +393,8 @@ export default function DeckScreen() {
       {
         id: 10,
         title: 'Body Press',
-        description: 'Press your body against your partner\'s while swaying to imaginary music.',
+        description:
+          "Press your body against your partner's while swaying to imaginary music.",
         difficulty: 'Easy',
         duration: '3 min',
         icon: '💃',
@@ -375,7 +403,8 @@ export default function DeckScreen() {
       {
         id: 11,
         title: 'Back Scratch',
-        description: 'Use your nails to lightly scratch your partner\'s back over their shirt.',
+        description:
+          "Use your nails to lightly scratch your partner's back over their shirt.",
         difficulty: 'Medium',
         duration: '4 min',
         icon: '💅',
@@ -384,7 +413,8 @@ export default function DeckScreen() {
       {
         id: 12,
         title: 'Elbow to Arm',
-        description: 'Kiss the inside of your partner\'s elbow and work up the arm.',
+        description:
+          "Kiss the inside of your partner's elbow and work up the arm.",
         difficulty: 'Medium',
         duration: '5 min',
         icon: '💋',
@@ -393,7 +423,7 @@ export default function DeckScreen() {
       {
         id: 13,
         title: 'Jawline Kisses',
-        description: 'Blow soft kisses along your partner\'s jawline.',
+        description: "Blow soft kisses along your partner's jawline.",
         difficulty: 'Easy',
         duration: '4 min',
         icon: '💋',
@@ -402,7 +432,8 @@ export default function DeckScreen() {
       {
         id: 14,
         title: 'Deep Hair Kiss',
-        description: 'Hold a deep kiss while running hands through each other\'s hair.',
+        description:
+          "Hold a deep kiss while running hands through each other's hair.",
         difficulty: 'Medium',
         duration: '5 min',
         icon: '💋',
@@ -411,7 +442,8 @@ export default function DeckScreen() {
       {
         id: 15,
         title: 'Lip Tease',
-        description: 'Tease your partner\'s lips with yours, pulling away just before contact.',
+        description:
+          "Tease your partner's lips with yours, pulling away just before contact.",
         difficulty: 'Medium',
         duration: '3 min',
         icon: '😏',
@@ -422,7 +454,8 @@ export default function DeckScreen() {
       {
         id: 1,
         title: 'Slow Strip',
-        description: 'Command your partner to strip slowly while you watch and direct their movements.',
+        description:
+          'Command your partner to strip slowly while you watch and direct their movements.',
         difficulty: 'Hard',
         duration: '10 min',
         icon: '👗',
@@ -431,7 +464,8 @@ export default function DeckScreen() {
       {
         id: 2,
         title: 'Hands Pinned',
-        description: 'Pin your partner\'s hands above their head and kiss them deeply, then finger them until they beg for more.',
+        description:
+          "Pin your partner's hands above their head and kiss them deeply, then finger them until they beg for more.",
         difficulty: 'Hard',
         duration: '15 min',
         icon: '🔒',
@@ -440,7 +474,8 @@ export default function DeckScreen() {
       {
         id: 3,
         title: 'Kneel and Serve',
-        description: 'Order your partner to kneel and perform oral sex on you for two minutes.',
+        description:
+          'Order your partner to kneel and perform oral sex on you for two minutes.',
         difficulty: 'Hard',
         duration: '5 min',
         icon: '🫦',
@@ -449,7 +484,8 @@ export default function DeckScreen() {
       {
         id: 4,
         title: 'Doggy Position',
-        description: 'Tell your partner to assume the doggy-style position and spank them lightly before penetrating.',
+        description:
+          'Tell your partner to assume the doggy-style position and spank them lightly before penetrating.',
         difficulty: 'Hard',
         duration: '12 min',
         icon: '🐕',
@@ -458,7 +494,8 @@ export default function DeckScreen() {
       {
         id: 5,
         title: 'Blindfold Tease',
-        description: 'Command your partner to blindfold themselves and let you tease their nipples with your mouth.',
+        description:
+          'Command your partner to blindfold themselves and let you tease their nipples with your mouth.',
         difficulty: 'Hard',
         duration: '10 min',
         icon: '👁️',
@@ -467,7 +504,8 @@ export default function DeckScreen() {
       {
         id: 6,
         title: 'Cowgirl Control',
-        description: 'Command your partner to ride you in cowgirl position while you control the pace with your hands on their hips.',
+        description:
+          'Command your partner to ride you in cowgirl position while you control the pace with your hands on their hips.',
         difficulty: 'Hard',
         duration: '15 min',
         icon: '👑',
@@ -476,7 +514,8 @@ export default function DeckScreen() {
       {
         id: 7,
         title: 'Edge Control',
-        description: 'Instruct your partner to spread their legs and use your fingers to bring them to the edge of orgasm.',
+        description:
+          'Instruct your partner to spread their legs and use your fingers to bring them to the edge of orgasm.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '🔥',
@@ -485,7 +524,8 @@ export default function DeckScreen() {
       {
         id: 8,
         title: 'Head Guidance',
-        description: 'Order your partner to give you a blowjob while you guide their head.',
+        description:
+          'Order your partner to give you a blowjob while you guide their head.',
         difficulty: 'Hard',
         duration: '8 min',
         icon: '💦',
@@ -494,7 +534,8 @@ export default function DeckScreen() {
       {
         id: 9,
         title: 'Bend and Spank',
-        description: 'Tell your partner to bend over and receive light spanking followed by anal fingering.',
+        description:
+          'Tell your partner to bend over and receive light spanking followed by anal fingering.',
         difficulty: 'Hard',
         duration: '15 min',
         icon: '🍑',
@@ -503,7 +544,8 @@ export default function DeckScreen() {
       {
         id: 10,
         title: 'Submissive Pose',
-        description: 'Command your partner to hold a submissive pose while you explore their body with toys.',
+        description:
+          'Command your partner to hold a submissive pose while you explore their body with toys.',
         difficulty: 'Hard',
         duration: '18 min',
         icon: '🎭',
@@ -512,7 +554,8 @@ export default function DeckScreen() {
       {
         id: 11,
         title: '69 Control',
-        description: 'Direct your partner to perform 69 position with you on top, controlling the intensity.',
+        description:
+          'Direct your partner to perform 69 position with you on top, controlling the intensity.',
         difficulty: 'Hard',
         duration: '15 min',
         icon: '6️⃣9️⃣',
@@ -521,7 +564,8 @@ export default function DeckScreen() {
       {
         id: 12,
         title: 'Yes Master',
-        description: 'Instruct your partner to whisper "yes, master/mistress" while you finger or lick them.',
+        description:
+          'Instruct your partner to whisper "yes, master/mistress" while you finger or lick them.',
         difficulty: 'Hard',
         duration: '10 min',
         icon: '🗣️',
@@ -530,7 +574,8 @@ export default function DeckScreen() {
       {
         id: 13,
         title: 'Face Straddle',
-        description: 'Order your partner to straddle your face for oral pleasure while you dominate the rhythm.',
+        description:
+          'Order your partner to straddle your face for oral pleasure while you dominate the rhythm.',
         difficulty: 'Hard',
         duration: '12 min',
         icon: '👅',
@@ -539,7 +584,8 @@ export default function DeckScreen() {
       {
         id: 14,
         title: 'Missionary Submit',
-        description: 'Tell your partner to assume missionary position and submit to deep thrusting.',
+        description:
+          'Tell your partner to assume missionary position and submit to deep thrusting.',
         difficulty: 'Hard',
         duration: '15 min',
         icon: '🛏️',
@@ -548,7 +594,8 @@ export default function DeckScreen() {
       {
         id: 15,
         title: 'Manual Edge',
-        description: 'Command your partner to edge themselves manually while you watch and deny release until you allow it.',
+        description:
+          'Command your partner to edge themselves manually while you watch and deny release until you allow it.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '⏰',
@@ -559,7 +606,8 @@ export default function DeckScreen() {
       {
         id: 1,
         title: 'Scarf Wrist Tie',
-        description: 'Tie your partner\'s wrists loosely with a scarf and tease their body with kisses before fingering them.',
+        description:
+          "Tie your partner's wrists loosely with a scarf and tease their body with kisses before fingering them.",
         difficulty: 'Hard',
         duration: '15 min',
         icon: '🧣',
@@ -568,7 +616,8 @@ export default function DeckScreen() {
       {
         id: 2,
         title: 'Silk Ankle Restraint',
-        description: 'Use silk ties to restrain your partner\'s ankles and perform oral sex in a spread-eagle position.',
+        description:
+          "Use silk ties to restrain your partner's ankles and perform oral sex in a spread-eagle position.",
         difficulty: 'Hard',
         duration: '20 min',
         icon: '🎀',
@@ -577,7 +626,8 @@ export default function DeckScreen() {
       {
         id: 3,
         title: 'Behind Back Binding',
-        description: 'Bind your partner\'s hands behind their back and guide them into giving you a blowjob.',
+        description:
+          "Bind your partner's hands behind their back and guide them into giving you a blowjob.",
         difficulty: 'Hard',
         duration: '12 min',
         icon: '🔒',
@@ -586,7 +636,8 @@ export default function DeckScreen() {
       {
         id: 4,
         title: 'Bed Cuff Missionary',
-        description: 'Lightly cuff your partner to the bed and penetrate them in missionary while they can\'t touch you.',
+        description:
+          "Lightly cuff your partner to the bed and penetrate them in missionary while they can't touch you.",
         difficulty: 'Hard',
         duration: '18 min',
         icon: '🛏️',
@@ -595,7 +646,8 @@ export default function DeckScreen() {
       {
         id: 5,
         title: 'Arms Restrained Ride',
-        description: 'Restrain your partner\'s arms and have them ride you reverse cowgirl style.',
+        description:
+          "Restrain your partner's arms and have them ride you reverse cowgirl style.",
         difficulty: 'Hard',
         duration: '15 min',
         icon: '🤲',
@@ -604,7 +656,8 @@ export default function DeckScreen() {
       {
         id: 6,
         title: 'Chair Tie Edge',
-        description: 'Tie your partner to a chair and edge them with your fingers until they plead.',
+        description:
+          'Tie your partner to a chair and edge them with your fingers until they plead.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '🪑',
@@ -613,7 +666,8 @@ export default function DeckScreen() {
       {
         id: 7,
         title: 'Soft Rope Anal',
-        description: 'Use soft ropes on your partner\'s wrists and introduce anal play with gentle fingering.',
+        description:
+          "Use soft ropes on your partner's wrists and introduce anal play with gentle fingering.",
         difficulty: 'Hard',
         duration: '20 min',
         icon: '🪢',
@@ -622,7 +676,7 @@ export default function DeckScreen() {
       {
         id: 8,
         title: 'Legs Apart Lick',
-        description: 'Bind your partner\'s legs apart and lick them to orgasm.',
+        description: "Bind your partner's legs apart and lick them to orgasm.",
         difficulty: 'Hard',
         duration: '15 min',
         icon: '👅',
@@ -631,7 +685,8 @@ export default function DeckScreen() {
       {
         id: 9,
         title: 'Face-Down Spank',
-        description: 'Restrain your partner face-down and spank lightly before doggy-style penetration.',
+        description:
+          'Restrain your partner face-down and spank lightly before doggy-style penetration.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '🍑',
@@ -640,7 +695,8 @@ export default function DeckScreen() {
       {
         id: 10,
         title: 'Hands Above Head Toy',
-        description: 'Tie your partner\'s hands above their head and use a toy for clitoral or prostate stimulation.',
+        description:
+          "Tie your partner's hands above their head and use a toy for clitoral or prostate stimulation.",
         difficulty: 'Hard',
         duration: '18 min',
         icon: '🎯',
@@ -649,7 +705,8 @@ export default function DeckScreen() {
       {
         id: 11,
         title: 'Handcuff 69',
-        description: 'Lightly handcuff your partner and switch to 69 position for mutual oral.',
+        description:
+          'Lightly handcuff your partner and switch to 69 position for mutual oral.',
         difficulty: 'Hard',
         duration: '15 min',
         icon: '6️⃣9️⃣',
@@ -658,7 +715,8 @@ export default function DeckScreen() {
       {
         id: 12,
         title: 'Ankles to Bedposts',
-        description: 'Bind your partner\'s ankles to the bedposts and finger them deeply.',
+        description:
+          "Bind your partner's ankles to the bedposts and finger them deeply.",
         difficulty: 'Hard',
         duration: '20 min',
         icon: '🛏️',
@@ -667,7 +725,8 @@ export default function DeckScreen() {
       {
         id: 13,
         title: 'Scarf Beg Command',
-        description: 'Use scarves to restrain your partner and command them to beg for a blowjob from you.',
+        description:
+          'Use scarves to restrain your partner and command them to beg for a blowjob from you.',
         difficulty: 'Hard',
         duration: '15 min',
         icon: '🧣',
@@ -676,7 +735,8 @@ export default function DeckScreen() {
       {
         id: 14,
         title: 'Hogtie Nipple Play',
-        description: 'Tie your partner in a hogtie position and tease with nipple play before sex.',
+        description:
+          'Tie your partner in a hogtie position and tease with nipple play before sex.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '🐷',
@@ -685,18 +745,20 @@ export default function DeckScreen() {
       {
         id: 15,
         title: 'Wrist Restraint Anal',
-        description: 'Restrain your partner\'s wrists and have them submit to anal penetration slowly.',
+        description:
+          "Restrain your partner's wrists and have them submit to anal penetration slowly.",
         difficulty: 'Hard',
         duration: '20 min',
         icon: '🔒',
         color: '#EC4899',
       },
     ],
-    'roleplay': [
+    roleplay: [
       {
         id: 1,
         title: 'Boss and Employee',
-        description: 'Roleplay as boss and employee: Command your "employee" to strip and give you oral under the desk.',
+        description:
+          'Roleplay as boss and employee: Command your "employee" to strip and give you oral under the desk.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '👔',
@@ -705,7 +767,8 @@ export default function DeckScreen() {
       {
         id: 2,
         title: 'Strangers at Bar',
-        description: 'Pretend to be strangers meeting at a bar: Seduce your partner into a quickie in doggy position.',
+        description:
+          'Pretend to be strangers meeting at a bar: Seduce your partner into a quickie in doggy position.',
         difficulty: 'Hard',
         duration: '15 min',
         icon: '🍺',
@@ -714,7 +777,8 @@ export default function DeckScreen() {
       {
         id: 3,
         title: 'Doctor and Patient',
-        description: 'Act as doctor and patient: "Examine" your partner intimately with fingers and tongue.',
+        description:
+          'Act as doctor and patient: "Examine" your partner intimately with fingers and tongue.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '👨‍⚕️',
@@ -723,7 +787,8 @@ export default function DeckScreen() {
       {
         id: 4,
         title: 'Teacher and Student',
-        description: 'Roleplay teacher and student: Punish with light spanking then reward with a blowjob.',
+        description:
+          'Roleplay teacher and student: Punish with light spanking then reward with a blowjob.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '📚',
@@ -732,7 +797,8 @@ export default function DeckScreen() {
       {
         id: 5,
         title: 'Vampire and Victim',
-        description: 'Be vampire and victim: Bite necks sensually before penetrating in missionary.',
+        description:
+          'Be vampire and victim: Bite necks sensually before penetrating in missionary.',
         difficulty: 'Hard',
         duration: '18 min',
         icon: '🧛',
@@ -741,7 +807,8 @@ export default function DeckScreen() {
       {
         id: 6,
         title: 'Cop and Criminal',
-        description: 'Pretend cop and criminal: Handcuff your partner and "interrogate" with fingering.',
+        description:
+          'Pretend cop and criminal: Handcuff your partner and "interrogate" with fingering.',
         difficulty: 'Hard',
         duration: '22 min',
         icon: '👮',
@@ -750,7 +817,8 @@ export default function DeckScreen() {
       {
         id: 7,
         title: 'Master and Servant',
-        description: 'Roleplay master and servant: Order your servant to perform 69 while you command.',
+        description:
+          'Roleplay master and servant: Order your servant to perform 69 while you command.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '👑',
@@ -759,7 +827,8 @@ export default function DeckScreen() {
       {
         id: 8,
         title: 'Pirate and Captive',
-        description: 'Act as pirate and captive: Tie them up and explore with anal fingering.',
+        description:
+          'Act as pirate and captive: Tie them up and explore with anal fingering.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '🏴‍☠️',
@@ -768,7 +837,8 @@ export default function DeckScreen() {
       {
         id: 9,
         title: 'Superhero and Villain',
-        description: 'Be superhero and villain: "Capture" your partner and tease to orgasm orally.',
+        description:
+          'Be superhero and villain: "Capture" your partner and tease to orgasm orally.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '🦸',
@@ -777,7 +847,8 @@ export default function DeckScreen() {
       {
         id: 10,
         title: 'Alien and Abductee',
-        description: 'Roleplay alien and abductee: Probe intimately with toys and fingers.',
+        description:
+          'Roleplay alien and abductee: Probe intimately with toys and fingers.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '👽',
@@ -786,7 +857,8 @@ export default function DeckScreen() {
       {
         id: 11,
         title: 'Royal and Commoner',
-        description: 'Pretend royal and commoner: Command submission in cowgirl position.',
+        description:
+          'Pretend royal and commoner: Command submission in cowgirl position.',
         difficulty: 'Hard',
         duration: '18 min',
         icon: '👑',
@@ -795,7 +867,8 @@ export default function DeckScreen() {
       {
         id: 12,
         title: 'Werewolf and Mate',
-        description: 'Act as werewolf and mate: Howl playfully before rough doggy-style sex.',
+        description:
+          'Act as werewolf and mate: Howl playfully before rough doggy-style sex.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '🐺',
@@ -804,7 +877,8 @@ export default function DeckScreen() {
       {
         id: 13,
         title: 'Chef and Diner',
-        description: 'Roleplay chef and diner: "Serve" pleasure with licking and fingering.',
+        description:
+          'Roleplay chef and diner: "Serve" pleasure with licking and fingering.',
         difficulty: 'Hard',
         duration: '22 min',
         icon: '👨‍🍳',
@@ -813,7 +887,8 @@ export default function DeckScreen() {
       {
         id: 14,
         title: 'Spy and Target',
-        description: 'Be spy and target: Seduce into reverse cowgirl with spanking.',
+        description:
+          'Be spy and target: Seduce into reverse cowgirl with spanking.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '🕵️',
@@ -822,7 +897,8 @@ export default function DeckScreen() {
       {
         id: 15,
         title: 'Ghost and Haunted',
-        description: 'Pretend ghost and haunted: Tease invisibly before full anal penetration.',
+        description:
+          'Pretend ghost and haunted: Tease invisibly before full anal penetration.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '👻',
@@ -833,7 +909,8 @@ export default function DeckScreen() {
       {
         id: 1,
         title: 'Parked Car Fingering',
-        description: 'In a parked car, finger your partner while they try to stay quiet.',
+        description:
+          'In a parked car, finger your partner while they try to stay quiet.',
         difficulty: 'Hard',
         duration: '15 min',
         icon: '🚗',
@@ -842,7 +919,8 @@ export default function DeckScreen() {
       {
         id: 2,
         title: 'Movie Theater Handjob',
-        description: 'At a movie theater, give your partner a handjob under a blanket.',
+        description:
+          'At a movie theater, give your partner a handjob under a blanket.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '🎬',
@@ -851,7 +929,8 @@ export default function DeckScreen() {
       {
         id: 3,
         title: 'Elevator Commands',
-        description: 'In an elevator, press against your partner and whisper commands for later oral sex.',
+        description:
+          'In an elevator, press against your partner and whisper commands for later oral sex.',
         difficulty: 'Medium',
         duration: '5 min',
         icon: '🛗',
@@ -860,7 +939,8 @@ export default function DeckScreen() {
       {
         id: 4,
         title: 'Park Bench Tease',
-        description: 'At a park bench, subtly tease your partner\'s inner thigh leading to fingering.',
+        description:
+          "At a park bench, subtly tease your partner's inner thigh leading to fingering.",
         difficulty: 'Medium',
         duration: '15 min',
         icon: '🪑',
@@ -869,7 +949,8 @@ export default function DeckScreen() {
       {
         id: 5,
         title: 'Restaurant Bathroom Oral',
-        description: 'In a restaurant bathroom, quickly perform oral on your partner.',
+        description:
+          'In a restaurant bathroom, quickly perform oral on your partner.',
         difficulty: 'Hard',
         duration: '10 min',
         icon: '🚽',
@@ -878,7 +959,8 @@ export default function DeckScreen() {
       {
         id: 6,
         title: 'Alley Quickie',
-        description: 'During a walk, pull into an alley for a standing doggy-style quickie.',
+        description:
+          'During a walk, pull into an alley for a standing doggy-style quickie.',
         difficulty: 'Hard',
         duration: '12 min',
         icon: '🏘️',
@@ -887,7 +969,8 @@ export default function DeckScreen() {
       {
         id: 7,
         title: 'Party Closet Masturbation',
-        description: 'At a party, sneak away for mutual masturbation in a closet.',
+        description:
+          'At a party, sneak away for mutual masturbation in a closet.',
         difficulty: 'Medium',
         duration: '15 min',
         icon: '🎉',
@@ -896,7 +979,8 @@ export default function DeckScreen() {
       {
         id: 8,
         title: 'Fitting Room Blowjob',
-        description: 'In a fitting room, try on clothes and end with a blowjob.',
+        description:
+          'In a fitting room, try on clothes and end with a blowjob.',
         difficulty: 'Hard',
         duration: '18 min',
         icon: '👗',
@@ -905,7 +989,8 @@ export default function DeckScreen() {
       {
         id: 9,
         title: 'Beach Towel Fingering',
-        description: 'On a beach, under a towel, finger your partner to near orgasm.',
+        description:
+          'On a beach, under a towel, finger your partner to near orgasm.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '🏖️',
@@ -914,7 +999,8 @@ export default function DeckScreen() {
       {
         id: 10,
         title: 'Library Fantasies',
-        description: 'In a library, whisper fantasies while lightly touching over clothes, then escalate to anal play later.',
+        description:
+          'In a library, whisper fantasies while lightly touching over clothes, then escalate to anal play later.',
         difficulty: 'Medium',
         duration: '25 min',
         icon: '📚',
@@ -923,7 +1009,8 @@ export default function DeckScreen() {
       {
         id: 11,
         title: 'Concert Grinding',
-        description: 'At a concert, grind against your partner and plan for 69 at home.',
+        description:
+          'At a concert, grind against your partner and plan for 69 at home.',
         difficulty: 'Medium',
         duration: '15 min',
         icon: '🎵',
@@ -932,7 +1019,8 @@ export default function DeckScreen() {
       {
         id: 12,
         title: 'Taxi Tease',
-        description: 'In a taxi, tease with hand play leading to full penetration upon arrival.',
+        description:
+          'In a taxi, tease with hand play leading to full penetration upon arrival.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '🚕',
@@ -941,7 +1029,8 @@ export default function DeckScreen() {
       {
         id: 13,
         title: 'Hiking Cowgirl',
-        description: 'During a hike, find a secluded spot for outdoor cowgirl sex.',
+        description:
+          'During a hike, find a secluded spot for outdoor cowgirl sex.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '🏔️',
@@ -950,7 +1039,8 @@ export default function DeckScreen() {
       {
         id: 14,
         title: 'Bar Restroom Fingering',
-        description: 'At a bar, flirt heavily and sneak to the restroom for fingering.',
+        description:
+          'At a bar, flirt heavily and sneak to the restroom for fingering.',
         difficulty: 'Hard',
         duration: '15 min',
         icon: '🍻',
@@ -959,7 +1049,8 @@ export default function DeckScreen() {
       {
         id: 15,
         title: 'Hotel Lobby Anal',
-        description: 'In a hotel lobby, build tension with touches, then upstairs for anal exploration.',
+        description:
+          'In a hotel lobby, build tension with touches, then upstairs for anal exploration.',
         difficulty: 'Hard',
         duration: '30 min',
         icon: '🏨',
@@ -970,7 +1061,8 @@ export default function DeckScreen() {
       {
         id: 1,
         title: 'Model and Rip',
-        description: 'Have your partner model lingerie, then rip it off and finger them intensely.',
+        description:
+          'Have your partner model lingerie, then rip it off and finger them intensely.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '👗',
@@ -979,7 +1071,8 @@ export default function DeckScreen() {
       {
         id: 2,
         title: 'Matching Striptease',
-        description: 'Dress in matching outfits, tease with a striptease, and end in oral sex.',
+        description:
+          'Dress in matching outfits, tease with a striptease, and end in oral sex.',
         difficulty: 'Medium',
         duration: '25 min',
         icon: '👯',
@@ -988,7 +1081,8 @@ export default function DeckScreen() {
       {
         id: 3,
         title: 'Sheer Command',
-        description: 'Let your partner command you to wear sheer lingerie while they perform a blowjob.',
+        description:
+          'Let your partner command you to wear sheer lingerie while they perform a blowjob.',
         difficulty: 'Hard',
         duration: '18 min',
         icon: '👙',
@@ -997,7 +1091,8 @@ export default function DeckScreen() {
       {
         id: 4,
         title: 'Photo Pose',
-        description: 'Pose in lingerie for photos, then submit to doggy-style penetration.',
+        description:
+          'Pose in lingerie for photos, then submit to doggy-style penetration.',
         difficulty: 'Hard',
         duration: '22 min',
         icon: '📸',
@@ -1006,7 +1101,8 @@ export default function DeckScreen() {
       {
         id: 5,
         title: 'Layer by Layer',
-        description: 'Layer lingerie and remove pieces one by one during foreplay leading to anal.',
+        description:
+          'Layer lingerie and remove pieces one by one during foreplay leading to anal.',
         difficulty: 'Hard',
         duration: '30 min',
         icon: '👘',
@@ -1015,7 +1111,8 @@ export default function DeckScreen() {
       {
         id: 6,
         title: 'Dance to 69',
-        description: 'Have your partner dance in lingerie, then pull them into 69 position.',
+        description:
+          'Have your partner dance in lingerie, then pull them into 69 position.',
         difficulty: 'Medium',
         duration: '20 min',
         icon: '💃',
@@ -1024,7 +1121,8 @@ export default function DeckScreen() {
       {
         id: 7,
         title: 'Lingerie Blindfold',
-        description: 'Use lingerie as blindfolds and restraints before fingering to orgasm.',
+        description:
+          'Use lingerie as blindfolds and restraints before fingering to orgasm.',
         difficulty: 'Medium',
         duration: '18 min',
         icon: '👁️',
@@ -1033,7 +1131,8 @@ export default function DeckScreen() {
       {
         id: 8,
         title: 'Crotchless Model',
-        description: 'Model crotchless lingerie and invite your partner for immediate oral.',
+        description:
+          'Model crotchless lingerie and invite your partner for immediate oral.',
         difficulty: 'Hard',
         duration: '15 min',
         icon: '👙',
@@ -1042,7 +1141,8 @@ export default function DeckScreen() {
       {
         id: 9,
         title: 'Strap Tease',
-        description: 'Tease by adjusting lingerie straps while your partner watches, then ride them cowgirl.',
+        description:
+          'Tease by adjusting lingerie straps while your partner watches, then ride them cowgirl.',
         difficulty: 'Medium',
         duration: '20 min',
         icon: '🎀',
@@ -1051,7 +1151,8 @@ export default function DeckScreen() {
       {
         id: 10,
         title: 'Edible Lingerie',
-        description: 'Incorporate edible lingerie and lick it off before deep thrusting.',
+        description:
+          'Incorporate edible lingerie and lick it off before deep thrusting.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '🍯',
@@ -1060,7 +1161,8 @@ export default function DeckScreen() {
       {
         id: 11,
         title: 'Fashion Show',
-        description: 'Have your partner command a lingerie fashion show ending in spanking and sex.',
+        description:
+          'Have your partner command a lingerie fashion show ending in spanking and sex.',
         difficulty: 'Hard',
         duration: '30 min',
         icon: '🎭',
@@ -1078,7 +1180,8 @@ export default function DeckScreen() {
       {
         id: 13,
         title: 'Provocative Pose',
-        description: 'Pose provocatively in lingerie and let your partner explore with toys.',
+        description:
+          'Pose provocatively in lingerie and let your partner explore with toys.',
         difficulty: 'Medium',
         duration: '25 min',
         icon: '🎯',
@@ -1087,7 +1190,8 @@ export default function DeckScreen() {
       {
         id: 14,
         title: 'Slow Strip Edge',
-        description: 'Strip slowly from lingerie while your partner edges you manually.',
+        description:
+          'Strip slowly from lingerie while your partner edges you manually.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '⏰',
@@ -1096,7 +1200,8 @@ export default function DeckScreen() {
       {
         id: 15,
         title: 'Vibrating Lingerie',
-        description: 'Wear vibrating lingerie and control each other\'s pleasure leading to anal play.',
+        description:
+          "Wear vibrating lingerie and control each other's pleasure leading to anal play.",
         difficulty: 'Hard',
         duration: '25 min',
         icon: '🔋',
@@ -1107,7 +1212,8 @@ export default function DeckScreen() {
       {
         id: 1,
         title: 'Ice Drip Fingering',
-        description: 'Blindfold your partner and drip ice on their skin before fingering them.',
+        description:
+          'Blindfold your partner and drip ice on their skin before fingering them.',
         difficulty: 'Medium',
         duration: '20 min',
         icon: '🧊',
@@ -1116,7 +1222,8 @@ export default function DeckScreen() {
       {
         id: 2,
         title: 'Feather to Oral',
-        description: 'Use feathers to tease, then switch to oral sex with warm breath.',
+        description:
+          'Use feathers to tease, then switch to oral sex with warm breath.',
         difficulty: 'Medium',
         duration: '18 min',
         icon: '🪶',
@@ -1134,7 +1241,8 @@ export default function DeckScreen() {
       {
         id: 4,
         title: 'Hot and Cold',
-        description: 'Alternate hot and cold sensations on erogenous zones before penetration.',
+        description:
+          'Alternate hot and cold sensations on erogenous zones before penetration.',
         difficulty: 'Medium',
         duration: '25 min',
         icon: '🌡️',
@@ -1143,7 +1251,8 @@ export default function DeckScreen() {
       {
         id: 5,
         title: 'Silk Touch 69',
-        description: 'Blindfold and use silk for touching, leading to 69 exploration.',
+        description:
+          'Blindfold and use silk for touching, leading to 69 exploration.',
         difficulty: 'Medium',
         duration: '20 min',
         icon: '🧣',
@@ -1152,7 +1261,8 @@ export default function DeckScreen() {
       {
         id: 6,
         title: 'Chocolate Body',
-        description: 'Incorporate food like chocolate on body parts for licking and anal fingering.',
+        description:
+          'Incorporate food like chocolate on body parts for licking and anal fingering.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '🍫',
@@ -1188,7 +1298,8 @@ export default function DeckScreen() {
       {
         id: 10,
         title: 'Scented Candles',
-        description: 'Use scented candles for aroma while performing cowgirl position.',
+        description:
+          'Use scented candles for aroma while performing cowgirl position.',
         difficulty: 'Medium',
         duration: '20 min',
         icon: '🕯️',
@@ -1197,7 +1308,8 @@ export default function DeckScreen() {
       {
         id: 11,
         title: 'Texture Alternation',
-        description: 'Alternate textures like fur and leather on skin before oral.',
+        description:
+          'Alternate textures like fur and leather on skin before oral.',
         difficulty: 'Medium',
         duration: '25 min',
         icon: '🦊',
@@ -1206,7 +1318,8 @@ export default function DeckScreen() {
       {
         id: 12,
         title: 'Sight and Sound Deprivation',
-        description: 'Deprive sight and sound, then edge with manual stimulation.',
+        description:
+          'Deprive sight and sound, then edge with manual stimulation.',
         difficulty: 'Hard',
         duration: '30 min',
         icon: '🔇',
@@ -1215,7 +1328,8 @@ export default function DeckScreen() {
       {
         id: 13,
         title: 'Ice Cube Missionary',
-        description: 'Use ice cubes during missionary for contrasting sensations.',
+        description:
+          'Use ice cubes during missionary for contrasting sensations.',
         difficulty: 'Medium',
         duration: '20 min',
         icon: '🧊',
@@ -1224,7 +1338,8 @@ export default function DeckScreen() {
       {
         id: 14,
         title: 'Taste Test Genitals',
-        description: 'Incorporate taste tests with edibles on genitals before sex.',
+        description:
+          'Incorporate taste tests with edibles on genitals before sex.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '👅',
@@ -1233,7 +1348,8 @@ export default function DeckScreen() {
       {
         id: 15,
         title: 'Blindfold Vibration',
-        description: 'Blindfold and use vibrations for sensory overload leading to anal.',
+        description:
+          'Blindfold and use vibrations for sensory overload leading to anal.',
         difficulty: 'Hard',
         duration: '28 min',
         icon: '🔊',
@@ -1244,7 +1360,8 @@ export default function DeckScreen() {
       {
         id: 1,
         title: '5-Minute Tease',
-        description: 'Tease your partner\'s genitals with fingers for 5 minutes without allowing orgasm.',
+        description:
+          "Tease your partner's genitals with fingers for 5 minutes without allowing orgasm.",
         difficulty: 'Hard',
         duration: '8 min',
         icon: '⏰',
@@ -1253,7 +1370,8 @@ export default function DeckScreen() {
       {
         id: 2,
         title: 'Triple Edge Oral',
-        description: 'Edge your partner orally three times before permitting release via blowjob.',
+        description:
+          'Edge your partner orally three times before permitting release via blowjob.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '🫦',
@@ -1262,7 +1380,8 @@ export default function DeckScreen() {
       {
         id: 3,
         title: 'Toy Edge Denial',
-        description: 'Use a toy to bring your partner close, deny, then penetrate in doggy.',
+        description:
+          'Use a toy to bring your partner close, deny, then penetrate in doggy.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '🎯',
@@ -1271,7 +1390,8 @@ export default function DeckScreen() {
       {
         id: 4,
         title: 'Manual Edge Repeat',
-        description: 'Manually stimulate your partner to the brink, stop, repeat, end with fingering climax.',
+        description:
+          'Manually stimulate your partner to the brink, stop, repeat, end with fingering climax.',
         difficulty: 'Hard',
         duration: '30 min',
         icon: '✋',
@@ -1280,7 +1400,8 @@ export default function DeckScreen() {
       {
         id: 5,
         title: 'Beg for Missionary',
-        description: 'Tease with light touches, deny penetration until begging, then missionary.',
+        description:
+          'Tease with light touches, deny penetration until begging, then missionary.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '🙏',
@@ -1289,7 +1410,8 @@ export default function DeckScreen() {
       {
         id: 6,
         title: '69 Double Denial',
-        description: 'Edge your partner in 69 position, denying mutual orgasm twice.',
+        description:
+          'Edge your partner in 69 position, denying mutual orgasm twice.',
         difficulty: 'Hard',
         duration: '35 min',
         icon: '6️⃣9️⃣',
@@ -1298,7 +1420,8 @@ export default function DeckScreen() {
       {
         id: 7,
         title: 'Cowgirl Denial Commands',
-        description: 'Use denial commands while your partner rides you cowgirl slowly.',
+        description:
+          'Use denial commands while your partner rides you cowgirl slowly.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '👑',
@@ -1307,7 +1430,8 @@ export default function DeckScreen() {
       {
         id: 8,
         title: 'Anal Tease Denial',
-        description: 'Tease anal area with fingers, deny entry until pleas, then proceed.',
+        description:
+          'Tease anal area with fingers, deny entry until pleas, then proceed.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '🍑',
@@ -1316,7 +1440,8 @@ export default function DeckScreen() {
       {
         id: 9,
         title: 'Edge and Switch',
-        description: 'Bring your partner to edge with oral, stop, and switch roles.',
+        description:
+          'Bring your partner to edge with oral, stop, and switch roles.',
         difficulty: 'Hard',
         duration: '30 min',
         icon: '🔄',
@@ -1325,7 +1450,8 @@ export default function DeckScreen() {
       {
         id: 10,
         title: 'Timer Teasing',
-        description: 'Use timers for teasing sessions leading to explosive sex.',
+        description:
+          'Use timers for teasing sessions leading to explosive sex.',
         difficulty: 'Hard',
         duration: '40 min',
         icon: '⏱️',
@@ -1334,7 +1460,8 @@ export default function DeckScreen() {
       {
         id: 11,
         title: 'Manual Denial Cowgirl',
-        description: 'Deny orgasm during manual play, then allow in reverse cowgirl.',
+        description:
+          'Deny orgasm during manual play, then allow in reverse cowgirl.',
         difficulty: 'Hard',
         duration: '25 min',
         icon: '🤲',
@@ -1343,7 +1470,8 @@ export default function DeckScreen() {
       {
         id: 12,
         title: 'Nipple Genital Tease',
-        description: 'Tease nipples and genitals alternately, deny release until anal play.',
+        description:
+          'Tease nipples and genitals alternately, deny release until anal play.',
         difficulty: 'Hard',
         duration: '30 min',
         icon: '👅',
@@ -1352,7 +1480,8 @@ export default function DeckScreen() {
       {
         id: 13,
         title: 'Vibration Edge Stop',
-        description: 'Edge with vibrations, stop repeatedly, end with deep thrusting.',
+        description:
+          'Edge with vibrations, stop repeatedly, end with deep thrusting.',
         difficulty: 'Hard',
         duration: '35 min',
         icon: '🔊',
@@ -1361,7 +1490,8 @@ export default function DeckScreen() {
       {
         id: 14,
         title: 'Self-Tease Watch',
-        description: 'Command your partner to self-tease while you watch and deny.',
+        description:
+          'Command your partner to self-tease while you watch and deny.',
         difficulty: 'Hard',
         duration: '20 min',
         icon: '👁️',
@@ -1370,7 +1500,8 @@ export default function DeckScreen() {
       {
         id: 15,
         title: 'Multi-Round Denial',
-        description: 'Build denial over multiple rounds, culminate in full-body orgasm via positions.',
+        description:
+          'Build denial over multiple rounds, culminate in full-body orgasm via positions.',
         difficulty: 'Hard',
         duration: '45 min',
         icon: '🔥',
@@ -1381,7 +1512,8 @@ export default function DeckScreen() {
       {
         id: 1,
         title: 'Kidnapping Fantasy',
-        description: 'Enact a kidnapping fantasy: Blindfold, restrain, and penetrate roughly in doggy.',
+        description:
+          'Enact a kidnapping fantasy: Blindfold, restrain, and penetrate roughly in doggy.',
         difficulty: 'Extreme',
         duration: '30 min',
         icon: '🚨',
@@ -1390,7 +1522,8 @@ export default function DeckScreen() {
       {
         id: 2,
         title: 'Tentacle Play',
-        description: 'Explore tentacle play with toys for multi-point stimulation and oral.',
+        description:
+          'Explore tentacle play with toys for multi-point stimulation and oral.',
         difficulty: 'Extreme',
         duration: '35 min',
         icon: '🐙',
@@ -1399,7 +1532,8 @@ export default function DeckScreen() {
       {
         id: 3,
         title: 'Mythical Shape-Shifting',
-        description: 'Roleplay mythical creatures: Fuck as if shape-shifting with anal inclusion.',
+        description:
+          'Roleplay mythical creatures: Fuck as if shape-shifting with anal inclusion.',
         difficulty: 'Extreme',
         duration: '40 min',
         icon: '🐉',
@@ -1408,7 +1542,8 @@ export default function DeckScreen() {
       {
         id: 4,
         title: 'BDSM Light Whipping',
-        description: 'Incorporate BDSM elements like whipping lightly before blowjob submission.',
+        description:
+          'Incorporate BDSM elements like whipping lightly before blowjob submission.',
         difficulty: 'Extreme',
         duration: '30 min',
         icon: '🪢',
@@ -1417,7 +1552,8 @@ export default function DeckScreen() {
       {
         id: 5,
         title: 'Fantasy Orgy Simulation',
-        description: 'Fantasy orgy simulation: Use mirrors and toys for "multiple partners" feel during 69.',
+        description:
+          'Fantasy orgy simulation: Use mirrors and toys for "multiple partners" feel during 69.',
         difficulty: 'Extreme',
         duration: '45 min',
         icon: '🪞',
@@ -1426,7 +1562,8 @@ export default function DeckScreen() {
       {
         id: 6,
         title: 'Acrobatic Wheelbarrow',
-        description: 'Extreme positions: Try acrobatic sex like standing wheelbarrow with fingering.',
+        description:
+          'Extreme positions: Try acrobatic sex like standing wheelbarrow with fingering.',
         difficulty: 'Extreme',
         duration: '25 min',
         icon: '🤸',
@@ -1435,7 +1572,8 @@ export default function DeckScreen() {
       {
         id: 7,
         title: 'Water Play Shower',
-        description: 'Water play fantasy: Shower sex with deep throating and anal.',
+        description:
+          'Water play fantasy: Shower sex with deep throating and anal.',
         difficulty: 'Extreme',
         duration: '35 min',
         icon: '🚿',
@@ -1444,7 +1582,8 @@ export default function DeckScreen() {
       {
         id: 8,
         title: 'Supernatural Possession',
-        description: 'Supernatural possession: Command "demonic" acts like intense cowgirl riding.',
+        description:
+          'Supernatural possession: Command "demonic" acts like intense cowgirl riding.',
         difficulty: 'Extreme',
         duration: '30 min',
         icon: '👹',
@@ -1453,7 +1592,8 @@ export default function DeckScreen() {
       {
         id: 9,
         title: 'Post-Apocalyptic Ruins',
-        description: 'Post-apocalyptic survival: Rough sex in "ruins" with spanking and penetration.',
+        description:
+          'Post-apocalyptic survival: Rough sex in "ruins" with spanking and penetration.',
         difficulty: 'Extreme',
         duration: '40 min',
         icon: '🏚️',
@@ -1462,7 +1602,8 @@ export default function DeckScreen() {
       {
         id: 10,
         title: 'Alien Invasion Probe',
-        description: 'Alien invasion: Probe with fingers, toys, and full anal exploration.',
+        description:
+          'Alien invasion: Probe with fingers, toys, and full anal exploration.',
         difficulty: 'Extreme',
         duration: '45 min',
         icon: '👽',
@@ -1471,7 +1612,8 @@ export default function DeckScreen() {
       {
         id: 11,
         title: 'Time Travel Relive',
-        description: 'Time travel fantasy: "Relive" past encounters with escalated blowjobs.',
+        description:
+          'Time travel fantasy: "Relive" past encounters with escalated blowjobs.',
         difficulty: 'Extreme',
         duration: '35 min',
         icon: '⏰',
@@ -1480,7 +1622,8 @@ export default function DeckScreen() {
       {
         id: 12,
         title: 'Superhuman Airborne',
-        description: 'Superhuman strength: Lift and fuck in airborne positions with oral finish.',
+        description:
+          'Superhuman strength: Lift and fuck in airborne positions with oral finish.',
         difficulty: 'Extreme',
         duration: '30 min',
         icon: '💪',
@@ -1489,7 +1632,8 @@ export default function DeckScreen() {
       {
         id: 13,
         title: 'Dark Magic Ritual',
-        description: 'Dark magic ritual: Use candles, chants, and ritualistic fingering to orgasm.',
+        description:
+          'Dark magic ritual: Use candles, chants, and ritualistic fingering to orgasm.',
         difficulty: 'Extreme',
         duration: '40 min',
         icon: '🕯️',
@@ -1498,7 +1642,8 @@ export default function DeckScreen() {
       {
         id: 14,
         title: 'Monster Chase Primal',
-        description: 'Monster chase: "Catch" your partner for primal doggy-style with bites.',
+        description:
+          'Monster chase: "Catch" your partner for primal doggy-style with bites.',
         difficulty: 'Extreme',
         duration: '35 min',
         icon: '👹',
@@ -1507,7 +1652,8 @@ export default function DeckScreen() {
       {
         id: 15,
         title: 'VR Fantasy Real',
-        description: 'Virtual reality extreme: Describe VR scenarios while performing real anal and sex acts.',
+        description:
+          'Virtual reality extreme: Describe VR scenarios while performing real anal and sex acts.',
         difficulty: 'Extreme',
         duration: '50 min',
         icon: '🥽',
@@ -1521,15 +1667,13 @@ export default function DeckScreen() {
   const progress = completedCards.size;
   const totalCards = currentDeck.length;
 
-
-
   const nextCard = () => {
     // Check if current category is premium and user is not premium
     if (isCategoryPremium(category) && !isPremium) {
       showPremiumUpgradeModal();
       return;
     }
-    
+
     if (currentCardIndex < currentDeck.length - 1) {
       // Start exit animation for current card
       Animated.parallel([
@@ -1546,11 +1690,11 @@ export default function DeckScreen() {
       ]).start(() => {
         // Update card index
         setCurrentCardIndex(currentCardIndex + 1);
-        
+
         // Reset animation values for new card
         nextCardSlideAnim.setValue(1);
         nextCardOpacityAnim.setValue(0);
-        
+
         // Animate new card in with bounce effect
         Animated.parallel([
           Animated.spring(nextCardSlideAnim, {
@@ -1591,20 +1735,20 @@ export default function DeckScreen() {
     ]).start(callback);
   };
 
-    const startDeck = () => {
+  const startDeck = () => {
     // Check if current category is premium and user is not premium
     if (isCategoryPremium(category) && !isPremium) {
       showPremiumUpgradeModal();
       return;
     }
-    
+
     // Reshuffle the deck for a new session
     const originalDeck = cardDecks[category] || [];
     if (originalDeck.length > 0) {
       const shuffled = shuffleDeck(originalDeck);
       setShuffledDeck(shuffled);
     }
-    
+
     // Reset all animation values to starting positions
     cardRevealAnim.setValue(0);
     cardScaleAnim.setValue(0.8);
@@ -1612,14 +1756,14 @@ export default function DeckScreen() {
     cardSlideAnim.setValue(0);
     cardRotateAnim.setValue(0);
     cardGlowAnim.setValue(0);
-    
+
     // Reset card transition animations for first card
     nextCardSlideAnim.setValue(0);
     nextCardOpacityAnim.setValue(1);
-    
+
     // Show the card reveal immediately to prevent blank screen
     setShowCardReveal(true);
-    
+
     // Simplified animation sequence for reliability
     Animated.sequence([
       // Phase 1: Card appears and scales up
@@ -1649,7 +1793,7 @@ export default function DeckScreen() {
   };
 
   const markAsCompleted = () => {
-    setCompletedCards(prev => {
+    setCompletedCards((prev) => {
       const newSet = new Set([...prev, currentCard.id]);
       if (newSet.size === totalCards) {
         setShowCompletion(true);
@@ -1667,12 +1811,35 @@ export default function DeckScreen() {
           color: '#FBBF24',
           gradient: ['#FBBF24', '#F59E0B', '#D97706'],
           difficulty: 'Easy',
-          introDescription: 'Gently open up conversations and create deeper connections with your partner through playful interaction.',
+          introDescription:
+            'Gently open up conversations and create deeper connections with your partner through playful interaction.',
           floatingElements: (
             <>
-              <Animated.View style={[styles.floatingHeart, { opacity: glowAnim }]} />
-              <Animated.View style={[styles.floatingRose, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.2, 0.6] }) }]} />
-              <Animated.View style={[styles.floatingSparkle, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.3, 0.7] }) }]} />
+              <Animated.View
+                style={[styles.floatingHeart, { opacity: glowAnim }]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingRose,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.2, 0.6],
+                    }),
+                  },
+                ]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingSparkle,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.3, 0.7],
+                    }),
+                  },
+                ]}
+              />
             </>
           ),
           specialElements: (
@@ -1696,12 +1863,35 @@ export default function DeckScreen() {
           color: '#F472B6',
           gradient: ['#F472B6', '#EC4899', '#DB2777'],
           difficulty: 'Medium',
-          introDescription: 'Build anticipation and explore different types of touch and sensation for deeper physical connection.',
+          introDescription:
+            'Build anticipation and explore different types of touch and sensation for deeper physical connection.',
           floatingElements: (
             <>
-              <Animated.View style={[styles.floatingKiss, { opacity: glowAnim }]} />
-              <Animated.View style={[styles.floatingLip, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.2, 0.6] }) }]} />
-              <Animated.View style={[styles.floatingHeart, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.3, 0.7] }) }]} />
+              <Animated.View
+                style={[styles.floatingKiss, { opacity: glowAnim }]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingLip,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.2, 0.6],
+                    }),
+                  },
+                ]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingHeart,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.3, 0.7],
+                    }),
+                  },
+                ]}
+              />
             </>
           ),
           specialElements: (
@@ -1711,7 +1901,9 @@ export default function DeckScreen() {
               </View>
               <View style={styles.buildUpMeter}>
                 <View style={styles.meterBar}>
-                  <View style={[styles.meterFill, { backgroundColor: '#F472B6' }]} />
+                  <View
+                    style={[styles.meterFill, { backgroundColor: '#F472B6' }]}
+                  />
                 </View>
                 <Text style={styles.meterText}>Build Up</Text>
               </View>
@@ -1725,12 +1917,35 @@ export default function DeckScreen() {
           color: '#8B5CF6',
           gradient: ['#8B5CF6', '#7C3AED', '#6D28D9'],
           difficulty: 'Hard',
-          introDescription: 'Explore gentle power dynamics and role-playing scenarios in a safe, loving environment.',
+          introDescription:
+            'Explore gentle power dynamics and role-playing scenarios in a safe, loving environment.',
           floatingElements: (
             <>
-              <Animated.View style={[styles.floatingCrown, { opacity: glowAnim }]} />
-              <Animated.View style={[styles.floatingStar, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.2, 0.6] }) }]} />
-              <Animated.View style={[styles.floatingPower, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.3, 0.7] }) }]} />
+              <Animated.View
+                style={[styles.floatingCrown, { opacity: glowAnim }]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingStar,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.2, 0.6],
+                    }),
+                  },
+                ]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingPower,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.3, 0.7],
+                    }),
+                  },
+                ]}
+              />
             </>
           ),
           specialElements: (
@@ -1740,7 +1955,9 @@ export default function DeckScreen() {
               </View>
               <View style={styles.controlMeter}>
                 <View style={styles.meterBar}>
-                  <View style={[styles.meterFill, { backgroundColor: '#8B5CF6' }]} />
+                  <View
+                    style={[styles.meterFill, { backgroundColor: '#8B5CF6' }]}
+                  />
                 </View>
                 <Text style={styles.meterText}>Control Level</Text>
               </View>
@@ -1754,12 +1971,35 @@ export default function DeckScreen() {
           color: '#F59E0B',
           gradient: ['#F59E0B', '#D97706', '#B45309'],
           difficulty: 'Hard',
-          introDescription: 'Dive into fantasies with scripts, costumes, and explicit scenarios involving various acts and power dynamics.',
+          introDescription:
+            'Dive into fantasies with scripts, costumes, and explicit scenarios involving various acts and power dynamics.',
           floatingElements: (
             <>
-              <Animated.View style={[styles.floatingMask, { opacity: glowAnim }]} />
-              <Animated.View style={[styles.floatingDrama, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.2, 0.6] }) }]} />
-              <Animated.View style={[styles.floatingStage, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.3, 0.7] }) }]} />
+              <Animated.View
+                style={[styles.floatingMask, { opacity: glowAnim }]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingDrama,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.2, 0.6],
+                    }),
+                  },
+                ]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingStage,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.3, 0.7],
+                    }),
+                  },
+                ]}
+              />
             </>
           ),
           specialElements: (
@@ -1769,7 +2009,9 @@ export default function DeckScreen() {
               </View>
               <View style={styles.roleplayMeter}>
                 <View style={styles.meterBar}>
-                  <View style={[styles.meterFill, { backgroundColor: '#F59E0B' }]} />
+                  <View
+                    style={[styles.meterFill, { backgroundColor: '#F59E0B' }]}
+                  />
                 </View>
                 <Text style={styles.meterText}>Roleplay Intensity</Text>
               </View>
@@ -1783,22 +2025,49 @@ export default function DeckScreen() {
           color: '#F97316',
           gradient: ['#F97316', '#EA580C', '#C2410C'],
           difficulty: 'Hard',
-          introDescription: 'Build intense frustration through edging and denial techniques, culminating in explosive releases and heightened pleasure.',
+          introDescription:
+            'Build intense frustration through edging and denial techniques, culminating in explosive releases and heightened pleasure.',
           floatingElements: (
             <>
-              <Animated.View style={[styles.floatingFire, { opacity: glowAnim }]} />
-              <Animated.View style={[styles.floatingTimer, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.2, 0.6] }) }]} />
-              <Animated.View style={[styles.floatingEdge, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.3, 0.7] }) }]} />
+              <Animated.View
+                style={[styles.floatingFire, { opacity: glowAnim }]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingTimer,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.2, 0.6],
+                    }),
+                  },
+                ]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingEdge,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.3, 0.7],
+                    }),
+                  },
+                ]}
+              />
             </>
           ),
           specialElements: (
             <View style={styles.teasingElements}>
               <View style={styles.frustrationIndicator}>
-                <Text style={styles.frustrationText}>🔥 Frustration Level: High</Text>
+                <Text style={styles.frustrationText}>
+                  🔥 Frustration Level: High
+                </Text>
               </View>
               <View style={styles.denialMeter}>
                 <View style={styles.meterBar}>
-                  <View style={[styles.meterFill, { backgroundColor: '#F97316' }]} />
+                  <View
+                    style={[styles.meterFill, { backgroundColor: '#F97316' }]}
+                  />
                 </View>
                 <Text style={styles.meterText}>Denial Control</Text>
               </View>
@@ -1812,22 +2081,49 @@ export default function DeckScreen() {
           color: '#DC2626',
           gradient: ['#DC2626', '#B91C1C', '#991B1B'],
           difficulty: 'Extreme',
-          introDescription: 'Push boundaries with wild, explicit fantasies involving intense acts, supernatural scenarios, and extreme roleplay situations.',
+          introDescription:
+            'Push boundaries with wild, explicit fantasies involving intense acts, supernatural scenarios, and extreme roleplay situations.',
           floatingElements: (
             <>
-              <Animated.View style={[styles.floatingLightning, { opacity: glowAnim }]} />
-              <Animated.View style={[styles.floatingDemon, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.2, 0.6] }) }]} />
-              <Animated.View style={[styles.floatingPortal, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.3, 0.7] }) }]} />
+              <Animated.View
+                style={[styles.floatingLightning, { opacity: glowAnim }]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingDemon,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.2, 0.6],
+                    }),
+                  },
+                ]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingPortal,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.3, 0.7],
+                    }),
+                  },
+                ]}
+              />
             </>
           ),
           specialElements: (
             <View style={styles.fantasyElements}>
               <View style={styles.extremeIndicator}>
-                <Text style={styles.extremeText}>⚡ Intensity Level: Extreme</Text>
+                <Text style={styles.extremeText}>
+                  ⚡ Intensity Level: Extreme
+                </Text>
               </View>
               <View style={styles.fantasyMeter}>
                 <View style={styles.meterBar}>
-                  <View style={[styles.meterFill, { backgroundColor: '#DC2626' }]} />
+                  <View
+                    style={[styles.meterFill, { backgroundColor: '#DC2626' }]}
+                  />
                 </View>
                 <Text style={styles.meterText}>Fantasy Intensity</Text>
               </View>
@@ -1841,12 +2137,35 @@ export default function DeckScreen() {
           color: '#10B981',
           gradient: ['#10B981', '#059669', '#047857'],
           difficulty: 'Hard',
-          introDescription: 'Experience discreet thrills in semi-public settings, escalating to explicit risks and outdoor adventures.',
+          introDescription:
+            'Experience discreet thrills in semi-public settings, escalating to explicit risks and outdoor adventures.',
           floatingElements: (
             <>
-              <Animated.View style={[styles.floatingCity, { opacity: glowAnim }]} />
-              <Animated.View style={[styles.floatingRisk, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.2, 0.6] }) }]} />
-              <Animated.View style={[styles.floatingAdventure, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.3, 0.7] }) }]} />
+              <Animated.View
+                style={[styles.floatingCity, { opacity: glowAnim }]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingRisk,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.2, 0.6],
+                    }),
+                  },
+                ]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingAdventure,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.3, 0.7],
+                    }),
+                  },
+                ]}
+              />
             </>
           ),
           specialElements: (
@@ -1856,7 +2175,9 @@ export default function DeckScreen() {
               </View>
               <View style={styles.publicMeter}>
                 <View style={styles.meterBar}>
-                  <View style={[styles.meterFill, { backgroundColor: '#10B981' }]} />
+                  <View
+                    style={[styles.meterFill, { backgroundColor: '#10B981' }]}
+                  />
                 </View>
                 <Text style={styles.meterText}>Public Exposure</Text>
               </View>
@@ -1870,12 +2191,35 @@ export default function DeckScreen() {
           color: '#EC4899',
           gradient: ['#EC4899', '#DB2777', '#BE185D'],
           difficulty: 'Hard',
-          introDescription: 'Explore gentle bindings and restraints for heightened sensation and deeper submission in a safe, loving environment.',
+          introDescription:
+            'Explore gentle bindings and restraints for heightened sensation and deeper submission in a safe, loving environment.',
           floatingElements: (
             <>
-              <Animated.View style={[styles.floatingChain, { opacity: glowAnim }]} />
-              <Animated.View style={[styles.floatingRope, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.2, 0.6] }) }]} />
-              <Animated.View style={[styles.floatingLock, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.3, 0.7] }) }]} />
+              <Animated.View
+                style={[styles.floatingChain, { opacity: glowAnim }]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingRope,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.2, 0.6],
+                    }),
+                  },
+                ]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingLock,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.3, 0.7],
+                    }),
+                  },
+                ]}
+              />
             </>
           ),
           specialElements: (
@@ -1885,7 +2229,9 @@ export default function DeckScreen() {
               </View>
               <View style={styles.restraintMeter}>
                 <View style={styles.meterBar}>
-                  <View style={[styles.meterFill, { backgroundColor: '#EC4899' }]} />
+                  <View
+                    style={[styles.meterFill, { backgroundColor: '#EC4899' }]}
+                  />
                 </View>
                 <Text style={styles.meterText}>Restraint Control</Text>
               </View>
@@ -1901,8 +2247,20 @@ export default function DeckScreen() {
           difficulty: 'Medium',
           floatingElements: (
             <>
-              <Animated.View style={[styles.floatingTarget, { opacity: glowAnim }]} />
-              <Animated.View style={[styles.floatingStar, { opacity: glowAnim.interpolate({ inputRange: [0.3, 1], outputRange: [0.2, 0.6] }) }]} />
+              <Animated.View
+                style={[styles.floatingTarget, { opacity: glowAnim }]}
+              />
+              <Animated.View
+                style={[
+                  styles.floatingStar,
+                  {
+                    opacity: glowAnim.interpolate({
+                      inputRange: [0.3, 1],
+                      outputRange: [0.2, 0.6],
+                    }),
+                  },
+                ]}
+              />
             </>
           ),
           specialElements: (
@@ -1921,7 +2279,9 @@ export default function DeckScreen() {
   if (!currentCard) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.errorText}>No cards available for this category.</Text>
+        <Text style={styles.errorText}>
+          No cards available for this category.
+        </Text>
       </SafeAreaView>
     );
   }
@@ -1929,7 +2289,7 @@ export default function DeckScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
-      
+
       {/* Background */}
       <LinearGradient
         colors={['#000000', '#1A0000', '#330000']}
@@ -1939,21 +2299,24 @@ export default function DeckScreen() {
       {/* Header - Only show when not in intro */}
       {!showIntro && (
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+          >
             <Text style={styles.backButtonText}>←</Text>
           </TouchableOpacity>
-          
+
           <View style={styles.headerCenter}>
             <Text style={styles.categoryName}>{categoryInfo.name}</Text>
           </View>
-          
+
           <View style={styles.progressContainer}>
-            <Text style={styles.progressText}>{currentCardIndex + 1} of {totalCards}</Text>
+            <Text style={styles.progressText}>
+              {currentCardIndex + 1} of {totalCards}
+            </Text>
           </View>
         </View>
       )}
-
-
 
       {/* Full Page Dare */}
       <View style={styles.dareContainer}>
@@ -1962,10 +2325,10 @@ export default function DeckScreen() {
           colors={['#000000', '#1a0000', '#330000']}
           style={styles.dareBackground}
         />
-        
+
         {/* Intro Screen */}
         {showIntro ? (
-          <Animated.View 
+          <Animated.View
             style={[
               styles.introContainer,
               {
@@ -1973,18 +2336,20 @@ export default function DeckScreen() {
                   inputRange: [0, 0.1],
                   outputRange: [1, 0],
                 }),
-                transform: [{
-                  scale: cardRevealAnim.interpolate({
-                    inputRange: [0, 0.1],
-                    outputRange: [1, 0.95],
-                  }),
-                }],
+                transform: [
+                  {
+                    scale: cardRevealAnim.interpolate({
+                      inputRange: [0, 0.1],
+                      outputRange: [1, 0.95],
+                    }),
+                  },
+                ],
               },
             ]}
           >
             {/* Sexy Background Elements */}
             <View style={styles.sexyBackgroundElements}>
-              <Animated.View 
+              <Animated.View
                 style={[
                   styles.sexyGlowOrb,
                   {
@@ -1992,16 +2357,18 @@ export default function DeckScreen() {
                       inputRange: [0.3, 1],
                       outputRange: [0.4, 0.8],
                     }),
-                    transform: [{
-                      scale: glowAnim.interpolate({
-                        inputRange: [0.3, 1],
-                        outputRange: [0.8, 1.2],
-                      }),
-                    }],
+                    transform: [
+                      {
+                        scale: glowAnim.interpolate({
+                          inputRange: [0.3, 1],
+                          outputRange: [0.8, 1.2],
+                        }),
+                      },
+                    ],
                   },
                 ]}
               />
-              <Animated.View 
+              <Animated.View
                 style={[
                   styles.sexyPulseRing,
                   {
@@ -2009,42 +2376,50 @@ export default function DeckScreen() {
                       inputRange: [0.3, 1],
                       outputRange: [0.2, 0.6],
                     }),
-                    transform: [{
-                      scale: glowAnim.interpolate({
-                        inputRange: [0.3, 1],
-                        outputRange: [1, 1.4],
-                      }),
-                    }],
+                    transform: [
+                      {
+                        scale: glowAnim.interpolate({
+                          inputRange: [0.3, 1],
+                          outputRange: [1, 1.4],
+                        }),
+                      },
+                    ],
                   },
                 ]}
               />
             </View>
 
             {/* Enhanced Category Image with Sexy Effects */}
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.categoryImageContainer,
                 {
-                  transform: [{
-                    scale: glowAnim.interpolate({
-                      inputRange: [0.3, 1],
-                      outputRange: [1, 1.05],
-                    }),
-                  }],
+                  transform: [
+                    {
+                      scale: glowAnim.interpolate({
+                        inputRange: [0.3, 1],
+                        outputRange: [1, 1.05],
+                      }),
+                    },
+                  ],
                 },
               ]}
             >
               <LinearGradient
-                colors={['rgba(220, 20, 60, 0.3)', 'rgba(178, 34, 34, 0.2)', 'rgba(139, 0, 0, 0.3)']}
+                colors={[
+                  'rgba(220, 20, 60, 0.3)',
+                  'rgba(178, 34, 34, 0.2)',
+                  'rgba(139, 0, 0, 0.3)',
+                ]}
                 style={styles.categoryImage}
               >
-                <Image 
+                <Image
                   source={require('../../assets/images/mild-seduction.png')}
                   style={styles.categoryImagePNG}
                   resizeMode="cover"
                 />
                 {/* Sexy glow overlay */}
-                <Animated.View 
+                <Animated.View
                   style={[
                     styles.sexyImageGlow,
                     {
@@ -2059,25 +2434,29 @@ export default function DeckScreen() {
                 <View style={styles.imageOverlay} />
               </LinearGradient>
             </Animated.View>
-            
+
             {/* Enhanced Intro Content with Sexy Typography */}
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.introContent,
                 {
-                  transform: [{
-                    translateY: glowAnim.interpolate({
-                      inputRange: [0.3, 1],
-                      outputRange: [0, -5],
-                    }),
-                  }],
+                  transform: [
+                    {
+                      translateY: glowAnim.interpolate({
+                        inputRange: [0.3, 1],
+                        outputRange: [0, -5],
+                      }),
+                    },
+                  ],
                 },
               ]}
             >
               <Text style={styles.introTitle}>{categoryInfo.name}</Text>
               <Text style={styles.introSubtitle}>Ready to explore?</Text>
-              <Text style={styles.introDescription}>{categoryInfo.introDescription}</Text>
-              
+              <Text style={styles.introDescription}>
+                {categoryInfo.introDescription}
+              </Text>
+
               {/* Sexy category stats */}
               <View style={styles.categoryStats}>
                 <View style={styles.statItem}>
@@ -2086,7 +2465,9 @@ export default function DeckScreen() {
                 </View>
                 <View style={styles.statDivider} />
                 <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>{categoryInfo.difficulty || 'Medium'}</Text>
+                  <Text style={styles.statNumber}>
+                    {categoryInfo.difficulty || 'Medium'}
+                  </Text>
                   <Text style={styles.statLabel}>Level</Text>
                 </View>
                 <View style={styles.statDivider} />
@@ -2096,26 +2477,28 @@ export default function DeckScreen() {
                 </View>
               </View>
             </Animated.View>
-            
+
             {/* Enhanced Start Deck Button with Sexy Effects */}
             <Animated.View
               style={[
                 styles.startDeckButtonContainer,
                 {
-                  transform: [{
-                    scale: glowAnim.interpolate({
-                      inputRange: [0.3, 1],
-                      outputRange: [1, 1.02],
-                    }),
-                  }],
+                  transform: [
+                    {
+                      scale: glowAnim.interpolate({
+                        inputRange: [0.3, 1],
+                        outputRange: [1, 1.02],
+                      }),
+                    },
+                  ],
                 },
               ]}
             >
               {/* Journey title outside button */}
               <Text style={styles.journeyTitle}>Begin Your Journey</Text>
-              
-              <TouchableOpacity 
-                style={styles.startDeckButton} 
+
+              <TouchableOpacity
+                style={styles.startDeckButton}
                 onPress={() => animateButtonPress(startDeck)}
               >
                 <LinearGradient
@@ -2127,22 +2510,32 @@ export default function DeckScreen() {
                     style={[
                       styles.sexyButtonShimmer,
                       {
-                        transform: [{ translateX: glowAnim.interpolate({
-                          inputRange: [0.3, 1],
-                          outputRange: [-200, 250],
-                        }) }],
+                        transform: [
+                          {
+                            translateX: glowAnim.interpolate({
+                              inputRange: [0.3, 1],
+                              outputRange: [-200, 250],
+                            }),
+                          },
+                        ],
                       },
                     ]}
                   >
                     <LinearGradient
-                      colors={['transparent', 'rgba(255, 255, 255, 0.6)', 'transparent']}
+                      colors={[
+                        'transparent',
+                        'rgba(255, 255, 255, 0.6)',
+                        'transparent',
+                      ]}
                       style={styles.sexyShimmerGradient}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                     />
                   </Animated.View>
-                  
-                  <Text style={styles.startDeckButtonText}>Start Exploring</Text>
+
+                  <Text style={styles.startDeckButtonText}>
+                    Start Exploring
+                  </Text>
                 </LinearGradient>
               </TouchableOpacity>
             </Animated.View>
@@ -2151,74 +2544,90 @@ export default function DeckScreen() {
           <>
             {/* Card Flip Animation - Only show when showCardReveal is true */}
             {showCardReveal && (
-              <Animated.View 
+              <Animated.View
                 style={[
                   styles.cardFlipContainer,
                   {
                     transform: [
-                      { translateY: cardRevealAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [height * 0.5, 0],
-                      })},
-                      { translateX: cardSlideAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [-width * 0.3, 0],
-                      })},
+                      {
+                        translateY: cardRevealAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [height * 0.5, 0],
+                        }),
+                      },
+                      {
+                        translateX: cardSlideAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [-width * 0.3, 0],
+                        }),
+                      },
                       { scale: cardScaleAnim },
-                      { rotate: cardRotateAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['-15deg', '0deg'],
-                      })},
+                      {
+                        rotate: cardRotateAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: ['-15deg', '0deg'],
+                        }),
+                      },
                     ],
                     opacity: cardOpacityAnim,
                   },
                 ]}
               >
                 <LinearGradient
-                  colors={['rgba(220, 20, 60, 0.8)', 'rgba(178, 34, 34, 0.7)', 'rgba(139, 0, 0, 0.8)']}
+                  colors={[
+                    'rgba(220, 20, 60, 0.8)',
+                    'rgba(178, 34, 34, 0.7)',
+                    'rgba(139, 0, 0, 0.8)',
+                  ]}
                   style={styles.cardFlipGradient}
                 >
                   {/* Glow effect overlay */}
-                  <Animated.View 
+                  <Animated.View
                     style={[
                       styles.cardGlowOverlay,
                       {
                         opacity: cardGlowAnim,
-                        transform: [{ scale: cardGlowAnim.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [0.8, 1.2],
-                        }) }],
+                        transform: [
+                          {
+                            scale: cardGlowAnim.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [0.8, 1.2],
+                            }),
+                          },
+                        ],
                       },
                     ]}
                   />
                   <View style={styles.cardFlipContent}>
                     <Text style={styles.cardFlipTitle}>First Challenge</Text>
-                    <Text style={styles.cardFlipSubtitle}>Get ready for your first intimate adventure...</Text>
+                    <Text style={styles.cardFlipSubtitle}>
+                      Get ready for your first intimate adventure...
+                    </Text>
                   </View>
                 </LinearGradient>
               </Animated.View>
             )}
-            
+
             {/* Animation test indicator */}
             {showCardReveal && (
               <View style={styles.animationTest}>
                 <Text style={styles.animationTestText}>
-                  Anim: {cardRevealAnim._value.toFixed(2)} | 
-                  Scale: {cardScaleAnim._value.toFixed(2)} | 
-                  Opacity: {cardOpacityAnim._value.toFixed(2)}
+                  Anim: {cardRevealAnim._value.toFixed(2)} | Scale:{' '}
+                  {cardScaleAnim._value.toFixed(2)} | Opacity:{' '}
+                  {cardOpacityAnim._value.toFixed(2)}
                 </Text>
               </View>
             )}
-            
+
             {/* Main Deck Content - Only show when not showing intro and not showing card reveal */}
-            {(!showIntro && !showCardReveal) && currentCard && (
+            {!showIntro && !showCardReveal && currentCard && (
               <View style={styles.mainDeckContainer}>
                 {/* Floating Theme Elements */}
                 {categoryInfo.floatingElements}
-                
+
                 {/* Sensual Background Patterns */}
                 <View style={styles.sensualPatterns}>
-                  <Animated.View 
+                  <Animated.View
                     style={[
                       styles.patternCircle1,
                       {
@@ -2229,7 +2638,7 @@ export default function DeckScreen() {
                       },
                     ]}
                   />
-                  <Animated.View 
+                  <Animated.View
                     style={[
                       styles.patternCircle2,
                       {
@@ -2241,31 +2650,37 @@ export default function DeckScreen() {
                     ]}
                   />
                 </View>
-                
+
                 {/* Dare Content */}
-                <Animated.View 
+                <Animated.View
                   style={[
                     styles.dareContent,
                     {
                       transform: [
-                        { translateX: nextCardSlideAnim.interpolate({
-                          inputRange: [-1, 0, 1],
-                          outputRange: [-width * 0.5, 0, width * 0.5],
-                        }) },
+                        {
+                          translateX: nextCardSlideAnim.interpolate({
+                            inputRange: [-1, 0, 1],
+                            outputRange: [-width * 0.5, 0, width * 0.5],
+                          }),
+                        },
                       ],
                       opacity: nextCardOpacityAnim,
                     },
                   ]}
                 >
                   {/* Card Header with Icon and Title */}
-                  <Animated.View 
+                  <Animated.View
                     style={[
                       styles.cardHeader,
                       {
-                        transform: [{ scale: nextCardOpacityAnim.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [0.8, 1],
-                        }) }],
+                        transform: [
+                          {
+                            scale: nextCardOpacityAnim.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [0.8, 1],
+                            }),
+                          },
+                        ],
                       },
                     ]}
                   >
@@ -2274,22 +2689,28 @@ export default function DeckScreen() {
                     </View>
                     <Text style={styles.cardTitle}>{currentCard.title}</Text>
                     <View style={styles.cardDifficultyContainer}>
-                      <Text style={styles.cardDifficulty}>{currentCard.difficulty}</Text>
-                      <Text style={styles.cardDuration}>• {currentCard.duration}</Text>
+                      <Text style={styles.cardDifficulty}>
+                        {currentCard.difficulty}
+                      </Text>
+                      <Text style={styles.cardDuration}>
+                        • {currentCard.duration}
+                      </Text>
                     </View>
                   </Animated.View>
-                  
+
                   {/* Dare Text Card - Main Content */}
                   <View style={styles.dareTextContainer}>
                     {/* Subtle Background Pattern */}
                     <View style={styles.dareBackgroundPattern} />
-                    <Text style={styles.dareText}>{currentCard.description}</Text>
+                    <Text style={styles.dareText}>
+                      {currentCard.description}
+                    </Text>
                   </View>
                 </Animated.View>
 
                 {/* Action Buttons - Only show if not the last card */}
                 {currentCardIndex < currentDeck.length - 1 && (
-                  <Animated.View 
+                  <Animated.View
                     style={[
                       styles.actionButtonsContainer,
                       {
@@ -2307,7 +2728,11 @@ export default function DeckScreen() {
                       >
                         {/* Glossy Overlay */}
                         <LinearGradient
-                          colors={['rgba(255, 255, 255, 0.3)', 'transparent', 'rgba(255, 255, 255, 0.1)']}
+                          colors={[
+                            'rgba(255, 255, 255, 0.3)',
+                            'transparent',
+                            'rgba(255, 255, 255, 0.1)',
+                          ]}
                           style={styles.glossyOverlay}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 0, y: 1 }}
@@ -2317,15 +2742,23 @@ export default function DeckScreen() {
                           style={[
                             styles.buttonShimmer,
                             {
-                              transform: [{ translateX: glowAnim.interpolate({
-                                inputRange: [0.3, 1],
-                                outputRange: [-200, 250],
-                              }) }],
+                              transform: [
+                                {
+                                  translateX: glowAnim.interpolate({
+                                    inputRange: [0.3, 1],
+                                    outputRange: [-200, 250],
+                                  }),
+                                },
+                              ],
                             },
                           ]}
                         >
                           <LinearGradient
-                            colors={['transparent', 'rgba(255, 255, 255, 0.4)', 'transparent']}
+                            colors={[
+                              'transparent',
+                              'rgba(255, 255, 255, 0.4)',
+                              'transparent',
+                            ]}
                             style={styles.shimmerGradient}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
@@ -2352,7 +2785,8 @@ export default function DeckScreen() {
             <Text style={styles.completionIcon}>🎉</Text>
             <Text style={styles.completionTitle}>Challenge Complete!</Text>
             <Text style={styles.completionSubtitle}>
-              You&apos;ve completed all {totalCards} challenges in {categoryInfo.name}
+              You&apos;ve completed all {totalCards} challenges in{' '}
+              {categoryInfo.name}
             </Text>
             <TouchableOpacity
               style={styles.completionButton}
@@ -2369,8 +2803,6 @@ export default function DeckScreen() {
         </View>
       )}
 
-
-
       {/* Floating Elements */}
       <View style={styles.floatingElements}>
         <Animated.View
@@ -2378,10 +2810,14 @@ export default function DeckScreen() {
             styles.floatingCircle,
             {
               opacity: glowAnim,
-              transform: [{ scale: glowAnim.interpolate({
-                inputRange: [0.3, 1],
-                outputRange: [0.8, 1.2],
-              })}],
+              transform: [
+                {
+                  scale: glowAnim.interpolate({
+                    inputRange: [0.3, 1],
+                    outputRange: [0.8, 1.2],
+                  }),
+                },
+              ],
             },
           ]}
         />
@@ -2394,12 +2830,12 @@ export default function DeckScreen() {
         animationType="slide"
         onRequestClose={() => setShowPremiumModal(false)}
       >
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
           onPress={() => setShowPremiumModal(false)}
         >
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.premiumModalContent}
             activeOpacity={1}
             onPress={(e) => e.stopPropagation()}
@@ -2412,29 +2848,31 @@ export default function DeckScreen() {
             >
               {/* Drag Handle */}
               <View style={styles.dragHandle} />
-              
+
               {/* Modal Header */}
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Unlock Premium Categories</Text>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.closeButton}
                   onPress={() => setShowPremiumModal(false)}
                 >
                   <Text style={styles.closeButtonText}>×</Text>
                 </TouchableOpacity>
               </View>
-              
+
               {/* Modal Body */}
               <View style={styles.premiumModalBody}>
                 <Text style={styles.premiumModalDescription}>
-                  This category is part of our premium collection. Upgrade now to access all premium categories and unlock unlimited intimate experiences!
+                  This category is part of our premium collection. Upgrade now
+                  to access all premium categories and unlock unlimited intimate
+                  experiences!
                 </Text>
-                
-                <PremiumUpgrade 
+
+                <PremiumUpgrade
                   onUpgradePress={() => {
                     setShowPremiumModal(false);
                     router.push('/payment');
-                  }} 
+                  }}
                 />
               </View>
             </LinearGradient>
@@ -2870,13 +3308,12 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
 
-
   actionButtonsContainer: {
     alignItems: 'center',
     marginTop: 30, // Increased from 20 to create better spacing
     marginBottom: 20,
   },
-  
+
   actionButton: {
     width: width * 0.7,
     height: 55,
@@ -2924,7 +3361,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
     letterSpacing: 0.6,
   },
-  
+
   // Themed Elements Styles
   mildSeductionElements: {
     alignItems: 'center',
@@ -2964,7 +3401,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
   },
-  
+
   foreplayElements: {
     alignItems: 'center',
     marginTop: 20,
@@ -2984,7 +3421,7 @@ const styles = StyleSheet.create({
   buildUpMeter: {
     alignItems: 'center',
   },
-  
+
   dominationElements: {
     alignItems: 'center',
     marginTop: 20,
@@ -3004,7 +3441,7 @@ const styles = StyleSheet.create({
   controlMeter: {
     alignItems: 'center',
   },
-  
+
   restraintsElements: {
     alignItems: 'center',
     marginTop: 20,
@@ -3024,7 +3461,7 @@ const styles = StyleSheet.create({
   restraintMeter: {
     alignItems: 'center',
   },
-  
+
   roleplayElements: {
     alignItems: 'center',
     marginTop: 20,
@@ -3044,7 +3481,7 @@ const styles = StyleSheet.create({
   roleplayMeter: {
     alignItems: 'center',
   },
-  
+
   publicPlayElements: {
     alignItems: 'center',
     marginTop: 20,
@@ -3064,7 +3501,7 @@ const styles = StyleSheet.create({
   publicMeter: {
     alignItems: 'center',
   },
-  
+
   teasingElements: {
     alignItems: 'center',
     marginTop: 20,
@@ -3084,7 +3521,7 @@ const styles = StyleSheet.create({
   denialMeter: {
     alignItems: 'center',
   },
-  
+
   fantasyElements: {
     alignItems: 'center',
     marginTop: 20,
@@ -3104,7 +3541,7 @@ const styles = StyleSheet.create({
   fantasyMeter: {
     alignItems: 'center',
   },
-  
+
   defaultElements: {
     alignItems: 'center',
     marginTop: 20,
@@ -3141,7 +3578,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(220, 20, 60, 0.15)',
   },
-  
+
   // Themed Floating Elements
   floatingHeart: {
     position: 'absolute',
@@ -3422,7 +3859,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'rgba(220, 20, 60, 0.6)',
   },
-  
+
   // Sensual Background Patterns
   sensualPatterns: {
     position: 'absolute',
@@ -3667,6 +4104,4 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     paddingHorizontal: 10,
   },
-
 });
-

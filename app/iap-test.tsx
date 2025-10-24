@@ -1,5 +1,5 @@
-import IAPTestComponent from "../src/components/IAPTestComponent";
-import { Stack } from "expo-router";
+import IAPTestComponent from '../src/components/IAPTestComponent';
+import { Stack } from 'expo-router';
 
 export default function IAPTestPage() {
   return (
