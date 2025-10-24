@@ -29,6 +29,7 @@ export default function HomeScreen() {
   const [glowAnim] = useState(new Animated.Value(0.3));
   const [pulseAnim] = useState(new Animated.Value(1));
   const [isSideMenuVisible, setIsSideMenuVisible] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState('');
 
   useEffect(() => {
     loadUserProfile();
@@ -40,6 +41,41 @@ export default function HomeScreen() {
       selected_category: selectedCategory 
     });
   }, []);
+
+  // Separate useEffect for timer management
+  useEffect(() => {
+    const cleanup = startTimer();
+    return cleanup;
+  }, []);
+
+  // Timer function to calculate time until next day
+  const calculateTimeRemaining = () => {
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0); // Set to midnight
+    
+    const diff = tomorrow.getTime() - now.getTime();
+    
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const startTimer = () => {
+    // Update immediately
+    setTimeRemaining(calculateTimeRemaining());
+    
+    // Update every second
+    const timerInterval = setInterval(() => {
+      setTimeRemaining(calculateTimeRemaining());
+    }, 1000);
+    
+    // Cleanup interval on component unmount
+    return () => clearInterval(timerInterval);
+  };
 
   const startAnimations = () => {
     // Fade in and slide up
@@ -287,14 +323,26 @@ export default function HomeScreen() {
   // Deck cards data (extracted from DeckScreen.js)
   const deckCards = {
     'mild-seduction': [
-      { id: 1, title: 'Sultry Whisper Tease', description: 'Lean in close and whisper a naughty fantasy into your partner\'s ear, describing in vivid detail what you\'d do to them. Maintain intense eye contact and let your breath graze their skin.', difficulty: 'Medium', duration: '5 min', icon: '😘', color: '#FBBF24' },
-      { id: 2, title: 'Thigh Caress', description: 'Slowly trace your fingers along your partner\'s inner thigh, teasing closer to their most sensitive spots without touching them directly. Whisper how much their body turns you on.', difficulty: 'Medium', duration: '5 min', icon: '🔥', color: '#F59E0B' },
-      { id: 3, title: 'Lip Tease Nibble', description: 'Hover your lips over your partner\'s, barely brushing them, then gently nibble their lower lip while murmuring how much you crave their taste.', difficulty: 'Easy', duration: '3 min', icon: '💋', color: '#D97706' },
-      { id: 4, title: 'Blindfolded Touch', description: 'Blindfold your partner and run your hands sensually over their body, focusing on erogenous zones like their neck, chest, and hips. Describe how their reactions drive you wild.', difficulty: 'Medium', duration: '7 min', icon: '😈', color: '#FBBF24' },
-      { id: 5, title: 'Earlobe Suck', description: 'Kiss your partner\'s neck, then slowly suck on their earlobe while whispering how much you want to feel their body against yours.', difficulty: 'Easy', duration: '3 min', icon: '👂', color: '#F59E0B' },
-      { id: 6, title: 'Chest Kiss Trail', description: 'Unbutton your partner\'s shirt (or lift it) and plant slow, wet kisses from their collarbone down to their chest, lingering just above their nipples.', difficulty: 'Medium', duration: '5 min', icon: '😘', color: '#D97706' },
-      { id: 7, title: 'Slow Grind Tease', description: 'Straddle your partner\'s lap, slowly grinding against them while maintaining eye contact and whispering how desperately you want to feel them inside you.', difficulty: 'Medium', duration: '5 min', icon: '🍑', color: '#F472B6' },
-      { id: 8, title: 'Underwear Tease', description: 'Slide your hand under your partner\'s clothing, teasingly brushing over their underwear while describing in explicit detail how you plan to pleasure them later.', difficulty: 'Medium', duration: '4 min', icon: '👙', color: '#FBBF24' }
+      { id: 1, title: 'Taboo Fantasy Unleashed', description: 'Describe your filthiest fantasy to your partner—bondage, public sex, or forbidden role-play—in vivid, explicit detail while locking eyes and tracing their jawline with your fingers.', difficulty: 'Medium', duration: '8 min', icon: '😈', color: '#FBBF24' },
+      { id: 2, title: 'Thigh Edge Tease', description: 'Run your fingers up their inner thigh, stopping a breath away from their throbbing cock or dripping pussy, teasing the edge of their underwear without crossing it.', difficulty: 'Medium', duration: '7 min', icon: '🔥', color: '#F59E0B' },
+      { id: 3, title: 'Lip Chase Torment', description: 'Hover your lips over theirs, brushing lightly, then bite their bottom lip sharply, pulling back to make them lean in desperate for more.', difficulty: 'Easy', duration: '5 min', icon: '💋', color: '#D97706' },
+      { id: 4, title: 'Blindfold Power Play', description: 'Blindfold them tightly, then explore their body with bold hands—pinching nipples, slapping their ass lightly, grazing their crotch, making them squirm with anticipation.', difficulty: 'Hard', duration: '10 min', icon: '😈', color: '#FBBF24' },
+      { id: 5, title: 'Earlobe Hunger', description: 'Lick a slow, wet trail up their neck, then suck their earlobe with deliberate heat, letting your teeth graze as you tease their sensitive skin.', difficulty: 'Easy', duration: '5 min', icon: '👂', color: '#F59E0B' },
+      { id: 6, title: 'Nipple Flick Frenzy', description: 'Lift their shirt and flick your tongue around their nipples, teasing without sucking, letting your breath drive them wild with unfulfilled need.', difficulty: 'Medium', duration: '7 min', icon: '😘', color: '#D97706' },
+      { id: 7, title: 'Lap Grind Takeover', description: 'Straddle them with authority, grinding your hips in slow, deep circles against their swelling arousal, daring them to grab you and escalate.', difficulty: 'Hard', duration: '8 min', icon: '🍑', color: '#F472B6' },
+      { id: 8, title: 'Underwear Breach Assault', description: 'Slide your hand inside their underwear, stroking their clit or shaft with feather-light touches, teasing them into a frenzy without giving full satisfaction.', difficulty: 'Hard', duration: '6 min', icon: '👙', color: '#FBBF24' },
+      { id: 9, title: 'Neck Pulse Ravish', description: 'Kiss and suck their neck where their pulse pounds, biting softly to mark their skin while pressing your body close to feel their reaction.', difficulty: 'Medium', duration: '6 min', icon: '👅', color: '#D97706' },
+      { id: 10, title: 'Collarbone Claim Bite', description: 'Lick their collarbone with possessive intent, then bite firmly to leave a faint mark, grinding your hips subtly to amplify the heat.', difficulty: 'Medium', duration: '6 min', icon: '😈', color: '#F59E0B' },
+      { id: 11, title: 'Ass Worship Massage', description: 'Massage their lower back, slipping hands under their waistband to knead their ass cheeks, dipping daringly between to tease forbidden zones.', difficulty: 'Medium', duration: '7 min', icon: '💆', color: '#8B5CF6' },
+      { id: 12, title: 'Kinky Confession Swap', description: 'Take turns revealing your most depraved sexual secret—public fucking, domination, or taboo toys—while groping their ass, chest, or crotch to make it feel dangerously real.', difficulty: 'Hard', duration: '10 min', icon: '😈', color: '#F472B6' },
+      { id: 13, title: 'Hip Clash Lock', description: 'Pull them into a tight embrace, grinding your hips hard against their growing arousal, letting the friction build unbearable tension.', difficulty: 'Medium', duration: '6 min', icon: '💃', color: '#FBBF24' },
+      { id: 14, title: 'Nipple Twist Torture', description: 'Pinch and twist their nipples through clothes (or bare), applying just enough pressure to draw gasps, teasing without full release.', difficulty: 'Hard', duration: '7 min', icon: '😘', color: '#F59E0B' },
+      { id: 15, title: 'Public Risk Grind', description: 'Drag them into a slow, dirty dance, bodies pressed scandalously close, hands gripping their ass as you grind with reckless abandon.', difficulty: 'Hard', duration: '8 min', icon: '💃', color: '#D97706' },
+      { id: 16, title: 'Ice Cube Seduction', description: 'Trail an ice cube over their neck, chest, and inner thighs, chasing it with your hot tongue to create a maddening contrast of sensations.', difficulty: 'Hard', duration: '8 min', icon: '🧊', color: '#06B6D4' },
+      { id: 17, title: 'Belt Bind Tease', description: 'Use a belt to loosely tie their wrists, then kiss and touch their body, avoiding their most sensitive spots to build desperate anticipation.', difficulty: 'Hard', duration: '9 min', icon: '😈', color: '#8B5CF6' },
+      { id: 18, title: 'Breath Play Edge', description: 'With consent, lightly press your hand to their throat to feel their pulse, kissing their neck and jaw to heighten their arousal.', difficulty: 'Hard', duration: '7 min', icon: '😘', color: '#EF4444' },
+      { id: 19, title: 'Clothed Crotch Rub', description: 'Rub their crotch through their clothes with slow, deliberate pressure, feeling their hardness or wetness grow as you tease without mercy.', difficulty: 'Hard', duration: '6 min', icon: '🔥', color: '#F59E0B' },
+      { id: 20, title: 'Mirror Fuck Fantasy', description: 'Position them in front of a mirror, hands roaming their body as you both watch, teasing their erogenous zones while describing how you\'d fuck them while staring at their reflection.', difficulty: 'Hard', duration: '8 min', icon: '😈', color: '#EC4899' }
     ],
     'foreplay': [
       { id: 1, title: 'Slow Undressing', description: 'Take turns slowly undressing each other, making eye contact throughout.', difficulty: 'Medium', duration: '15 min', icon: '👗', color: '#EC4899' },
@@ -359,16 +407,25 @@ export default function HomeScreen() {
       hash = hash & hash; // Convert to 32-bit integer
     }
     
-    // Prepare deck cards from each category
+    // Prepare deck cards from each category with proper randomization
     const allDeckCards = [];
     Object.keys(deckCards).forEach(category => {
       const categoryCards = deckCards[category];
-      // Take 2-3 random cards from each category
-      const sampleSize = Math.min(3, categoryCards.length);
-      const sampledCards = categoryCards
-        .map(card => transformDeckCard(card, category))
-        .slice(0, sampleSize);
-      allDeckCards.push(...sampledCards);
+      if (categoryCards.length > 0) {
+        // Shuffle the category cards first
+        const shuffledCategory = [...categoryCards];
+        for (let i = shuffledCategory.length - 1; i > 0; i--) {
+          const j = Math.floor((hash * (i + 1)) % (i + 1));
+          [shuffledCategory[i], shuffledCategory[j]] = [shuffledCategory[j], shuffledCategory[i]];
+        }
+        
+        // Take 2-4 random cards from each category (more variety)
+        const sampleSize = Math.min(4, Math.max(2, Math.floor(categoryCards.length * 0.3)));
+        const sampledCards = shuffledCategory
+          .slice(0, sampleSize)
+          .map(card => transformDeckCard(card, category));
+        allDeckCards.push(...sampledCards);
+      }
     });
     
     // Shuffle all cards together
@@ -382,17 +439,20 @@ export default function HomeScreen() {
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     
-    // Ensure at least one deck card is included
-    const firstThree = shuffled.slice(0, 3);
-    const hasDeckCard = firstThree.some(card => card.source === 'deck');
+    // Return exactly 3 cards for optimal display
+    const selectedCards = shuffled.slice(0, 3);
     
-    if (!hasDeckCard && allDeckCards.length > 0) {
-      // Replace the last card with a deck card
-      const deckCardIndex = Math.floor((seed * 7) % allDeckCards.length); // Use seed for consistent selection
-      firstThree[2] = allDeckCards[deckCardIndex];
+    // Ensure we have a good mix of featured and deck cards
+    const featuredCount = selectedCards.filter(card => card.source !== 'deck').length;
+    const deckCount = selectedCards.filter(card => card.source === 'deck').length;
+    
+    // If we don't have at least one deck card, replace the last card with a deck card
+    if (deckCount === 0 && allDeckCards.length > 0) {
+      const deckCardIndex = Math.floor((seed * 13) % allDeckCards.length);
+      selectedCards[2] = allDeckCards[deckCardIndex];
     }
     
-    return firstThree;
+    return selectedCards; // Return exactly 3 cards
   };
 
   // Get today's shuffled featured cards
@@ -734,8 +794,20 @@ export default function HomeScreen() {
           ]}
         >
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Today&apos;s Picks 💋</Text>
-            <Text style={styles.sectionSubtitle}>Curated for your pleasure</Text>
+            <View style={styles.sectionTitleRow}>
+              <View style={styles.titleContainer}>
+                <Text style={styles.sectionTitle}>Today&apos;s Picks 💋</Text>
+                <Text style={styles.sectionSubtitle}>Curated for your pleasure</Text>
+              </View>
+              <View style={styles.timerContainer}>
+                <View style={styles.timerCard}>
+                  <Text style={styles.timerLabel}>New picks in</Text>
+                  <View style={styles.timerDisplay}>
+                    <Text style={styles.timerText}>{timeRemaining}</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
           </View>
           {featuredCards.map(renderFeaturedCard)}
         </Animated.View>
@@ -1041,6 +1113,56 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     marginBottom: 24,
+  },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  titleContainer: {
+    flex: 1,
+  },
+  timerContainer: {
+    alignItems: 'flex-end',
+  },
+  timerCard: {
+    backgroundColor: 'rgba(220, 20, 60, 0.08)',
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(220, 20, 60, 0.2)',
+    alignItems: 'center',
+    minWidth: 100,
+    shadowColor: '#DC143C',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  timerLabel: {
+    fontSize: 10,
+    color: '#CD5C5C',
+    fontFamily: 'System',
+    fontWeight: '600',
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  timerDisplay: {
+    backgroundColor: 'rgba(220, 20, 60, 0.15)',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(220, 20, 60, 0.3)',
+  },
+  timerText: {
+    fontSize: 14,
+    color: '#DC143C',
+    fontFamily: 'System',
+    fontWeight: '800',
+    letterSpacing: 1.5,
+    textAlign: 'center',
   },
   sectionSubtitle: {
     fontSize: 14,

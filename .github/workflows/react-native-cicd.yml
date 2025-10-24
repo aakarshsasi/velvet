@@ -200,8 +200,7 @@ jobs:
             ### Installation
             - iOS: Available in TestFlight automatically
             - Android: Build paused (can be re-enabled later)" \
-            $IPA_FILE \
-            --clobber
+            $IPA_FILE
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

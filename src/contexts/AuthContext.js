@@ -101,6 +101,12 @@ export const AuthProvider = ({ children }) => {
       // Link anonymous user data to authenticated user
       await AnalyticsService.linkAnonymousUser(user.uid);
       
+      // Link questionnaire data to user account
+      const anonymousId = await AsyncStorage.getItem('anonymousId');
+      if (anonymousId) {
+        await linkAnonymousQuestionnaireData(anonymousId, user.uid);
+      }
+      
       // Track successful signup
       AnalyticsService.trackSignUp('email', true);
       AnalyticsService.setUserId(user.uid);
@@ -118,7 +124,23 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       AnalyticsService.trackSignUp('email', false, error);
       AnalyticsService.trackError(error, 'signup', 'error');
-      throw error;
+      
+      // Handle specific Firebase Auth errors
+      let errorMessage = 'Failed to create account';
+      
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'This email is already registered. Please try signing in instead.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'Password is too weak. Please choose a stronger password.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Please enter a valid email address.';
+      } else if (error.code === 'auth/operation-not-allowed') {
+        errorMessage = 'Email/password accounts are not enabled. Please contact support.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      throw new Error(errorMessage);
     }
   };
 
@@ -224,6 +246,8 @@ export const AuthProvider = ({ children }) => {
       const userProfile = await AsyncStorage.getItem('userProfile');
       const onboardingAnswers = await AsyncStorage.getItem('onboardingAnswers');
       const analysisData = await AsyncStorage.getItem('analysisData');
+      const anonymousId = await AsyncStorage.getItem('anonymousId');
+      const pendingQuestionnaireData = await AsyncStorage.getItem('questionnaireDataPending');
       
       if (userProfile) {
         const profileData = JSON.parse(userProfile);
@@ -235,7 +259,8 @@ export const AuthProvider = ({ children }) => {
           userProfile: profileData,
           onboardingAnswers: onboardingAnswers ? JSON.parse(onboardingAnswers) : null,
           analysis: analysis, // Save comprehensive analysis
-          onboardingCompletedAt: new Date()
+          onboardingCompletedAt: new Date(),
+          anonymousId: anonymousId // Link to anonymous questionnaire data
         });
         
         // Also update AsyncStorage to mark onboarding as completed
@@ -252,8 +277,91 @@ export const AuthProvider = ({ children }) => {
         await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
         setHasCompletedOnboarding(true);
       }
+      
+      // Link anonymous questionnaire data to user account (for all users)
+      if (anonymousId) {
+        await linkAnonymousQuestionnaireData(anonymousId, user.uid);
+      }
+      
+      // If there's pending questionnaire data (from permission denied), try to save it now
+      if (pendingQuestionnaireData) {
+        await savePendingQuestionnaireData(pendingQuestionnaireData, user.uid);
+      }
     } catch (error) {
       throw error;
+    }
+  };
+
+  // Save pending questionnaire data when user signs up
+  const savePendingQuestionnaireData = async (pendingDataString, userId) => {
+    try {
+      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+      const { db } = await import('../config/firebase');
+      
+      const pendingData = JSON.parse(pendingDataString);
+      
+      await addDoc(collection(db, 'questionnaire_responses'), {
+        ...pendingData,
+        userId: userId, // Link to authenticated user
+        hasSignedUp: true,
+        linkedAt: serverTimestamp()
+      });
+      
+      // Clear the pending data
+      await AsyncStorage.removeItem('questionnaireDataPending');
+      
+      console.log('Pending questionnaire data saved to Firebase');
+    } catch (error) {
+      console.error('Error saving pending questionnaire data:', error);
+      // Don't throw error - this shouldn't block the user flow
+    }
+  };
+
+  // Link anonymous questionnaire data to user account
+  const linkAnonymousQuestionnaireData = async (anonymousId, userId) => {
+    try {
+      console.log('Attempting to link anonymous questionnaire data:', { anonymousId, userId });
+      
+      const { collection, query, where, getDocs, updateDoc, doc } = await import('firebase/firestore');
+      const { db } = await import('../config/firebase');
+      
+      // Try to find by document ID first (new structure)
+      try {
+        const docRef = doc(db, 'questionnaire_responses', anonymousId);
+        await updateDoc(docRef, {
+          userId: userId, // Link to authenticated user
+          hasSignedUp: true,
+          linkedAt: new Date()
+        });
+        console.log('Questionnaire data linked by document ID');
+        return;
+      } catch (docError) {
+        console.log('Document not found by ID, trying query...');
+      }
+      
+      // Fallback: Find by anonymousId field (old structure)
+      const q = query(collection(db, 'questionnaire_responses'), where('anonymousId', '==', anonymousId));
+      const querySnapshot = await getDocs(q);
+      
+      console.log('Found questionnaire documents:', querySnapshot.docs.length);
+      
+      if (!querySnapshot.empty) {
+        const docSnapshot = querySnapshot.docs[0];
+        console.log('Updating document:', docSnapshot.id);
+        
+        await updateDoc(docSnapshot.ref, {
+          userId: userId, // Link to authenticated user
+          hasSignedUp: true,
+          linkedAt: new Date()
+        });
+        
+        console.log('Anonymous questionnaire data linked to user account successfully');
+      } else {
+        console.log('No questionnaire data found for anonymousId:', anonymousId);
+      }
+    } catch (error) {
+      console.error('Error linking anonymous questionnaire data:', error);
+      // Don't throw error - this shouldn't block the user flow
     }
   };
 

@@ -84,20 +84,26 @@ export default function OnboardingScreen() {
     }
   }, [showIntro]);
 
-  const onboardingSteps = [
+  // Initial relationship status question (shown to everyone)
+  const initialSteps = [
     {
       id: 'relationshipStatus',
       title: "What's Your Relationship Status? 💕",
-      subtitle: "Help us understand your partnership journey",
+      subtitle: "Help us understand your journey",
       type: 'single',
       options: [
+        { value: 'single', label: 'Single', description: 'Exploring on my own', color: '#6366F1' },
         { value: 'dating', label: 'Dating', description: 'Getting to know each other', color: '#10B981' },
         { value: 'committed', label: 'Committed', description: 'Exclusive relationship', color: '#EC4899' },
         { value: 'engaged', label: 'Engaged', description: 'Planning our future', color: '#8B5CF6' },
         { value: 'married', label: 'Married', description: 'Long-term partnership', color: '#F59E0B' },
         { value: 'long-term', label: 'Long-term Partners', description: 'Established relationship', color: '#EF4444' }
       ]
-    },
+    }
+  ];
+
+  // Questions for couples/in relationships (after relationship status is selected)
+  const coupleSteps = [
     {
       id: 'intimacyFrequency',
       title: "How Often Are You Intimate? 🔥",
@@ -207,18 +213,160 @@ export default function OnboardingScreen() {
     }
   ];
 
+  // Questions for single people (after relationship status is selected)
+  const singleSteps = [
+    {
+      id: 'singleGoal',
+      title: "What's Your Main Goal? 🎯",
+      subtitle: "What are you looking to explore or improve?",
+      type: 'single',
+      options: [
+        { value: 'self-discovery', label: 'Self-Discovery', description: 'Understanding my desires', color: '#10B981' },
+        { value: 'confidence-building', label: 'Confidence Building', description: 'Building self-confidence', color: '#F59E0B' },
+        { value: 'future-relationship', label: 'Future Relationship', description: 'Preparing for partnership', color: '#EC4899' },
+        { value: 'self-pleasure', label: 'Self-Pleasure', description: 'Enhancing solo experiences', color: '#8B5CF6' },
+        { value: 'exploration', label: 'Exploration', description: 'Trying new things', color: '#EF4444' }
+      ]
+    },
+    {
+      id: 'singleFrequency',
+      title: "How Often Do You Explore Intimacy? 🔥",
+      subtitle: "Your current solo exploration rhythm",
+      type: 'single',
+      options: [
+        { value: 'daily', label: 'Daily', description: 'Very active', color: '#EF4444' },
+        { value: 'weekly', label: 'Weekly', description: 'Regular exploration', color: '#F59E0B' },
+        { value: 'monthly', label: 'Monthly', description: 'Occasional', color: '#8B5CF6' },
+        { value: 'rarely', label: 'Rarely', description: 'Just starting out', color: '#6B7280' }
+      ]
+    },
+    {
+      id: 'singleChallenge',
+      title: "What's Your Biggest Challenge? 🎯",
+      subtitle: "We're here to help you overcome it",
+      type: 'single',
+      options: [
+        { value: 'self-confidence', label: 'Self-Confidence', description: 'Feeling comfortable with myself', color: '#10B981' },
+        { value: 'knowledge', label: 'Knowledge', description: 'Learning about my body', color: '#F59E0B' },
+        { value: 'exploration', label: 'Exploration', description: 'Trying new things', color: '#EC4899' },
+        { value: 'communication', label: 'Future Communication', description: 'Talking about needs', color: '#8B5CF6' },
+        { value: 'routine', label: 'Breaking Routine', description: 'Adding variety', color: '#06B6D4' }
+      ]
+    },
+    {
+      id: 'comfortLevel',
+      title: "How Comfortable Are You With Self-Exploration? 💬",
+      subtitle: "Rate your comfort with solo intimacy",
+      type: 'slider',
+      minValue: 0,
+      maxValue: 10,
+      defaultValue: 5,
+      labels: {
+        min: "Very Uncomfortable",
+        max: "Very Comfortable"
+      }
+    },
+    {
+      id: 'desire',
+      title: "What's Your Desire Level? 🔥",
+      subtitle: "Help us understand your comfort zone",
+      type: 'single',
+      options: [
+        { value: 'mild', label: 'Mild & Playful', description: 'Gentle exploration', color: '#10B981' },
+        { value: 'spicy', label: 'Spicy & Adventurous', description: 'Push boundaries', color: '#F59E0B' },
+        { value: 'extreme', label: 'Extreme & Wild', description: 'No limits', color: '#EF4444' }
+      ]
+    },
+    {
+      id: 'turnOns',
+      title: "What Turns You On? 💋",
+      subtitle: "Select all that excite you",
+      type: 'multiple',
+      options: [
+        { value: 'self-pleasure', label: 'Self-Pleasure', icon: '✨', color: '#EC4899' },
+        { value: 'fantasy', label: 'Fantasy', icon: '🌟', color: '#8B5CF6' },
+        { value: 'sensory', label: 'Sensory Play', icon: '✨', color: '#06B6D4' },
+        { value: 'roleplay', label: 'Roleplay', icon: '🎭', color: '#8B5CF6' },
+        { value: 'power-play', label: 'Power Dynamics', icon: '👑', color: '#8B5CF6' },
+        { value: 'public-play', label: 'Public Fantasy', icon: '🌆', color: '#10B981' },
+        { value: 'bondage', label: 'Light Bondage', icon: '🔗', color: '#EF4444' },
+        { value: 'teasing', label: 'Teasing & Denial', icon: '😈', color: '#F59E0B' }
+      ]
+    },
+    {
+      id: 'fantasy',
+      title: "Your Fantasy Settings 🌟",
+      subtitle: "Where do your wildest dreams take place?",
+      type: 'multiple',
+      options: [
+        { value: 'bedroom', label: 'Bedroom', icon: '🛏️', color: '#8B5CF6' },
+        { value: 'kitchen', label: 'Kitchen', icon: '🍳', color: '#F59E0B' },
+        { value: 'shower', label: 'Shower', icon: '🚿', color: '#06B6D4' },
+        { value: 'office', label: 'Office', icon: '💼', color: '#6B7280' },
+        { value: 'outdoors', label: 'Outdoors', icon: '🌳', color: '#10B981' },
+        { value: 'luxury-hotel', label: 'Luxury Hotel', icon: '🏨', color: '#EC4899' },
+        { value: 'car', label: 'Car', icon: '🚗', color: '#F97316' },
+        { value: 'public-place', label: 'Public Place', icon: '🎭', color: '#EF4444' }
+      ]
+    },
+    {
+      id: 'improvementGoal',
+      title: "What Would You Like to Improve Most? 🎯",
+      subtitle: "Your main goal for better self-intimacy",
+      type: 'single',
+      options: [
+        { value: 'self-confidence', label: 'Self-Confidence', description: 'Feel more comfortable', color: '#10B981' },
+        { value: 'variety', label: 'More Variety', description: 'Break out of routine', color: '#F59E0B' },
+        { value: 'knowledge', label: 'Self-Knowledge', description: 'Understand my body', color: '#EC4899' },
+        { value: 'frequency', label: 'Increase Frequency', description: 'More exploration time', color: '#8B5CF6' },
+        { value: 'quality', label: 'Better Quality', description: 'More satisfying experiences', color: '#EF4444' }
+      ]
+    },
+    {
+      id: 'enhancement',
+      title: "How Much Do You Want to Enhance Your Self-Intimacy? 🔥",
+      subtitle: "Your commitment to improvement",
+      type: 'slider',
+      minValue: 0,
+      maxValue: 100,
+      defaultValue: 50,
+      labels: {
+        min: "Just a Little",
+        max: "Completely Transform"
+      }
+    }
+  ];
+
+  // Determine which questionnaire to use based on relationship status
+  const getCurrentSteps = () => {
+    // If no relationship status selected yet, show initial question
+    if (!answers.relationshipStatus) {
+      return initialSteps;
+    }
+    
+    // After relationship status is selected, show appropriate flow
+    if (answers.relationshipStatus === 'single') {
+      return [...initialSteps, ...singleSteps];
+    }
+    
+    return [...initialSteps, ...coupleSteps];
+  };
+
+  const onboardingSteps = getCurrentSteps();
+
   useEffect(() => {
     if (showIntro) {
       // Show intro screen
       setProgress(0);
     } else {
       // Calculate progress based on quiz steps and answers
+      const currentSteps = getCurrentSteps();
       let answeredSteps = 0;
-      onboardingSteps.forEach(step => {
-        if (step.type === 'toggle' && currentStep >= onboardingSteps.indexOf(step)) {
+      currentSteps.forEach(step => {
+        if (step.type === 'toggle' && currentStep >= currentSteps.indexOf(step)) {
           // Count toggle questions only when user reaches that page
           answeredSteps++;
-        } else if (step.type === 'slider' && currentStep >= onboardingSteps.indexOf(step)) {
+        } else if (step.type === 'slider' && currentStep >= currentSteps.indexOf(step)) {
           // Count slider questions when user reaches that page
           answeredSteps++;
         } else if (answers[step.id] !== undefined) {
@@ -229,7 +377,7 @@ export default function OnboardingScreen() {
           }
         }
       });
-      const progressValue = (answeredSteps / onboardingSteps.length) * 100;
+      const progressValue = (answeredSteps / currentSteps.length) * 100;
       setProgress(progressValue);
       
       // Animate progress bar update
@@ -271,7 +419,7 @@ export default function OnboardingScreen() {
         ])
       ).start();
     }
-  }, [currentStep, showIntro, answers, onboardingSteps.length]);
+  }, [currentStep, showIntro, answers, answers.relationshipStatus]);
 
   const handleStartQuiz = () => {
     analytics.trackOnboardingStep(0, 'quiz_started', {});
@@ -284,40 +432,68 @@ export default function OnboardingScreen() {
 
 
   const handleAnswer = (stepId, value, isMultiple = false) => {
+    console.log('🔵 handleAnswer called:', { stepId, value, isMultiple, currentStep });
+    
     // Track answer selection
+    const currentSteps = getCurrentSteps();
     analytics.trackOnboardingStep(currentStep + 1, stepId, { 
       answer: value, 
       is_multiple: isMultiple,
-      step_type: onboardingSteps[currentStep]?.type || 'unknown'
+      step_type: currentSteps[currentStep]?.type || 'unknown'
     });
 
+    // If relationship status is being selected, reset to step 0 of the new flow
+    if (stepId === 'relationshipStatus') {
+      console.log('🔄 Relationship status selected, resetting flow');
+      setCurrentStep(0);
+      setAnswers(prev => ({ ...prev, [stepId]: value }));
+      
+      // Save incremental data after relationship status selection
+      setTimeout(() => {
+        console.log('💾 Saving relationship status data');
+        saveIncrementalQuestionnaireData({ [stepId]: value }, 0);
+      }, 100);
+      return;
+    }
+
+    let newAnswers;
     if (isMultiple) {
-      setAnswers(prev => ({
-        ...prev,
-        [stepId]: prev[stepId] 
-          ? prev[stepId].includes(value)
-            ? prev[stepId].filter(v => v !== value)
-            : [...prev[stepId], value]
+      newAnswers = {
+        ...answers,
+        [stepId]: answers[stepId] 
+          ? answers[stepId].includes(value)
+            ? answers[stepId].filter(v => v !== value)
+            : [...answers[stepId], value]
           : [value]
-      }));
+      };
     } else if (typeof value === 'boolean') {
       // Handle toggle type questions
-      setAnswers(prev => ({ ...prev, [stepId]: value }));
+      newAnswers = { ...answers, [stepId]: value };
     } else if (typeof value === 'number') {
       // Handle slider type questions
-      setAnswers(prev => ({ ...prev, [stepId]: value }));
+      newAnswers = { ...answers, [stepId]: value };
     } else {
-      setAnswers(prev => ({ ...prev, [stepId]: value }));
+      newAnswers = { ...answers, [stepId]: value };
     }
+    
+    console.log('📝 New answers:', newAnswers);
+    setAnswers(newAnswers);
+    
+    // Save incremental data after each answer
+    setTimeout(() => {
+      console.log('💾 Saving incremental data for step:', currentStep);
+      saveIncrementalQuestionnaireData(newAnswers, currentStep);
+    }, 100);
   };
 
   const nextStep = () => {
-    if (currentStep < onboardingSteps.length - 1) {
-      analytics.trackFunnelStep('onboarding_funnel', 'step_completed', currentStep + 2, onboardingSteps.length + 1);
+    const currentSteps = getCurrentSteps();
+    if (currentStep < currentSteps.length - 1) {
+      analytics.trackFunnelStep('onboarding_funnel', 'step_completed', currentStep + 2, currentSteps.length + 1);
       fadeAnim.setValue(0);
       setCurrentStep(currentStep + 1);
         } else {
-      analytics.trackFunnelStep('onboarding_funnel', 'quiz_completed', onboardingSteps.length + 1, onboardingSteps.length + 1);
+      analytics.trackFunnelStep('onboarding_funnel', 'quiz_completed', currentSteps.length + 1, currentSteps.length + 1);
       generateIntimacyProfile();
     }
   };
@@ -333,7 +509,8 @@ export default function OnboardingScreen() {
   const canProceed = () => {
     if (showIntro) return true;
     
-    const currentStepData = onboardingSteps[currentStep];
+    const currentSteps = getCurrentSteps();
+    const currentStepData = currentSteps[currentStep];
     if (currentStepData.type === 'multiple') {
       return answers[currentStepData.id] && answers[currentStepData.id].length > 0;
     } else if (currentStepData.type === 'toggle') {
@@ -348,10 +525,12 @@ export default function OnboardingScreen() {
     const startTime = Date.now();
     try {
       // Generate profile based on answers
+      const isSingle = answers.relationshipStatus === 'single';
       const profile = {
         relationshipStatus: answers.relationshipStatus || 'dating',
-        intimacyFrequency: answers.intimacyFrequency || 'daily',
-        biggestChallenge: answers.biggestChallenge || 'communication',
+        intimacyFrequency: isSingle ? answers.singleFrequency : answers.intimacyFrequency,
+        biggestChallenge: isSingle ? answers.singleChallenge : answers.biggestChallenge,
+        singleGoal: isSingle ? answers.singleGoal : null,
         comfortLevel: answers.comfortLevel || 5,
         desireLevel: answers.desire || 'mild',
         turnOns: answers.turnOns || [],
@@ -359,7 +538,8 @@ export default function OnboardingScreen() {
         improvementGoal: answers.improvementGoal || 'communication',
         enhancement: answers.enhancement !== undefined ? answers.enhancement : 50,
         persona: generatePersona(answers),
-        premiumSuggestions: generatePremiumSuggestions(answers)
+        premiumSuggestions: generatePremiumSuggestions(answers),
+        isSingle: isSingle
       };
       
       // Store profile in AsyncStorage (will be saved to Firebase after sign up)
@@ -367,16 +547,24 @@ export default function OnboardingScreen() {
       await AsyncStorage.setItem('onboardingAnswers', JSON.stringify(answers));
       await AsyncStorage.setItem('hasCompletedOnboarding', 'false'); // Will be true after sign up
       
+      // Save questionnaire data to Firebase immediately for analytics, even if user drops off
+      await saveQuestionnaireDataToFirebase(answers, profile);
+      
+      // Mark questionnaire as completed
+      await markQuestionnaireCompleted(answers, profile);
+      
       console.log('Generated Profile:', profile);
       console.log('Profile saved to AsyncStorage. User needs to sign up to save to Firebase.');
       
       // Track onboarding completion
+      const currentSteps = getCurrentSteps();
       const completionTime = Math.round((Date.now() - startTime) / 1000);
-      analytics.trackOnboardingCompletion(onboardingSteps.length, completionTime, answers);
+      analytics.trackOnboardingCompletion(currentSteps.length, completionTime, answers);
       analytics.trackFunnelConversion('onboarding_funnel', 'profile_generated', { 
         persona: profile.persona?.name || 'Unknown',
         relationship_status: profile.relationshipStatus,
-        intimacy_frequency: profile.intimacyFrequency
+        intimacy_frequency: profile.intimacyFrequency,
+        is_single: isSingle
       });
       
       // Navigate to analysis screen
@@ -389,8 +577,118 @@ export default function OnboardingScreen() {
     }
   };
 
+  // Save questionnaire data incrementally as questions are answered
+  const saveIncrementalQuestionnaireData = async (answers, currentStep) => {
+    try {
+      const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
+      const { db } = await import('../config/firebase');
+      
+      // Get or create anonymous ID
+      let anonymousId = await AsyncStorage.getItem('anonymousId');
+      if (!anonymousId) {
+        anonymousId = `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        await AsyncStorage.setItem('anonymousId', anonymousId);
+        console.log('Created new anonymous ID:', anonymousId);
+      }
+      
+      // Create document reference
+      const docRef = doc(db, 'questionnaire_responses', anonymousId);
+      
+      // Calculate progress
+      const currentSteps = getCurrentSteps();
+      const totalSteps = currentSteps.length;
+      const answeredSteps = Object.keys(answers).length;
+      const progressPercentage = Math.round((answeredSteps / totalSteps) * 100);
+      
+      // Determine user type based on relationship status
+      const userType = answers.relationshipStatus === 'single' ? 'single' : 'couple';
+      
+      console.log('Saving incremental data:', {
+        anonymousId,
+        answeredSteps,
+        totalSteps,
+        progressPercentage,
+        currentStep,
+        userType
+      });
+      
+      // Save/update questionnaire data
+      await setDoc(docRef, {
+        anonymousId: anonymousId,
+        answers: answers,
+        currentStep: currentStep,
+        progressPercentage: progressPercentage,
+        answeredSteps: answeredSteps,
+        totalSteps: totalSteps,
+        userType: userType,
+        hasSignedUp: false,
+        userId: null,
+        lastUpdated: serverTimestamp(),
+        createdAt: serverTimestamp()
+      }, { merge: true }); // merge: true allows partial updates
+      
+      console.log(`✅ Questionnaire data updated: ${answeredSteps}/${totalSteps} questions (${progressPercentage}%)`);
+      
+    } catch (error) {
+      console.error('❌ Error saving incremental questionnaire data:', error);
+      
+      // If it's a permission error, store locally
+      if (error.code === 'permission-denied') {
+        console.warn('Firebase permission denied - storing questionnaire data locally');
+        
+        // Store locally for potential future sync
+        const anonymousId = await AsyncStorage.getItem('anonymousId') || `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        await AsyncStorage.setItem('anonymousId', anonymousId);
+        await AsyncStorage.setItem('questionnaireDataPending', JSON.stringify({
+          anonymousId,
+          answers,
+          currentStep,
+          progressPercentage: Math.round((Object.keys(answers).length / getCurrentSteps().length) * 100),
+          answeredSteps: Object.keys(answers).length,
+          totalSteps: getCurrentSteps().length,
+          userType: answers.relationshipStatus === 'single' ? 'single' : 'couple',
+          hasSignedUp: false,
+          userId: null,
+          lastUpdated: new Date().toISOString()
+        }));
+      }
+    }
+  };
+
+  // Mark questionnaire as completed
+  const markQuestionnaireCompleted = async (answers, profile) => {
+    try {
+      const { doc, updateDoc, serverTimestamp } = await import('firebase/firestore');
+      const { db } = await import('../config/firebase');
+      
+      const anonymousId = await AsyncStorage.getItem('anonymousId');
+      if (anonymousId) {
+        const docRef = doc(db, 'questionnaire_responses', anonymousId);
+        
+        await updateDoc(docRef, {
+          profile: profile,
+          completedAt: serverTimestamp(),
+          isCompleted: true,
+          completionPercentage: 100,
+          lastUpdated: serverTimestamp()
+        });
+        
+        console.log('Questionnaire marked as completed');
+      }
+    } catch (error) {
+      console.error('Error marking questionnaire as completed:', error);
+    }
+  };
+
   const generatePersona = (answers) => {
     const personas = {
+      // Single people personas
+      'self-explorer': 'Self Explorer',
+      'confident-solo': 'Confident Solo',
+      'future-ready': 'Future Ready',
+      'adventurous-single': 'Adventurous Single',
+      'mindful-solo': 'Mindful Solo',
+      // Couple personas
       'seductive-explorer': 'Seductive Explorer',
       'passionate-adventurer': 'Passionate Adventurer',
       'mysterious-seductress': 'Mysterious Seductress',
@@ -398,7 +696,23 @@ export default function OnboardingScreen() {
       'sensual-master': 'Sensual Master'
     };
     
-    // Logic to determine persona based on answers
+    // Logic for single people
+    if (answers.relationshipStatus === 'single') {
+      if (answers.singleGoal === 'self-discovery' && answers.desire === 'mild') {
+        return personas['self-explorer'];
+      } else if (answers.singleGoal === 'confidence-building' && answers.comfortLevel >= 7) {
+        return personas['confident-solo'];
+      } else if (answers.singleGoal === 'future-relationship' && answers.desire === 'spicy') {
+        return personas['future-ready'];
+      } else if (answers.singleGoal === 'exploration' && answers.desire === 'extreme') {
+        return personas['adventurous-single'];
+      } else if (answers.singleGoal === 'self-pleasure' && answers.comfortLevel >= 5) {
+        return personas['mindful-solo'];
+      }
+      return personas['self-explorer']; // Default for single
+    }
+    
+    // Logic for couples (existing logic)
     if (answers.desire === 'extreme' && answers.relationshipStatus === 'married') {
       return personas['wild-dreamer'];
     } else if (answers.desire === 'spicy' && answers.turnOns?.includes('roleplay')) {
