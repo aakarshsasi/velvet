@@ -1,17 +1,26 @@
+/**
+ * LEGACY FILE - DEPRECATED
+ * 
+ * This payment screen uses the old expo-in-app-purchases approach.
+ * For new implementations, use PaymentScreenRevenueCat instead.
+ * 
+ * See: src/screens/PaymentScreenRevenueCat.js
+ * Documentation: REVENUECAT_SETUP.md
+ */
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  Alert,
-  Animated,
-  Dimensions,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Alert,
+    Animated,
+    Dimensions,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { useIAP } from '../contexts/IAPContext';

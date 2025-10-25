@@ -1,7 +1,7 @@
 import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
+    DarkTheme,
+    DefaultTheme,
+    ThemeProvider,
 } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -13,6 +13,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '../hooks/useColorScheme';
 import { AuthProvider } from '../src/contexts/AuthContext';
 import { IAPProvider } from '../src/contexts/IAPContext';
+import { RevenueCatProvider } from '../src/contexts/RevenueCatContext';
 import AnalyticsService from '../src/services/AnalyticsService';
 
 export default function RootLayout() {
@@ -68,45 +69,47 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <AuthProvider>
-        <IAPProvider>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="welcome" />
-            <Stack.Screen name="onboarding" />
-            <Stack.Screen
-              name="analysis"
-              options={{
-                gestureEnabled: false,
-                animationTypeForReplace: 'pop',
-              }}
-            />
-            <Stack.Screen name="signup" />
-            <Stack.Screen
-              name="signup-details"
-              options={{
-                gestureEnabled: false,
-                animationTypeForReplace: 'pop',
-              }}
-            />
-            <Stack.Screen
-              name="profile-result"
-              options={{
-                gestureEnabled: false,
-                animationTypeForReplace: 'pop',
-              }}
-            />
-            <Stack.Screen name="payment" />
-            <Stack.Screen name="login" />
-            <Stack.Screen name="iap-test" />
-            <Stack.Screen name="home" />
-            <Stack.Screen name="deck" />
-            <Stack.Screen name="dice-game" />
-            <Stack.Screen name="spin-wheel" />
-            <Stack.Screen name="fantasy-builder" />
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" />
-        </IAPProvider>
+        <RevenueCatProvider>
+          <IAPProvider>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="welcome" />
+              <Stack.Screen name="onboarding" />
+              <Stack.Screen
+                name="analysis"
+                options={{
+                  gestureEnabled: false,
+                  animationTypeForReplace: 'pop',
+                }}
+              />
+              <Stack.Screen name="signup" />
+              <Stack.Screen
+                name="signup-details"
+                options={{
+                  gestureEnabled: false,
+                  animationTypeForReplace: 'pop',
+                }}
+              />
+              <Stack.Screen
+                name="profile-result"
+                options={{
+                  gestureEnabled: false,
+                  animationTypeForReplace: 'pop',
+                }}
+              />
+              <Stack.Screen name="payment" />
+              <Stack.Screen name="login" />
+              <Stack.Screen name="iap-test" />
+              <Stack.Screen name="home" />
+              <Stack.Screen name="deck" />
+              <Stack.Screen name="dice-game" />
+              <Stack.Screen name="spin-wheel" />
+              <Stack.Screen name="fantasy-builder" />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" />
+          </IAPProvider>
+        </RevenueCatProvider>
       </AuthProvider>
     </ThemeProvider>
   );

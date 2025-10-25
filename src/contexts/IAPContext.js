@@ -1,3 +1,12 @@
+/**
+ * LEGACY FILE - DEPRECATED
+ * 
+ * This file uses expo-in-app-purchases and is kept for backward compatibility.
+ * For new implementations, use RevenueCatContext instead.
+ * 
+ * See: src/contexts/RevenueCatContext.js
+ * Documentation: REVENUECAT_SETUP.md
+ */
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import IAPService from '../services/IAPServiceFactory';

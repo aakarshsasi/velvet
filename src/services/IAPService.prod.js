@@ -1,3 +1,12 @@
+/**
+ * LEGACY FILE - DEPRECATED
+ * 
+ * This service uses expo-in-app-purchases and is kept for backward compatibility.
+ * For new implementations, use RevenueCatManager instead.
+ * 
+ * See: src/lib/RevenueCatManager.ts
+ * Documentation: REVENUECAT_SETUP.md
+ */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as InAppPurchases from 'expo-in-app-purchases';
 import { getErrorMessage, getProductIds } from '../config/iapConfig';

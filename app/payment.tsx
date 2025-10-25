@@ -1,11 +1,11 @@
-import PaymentScreen from '../src/screens/PaymentScreen';
 import { Stack } from 'expo-router';
+import PaymentScreenRevenueCat from '../src/screens/PaymentScreenRevenueCat';
 
 export default function Page() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <PaymentScreen />
+      <PaymentScreenRevenueCat />
     </>
   );
 }
