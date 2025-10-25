@@ -22,7 +22,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.ritzakku.velvet"
+      "package": "com.ritzakku.velvet",
+      "versionCode": 6
     },
     "web": {
       "bundler": "metro",
