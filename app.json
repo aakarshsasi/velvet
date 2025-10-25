@@ -11,7 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ritzakku.velvet",
-      "buildNumber": "6",
+      "buildNumber": "7",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -23,7 +23,7 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.ritzakku.velvet",
-      "versionCode": 6
+      "versionCode": 7
     },
     "web": {
       "bundler": "metro",
