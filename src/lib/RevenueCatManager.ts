@@ -1,10 +1,10 @@
 import { REVENUECAT_API_KEY } from '@env';
 import { Platform } from 'react-native';
 import Purchases, {
-    CustomerInfo,
-    LOG_LEVEL,
-    PurchasesOfferings,
-    PurchasesPackage,
+  CustomerInfo,
+  LOG_LEVEL,
+  PurchasesOfferings,
+  PurchasesPackage,
 } from 'react-native-purchases';
 
 /**
@@ -36,19 +36,19 @@ class RevenueCatManager {
 
       // Configure Purchases SDK
       if (Platform.OS === 'ios') {
-        // Enable debug logs in development
-        if (__DEV__) {
-          Purchases.setLogLevel(LOG_LEVEL.DEBUG);
-        }
+        // Enable debug logs in development - ALWAYS enable for testing
+        Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+        console.log('🔧 RevenueCat debug logging ENABLED');
 
         // Configure with API key
+        console.log('🔑 Configuring RevenueCat with API key...');
         await Purchases.configure({
           apiKey: apiKey,
           appUserID: undefined, // Let RevenueCat generate anonymous ID, or set your own
         });
 
         this.isConfigured = true;
-        console.log('RevenueCat initialized successfully');
+        console.log('✅ RevenueCat initialized successfully');
 
         // Pre-fetch offerings
         await this.getOfferings();
@@ -75,13 +75,19 @@ class RevenueCatManager {
         return null;
       }
 
+      console.log('📱 Fetching offerings from RevenueCat...');
       const offerings = await Purchases.getOfferings();
       this.currentOfferings = offerings;
 
+      console.log('📦 Offerings response:', {
+        current: offerings.current?.identifier || 'null',
+        all: Object.keys(offerings.all),
+      });
+
       if (offerings.current !== null) {
-        console.log('Current offering:', offerings.current.identifier);
+        console.log('✅ Current offering found:', offerings.current.identifier);
         console.log(
-          'Available packages:',
+          '📋 Available packages:',
           offerings.current.availablePackages.map((p) => ({
             identifier: p.identifier,
             product: p.product.identifier,
@@ -89,12 +95,17 @@ class RevenueCatManager {
           }))
         );
       } else {
-        console.warn('No current offering found');
+        console.error('❌ No current offering found in RevenueCat');
+        console.error('💡 This usually means:');
+        console.error('1. No offering is set as "Current" in RevenueCat dashboard');
+        console.error('2. Products are not synced from App Store Connect');
+        console.error('3. There are issues with your RevenueCat configuration');
+        console.log('📋 All available offerings:', Object.keys(offerings.all));
       }
 
       return offerings;
     } catch (error) {
-      console.error('Failed to get offerings:', error);
+      console.error('❌ Failed to get offerings:', error);
       return null;
     }
   }

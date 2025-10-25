@@ -3,20 +3,19 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
-    Dimensions,
     SafeAreaView,
     ScrollView,
     StatusBar,
     StyleSheet,
     Text,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { useRevenueCat } from '../contexts/RevenueCatContext';
 import useAnalytics from '../hooks/useAnalytics';
 
-const { width, height } = Dimensions.get('window');
+// const { width, height } = Dimensions.get('window'); // Unused but kept for future use
 
 export default function PaymentScreenRevenueCat() {
   const router = useRouter();
@@ -46,7 +45,18 @@ export default function PaymentScreenRevenueCat() {
       offerings_available: offerings?.current !== null,
     });
     analytics.trackFeatureInterest('premium_upgrade', 'payment_screen_view');
-  }, []);
+    
+    // Log debug info
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      initialized: isInitialized,
+      loading: revenueCatLoading,
+      hasOfferings: !!offerings,
+      hasCurrentOffering: !!offerings?.current,
+      packagesCount: offerings?.current?.availablePackages?.length || 0,
+    };
+    console.log('Payment screen debug:', logEntry);
+  }, [isInitialized, revenueCatLoading, offerings]);
 
   // Auto-select most popular package (or first package)
   useEffect(() => {
@@ -442,8 +452,33 @@ export default function PaymentScreenRevenueCat() {
           ) : (
             <View style={styles.loadingContainer}>
               <Text style={styles.errorText}>
-                No plans available. Please try again later.
+                No plans available
               </Text>
+              <Text style={styles.errorSubtext}>
+                Please check your internet connection{'\n'}
+                or try again later
+              </Text>
+              <Text style={styles.errorDetail}>
+                Debug: {isInitialized ? '✓ Initialized' : '✗ Not initialized'}
+                {offerings ? ' | Offerings loaded' : ' | No offerings'}
+                {offerings?.current ? ' | Has current offering' : ' | No current offering'}
+                {` | ${isInitialized && revenueCatLoading ? 'Loading...' : 'Ready'}`}
+              </Text>
+              
+              {/* Detailed debug info for troubleshooting */}
+              <View style={styles.debugContainer}>
+                <Text style={styles.debugTitle}>📋 Detailed Debug Info:</Text>
+                <Text style={styles.debugText}>
+                  {JSON.stringify({
+                    isInitialized,
+                    isLoading: revenueCatLoading,
+                    offeringsExists: !!offerings,
+                    currentOffering: offerings?.current?.identifier || 'null',
+                    packagesCount: offerings?.current?.availablePackages?.length || 0,
+                    allOfferings: Object.keys(offerings?.all || {}),
+                  }, null, 2)}
+                </Text>
+              </View>
             </View>
           )}
         </Animated.View>
@@ -750,9 +785,44 @@ const styles = StyleSheet.create({
     color: '#9CA3AF',
   },
   errorText: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#EF4444',
     textAlign: 'center',
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  errorSubtext: {
+    fontSize: 14,
+    color: '#9CA3AF',
+    textAlign: 'center',
+    marginBottom: 16,
+    lineHeight: 20,
+  },
+  errorDetail: {
+    fontSize: 11,
+    color: '#6B7280',
+    textAlign: 'center',
+    fontFamily: 'monospace',
+  },
+  debugContainer: {
+    marginTop: 20,
+    padding: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  debugTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#9CA3AF',
+    marginBottom: 8,
+  },
+  debugText: {
+    fontSize: 10,
+    color: '#D1D5DB',
+    fontFamily: 'monospace',
+    lineHeight: 14,
   },
   restoreContainer: {
     paddingHorizontal: 20,

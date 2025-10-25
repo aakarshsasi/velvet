@@ -60,7 +60,24 @@ export const RevenueCatProvider = ({ children }) => {
 
   const loadOfferings = async () => {
     try {
+      console.log('Loading offerings from RevenueCat...');
       const availableOfferings = await RevenueCatManager.getOfferings();
+      console.log('Offerings loaded:', availableOfferings);
+      
+      if (availableOfferings) {
+        console.log('Current offering:', availableOfferings.current?.identifier);
+        console.log('Available packages:', availableOfferings.current?.availablePackages?.length || 0);
+        
+        if (availableOfferings.current === null) {
+          console.warn('⚠️ No current offering found in RevenueCat');
+          console.warn('Please check RevenueCat dashboard - offerings must be configured');
+          setError('No offerings configured. Please check RevenueCat dashboard.');
+        }
+      } else {
+        console.error('❌ Failed to load offerings');
+        setError('Failed to load offerings from RevenueCat');
+      }
+      
       setOfferings(availableOfferings);
     } catch (error) {
       console.error('Error loading offerings:', error);
