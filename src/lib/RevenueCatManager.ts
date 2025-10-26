@@ -21,16 +21,26 @@ class RevenueCatManager {
    */
   async initializeRevenueCat(): Promise<boolean> {
     try {
+      console.log('🚀 ============= REVENUECAT INITIALIZATION START =============');
+      
       if (this.isConfigured) {
-        console.log('RevenueCat already initialized');
+        console.log('✅ RevenueCat already initialized');
         return true;
       }
 
       // Get API key from environment
       const apiKey = REVENUECAT_API_KEY;
+      
+      console.log('🔑 API Key check:', {
+        exists: !!apiKey,
+        length: apiKey?.length || 0,
+        prefix: apiKey?.substring(0, 10) || 'undefined',
+        platform: Platform.OS,
+      });
 
       if (!apiKey) {
-        console.error('RevenueCat API key not found in environment variables');
+        console.error('❌ RevenueCat API key not found in environment variables');
+        console.error('💡 Check that .env file exists and REVENUECAT_API_KEY is set');
         return false;
       }
 
@@ -38,28 +48,42 @@ class RevenueCatManager {
       if (Platform.OS === 'ios') {
         // Enable debug logs in development - ALWAYS enable for testing
         Purchases.setLogLevel(LOG_LEVEL.DEBUG);
-        console.log('🔧 RevenueCat debug logging ENABLED');
+        console.log('🔧 RevenueCat debug logging ENABLED (LOG_LEVEL.DEBUG)');
 
         // Configure with API key
         console.log('🔑 Configuring RevenueCat with API key...');
+        console.log('📱 Platform:', Platform.OS);
+        console.log('📦 Bundle ID: com.ritzakku.velvet');
+        
         await Purchases.configure({
           apiKey: apiKey,
           appUserID: undefined, // Let RevenueCat generate anonymous ID, or set your own
         });
 
         this.isConfigured = true;
-        console.log('✅ RevenueCat initialized successfully');
+        console.log('✅ RevenueCat SDK configured successfully');
+
+        // Get anonymous user ID
+        const customerInfo = await Purchases.getCustomerInfo();
+        console.log('👤 Anonymous User ID:', customerInfo.originalAppUserId);
+        console.log('📅 First Seen:', customerInfo.firstSeen);
+        console.log('🎟️ Active Entitlements:', Object.keys(customerInfo.entitlements.active));
+        console.log('📋 Active Subscriptions:', customerInfo.activeSubscriptions);
 
         // Pre-fetch offerings
+        console.log('📦 Pre-fetching offerings...');
         await this.getOfferings();
 
+        console.log('🎉 ============= REVENUECAT INITIALIZATION COMPLETE =============');
         return true;
       } else {
-        console.log('RevenueCat: Platform not supported yet (Android coming soon)');
+        console.log('⚠️ RevenueCat: Platform not supported yet (Android coming soon)');
         return false;
       }
     } catch (error) {
-      console.error('Failed to initialize RevenueCat:', error);
+      console.error('❌ ============= REVENUECAT INITIALIZATION FAILED =============');
+      console.error('❌ Failed to initialize RevenueCat:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
       return false;
     }
   }
