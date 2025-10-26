@@ -23,17 +23,24 @@ class RevenueCatManager {
    * Must be called once at app startup
    */
   async initializeRevenueCat(): Promise<boolean> {
+    console.log('🚀 ============= REVENUECAT INITIALIZATION START =============');
+    console.log('📍 CHECKPOINT 1: Entered initializeRevenueCat()');
+    
     try {
-      console.log('🚀 ============= REVENUECAT INITIALIZATION START =============');
+      console.log('📍 CHECKPOINT 2: Inside try block');
       
       if (this.isConfigured) {
-        console.log('✅ RevenueCat already initialized');
+        console.log('✅ RevenueCat already initialized - EARLY RETURN');
         return true;
       }
+      
+      console.log('📍 CHECKPOINT 3: Not yet configured, proceeding...');
 
       // Get API key from environment or use hardcoded fallback
+      console.log('📍 CHECKPOINT 4: About to read API key from environment...');
       let apiKey = REVENUECAT_API_KEY || process.env.REVENUECAT_API_KEY;
       let keySource = 'environment';
+      console.log('📍 CHECKPOINT 5: API key read from environment');
       
       console.log('🔍 Environment variable check:');
       console.log('  - REVENUECAT_API_KEY from @env:', apiKey || 'undefined');
@@ -54,11 +61,14 @@ class RevenueCatManager {
         }
       }
       
+      console.log('📍 CHECKPOINT 6: About to log final API key...');
       console.log('🔑 Final API Key being used:');
       console.log('  - Source:', keySource);
       console.log('  - Full Key:', apiKey);  // Logging full key for debugging
       console.log('  - Length:', apiKey.length);
       console.log('  - Starts with appl_:', apiKey.startsWith('appl_'));
+      console.log('  - Trimmed Key:', apiKey.trim());
+      console.log('  - Has whitespace:', apiKey !== apiKey.trim());
       
       // Enhanced debug logging for RevenueCat API key
       console.log('═══════════════════════════════════════════════');
@@ -71,22 +81,32 @@ class RevenueCatManager {
       console.log('Full Key:', apiKey);
       console.log('Key Valid:', apiKey && apiKey.length > 0 && apiKey.startsWith('appl_'));
       console.log('═══════════════════════════════════════════════');
+      console.log('📍 CHECKPOINT 7: API key logged, checking platform...');
       
       // Configure Purchases SDK
+      console.log('📍 CHECKPOINT 8: Platform.OS is:', Platform.OS);
       if (Platform.OS === 'ios') {
+        console.log('📍 CHECKPOINT 9: Inside iOS platform block');
         // Enable debug logs in development - ALWAYS enable for testing
         Purchases.setLogLevel(LOG_LEVEL.DEBUG);
         console.log('🔧 RevenueCat debug logging ENABLED (LOG_LEVEL.DEBUG)');
 
         // Configure with API key
+        console.log('📍 CHECKPOINT 10: About to configure RevenueCat...');
         console.log('🔑 Configuring RevenueCat with API key...');
         console.log('📱 Platform:', Platform.OS);
         console.log('📦 Bundle ID: com.ritzakku.velvet');
+        console.log('🔑 API Key being passed to Purchases.configure():');
+        console.log('   Raw value:', apiKey);
+        console.log('   Stringified:', JSON.stringify(apiKey));
+        console.log('   Character codes:', Array.from(apiKey.substring(0, 10)).map(c => c.charCodeAt(0)));
         
+        console.log('📍 CHECKPOINT 11: Calling Purchases.configure() NOW...');
         await Purchases.configure({
           apiKey: apiKey,
           appUserID: undefined, // Let RevenueCat generate anonymous ID, or set your own
         });
+        console.log('📍 CHECKPOINT 12: Purchases.configure() completed successfully!');
 
         this.isConfigured = true;
         console.log('✅ RevenueCat SDK configured successfully');
@@ -102,16 +122,26 @@ class RevenueCatManager {
         console.log('📦 Pre-fetching offerings...');
         await this.getOfferings();
 
+        console.log('📍 CHECKPOINT 13: Pre-fetch complete');
         console.log('🎉 ============= REVENUECAT INITIALIZATION COMPLETE =============');
+        console.log('📍 CHECKPOINT 14: About to return true');
         return true;
       } else {
+        console.log('📍 CHECKPOINT 15: Platform is NOT iOS - returning false');
         console.log('⚠️ RevenueCat: Platform not supported yet (Android coming soon)');
+        console.log('📍 CHECKPOINT 16: About to return false (non-iOS)');
         return false;
       }
     } catch (error) {
+      console.error('📍 CHECKPOINT 17: EXCEPTION CAUGHT!');
       console.error('❌ ============= REVENUECAT INITIALIZATION FAILED =============');
       console.error('❌ Failed to initialize RevenueCat:', error);
+      console.error('Error type:', error?.constructor?.name);
+      console.error('Error message:', error?.message);
+      console.error('Error code:', error?.code);
       console.error('Error details:', JSON.stringify(error, null, 2));
+      console.error('Error stack:', error?.stack);
+      console.error('📍 CHECKPOINT 18: About to return false (error)');
       return false;
     }
   }

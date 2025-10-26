@@ -8,28 +8,28 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		1BCE34B5DD12009B9898AB1D /* libPods-velvet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 92DBB8373D7B4A9EB0CE2936 /* libPods-velvet.a */; };
+		1E6D52755A67F95366DF0D66 /* libPods-velvet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C16F36E16539C36AE95D1BD /* libPods-velvet.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		633DAA59334F5E1FEC4A6983 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3183B79D21619ED0C0C5B3 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		EA579CE06B8A9ADA14C31DE2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B26D5D4F2B7BA25D1942E0A2 /* PrivacyInfo.xcprivacy */; };
+		C9BD468FEABDA979665B348D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AB492CA65173BC2039A46C /* ExpoModulesProvider.swift */; };
+		EEAF8A7233A7FDBEFD43C011 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F7D2B092506386B68514BEBF /* PrivacyInfo.xcprivacy */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		05AB492CA65173BC2039A46C /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-velvet/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		1057A6337AAC9CAB740DEE61 /* Pods-velvet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-velvet.debug.xcconfig"; path = "Target Support Files/Pods-velvet/Pods-velvet.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* velvet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = velvet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = velvet/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = velvet/Info.plist; sourceTree = "<group>"; };
-		2EA4629F0BE6BFFC52D3F770 /* Pods-velvet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-velvet.release.xcconfig"; path = "Target Support Files/Pods-velvet/Pods-velvet.release.xcconfig"; sourceTree = "<group>"; };
-		884E5C74517EE632C7B3BC35 /* Pods-velvet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-velvet.debug.xcconfig"; path = "Target Support Files/Pods-velvet/Pods-velvet.debug.xcconfig"; sourceTree = "<group>"; };
-		92DBB8373D7B4A9EB0CE2936 /* libPods-velvet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-velvet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9C3183B79D21619ED0C0C5B3 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-velvet/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		7C16F36E16539C36AE95D1BD /* libPods-velvet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-velvet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DA2D5280250CABB4528199F /* Pods-velvet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-velvet.release.xcconfig"; path = "Target Support Files/Pods-velvet/Pods-velvet.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = velvet/SplashScreen.storyboard; sourceTree = "<group>"; };
-		B26D5D4F2B7BA25D1942E0A2 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = velvet/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = velvet/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* velvet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "velvet-Bridging-Header.h"; path = "velvet/velvet-Bridging-Header.h"; sourceTree = "<group>"; };
+		F7D2B092506386B68514BEBF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = velvet/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,21 +37,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BCE34B5DD12009B9898AB1D /* libPods-velvet.a in Frameworks */,
+				1E6D52755A67F95366DF0D66 /* libPods-velvet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13A98A1C139A1B305616D430 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				B9668831D6FE842537CAD236 /* velvet */,
-			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
 		13B07FAE1A68108700A75B9A /* velvet */ = {
 			isa = PBXGroup;
 			children = (
@@ -61,7 +53,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				B26D5D4F2B7BA25D1942E0A2 /* PrivacyInfo.xcprivacy */,
+				F7D2B092506386B68514BEBF /* PrivacyInfo.xcprivacy */,
 			);
 			name = velvet;
 			sourceTree = "<group>";
@@ -70,9 +62,19 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				92DBB8373D7B4A9EB0CE2936 /* libPods-velvet.a */,
+				7C16F36E16539C36AE95D1BD /* libPods-velvet.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		319C24E4A407B050771FD827 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				1057A6337AAC9CAB740DEE61 /* Pods-velvet.debug.xcconfig */,
+				8DA2D5280250CABB4528199F /* Pods-velvet.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -89,8 +91,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				F65D1CF1899546D55669306E /* Pods */,
-				13A98A1C139A1B305616D430 /* ExpoModulesProviders */,
+				319C24E4A407B050771FD827 /* Pods */,
+				A3741FC91AE775F3DC9B62D9 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -105,10 +107,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B9668831D6FE842537CAD236 /* velvet */ = {
+		A3741FC91AE775F3DC9B62D9 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				9C3183B79D21619ED0C0C5B3 /* ExpoModulesProvider.swift */,
+				B8C0C7C4361FE8F694D9A54B /* velvet */,
+			);
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		B8C0C7C4361FE8F694D9A54B /* velvet */ = {
+			isa = PBXGroup;
+			children = (
+				05AB492CA65173BC2039A46C /* ExpoModulesProvider.swift */,
 			);
 			name = velvet;
 			sourceTree = "<group>";
@@ -122,16 +132,6 @@
 			path = velvet/Supporting;
 			sourceTree = "<group>";
 		};
-		F65D1CF1899546D55669306E /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				884E5C74517EE632C7B3BC35 /* Pods-velvet.debug.xcconfig */,
-				2EA4629F0BE6BFFC52D3F770 /* Pods-velvet.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -140,13 +140,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "velvet" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				2CE94C6A830A4259374A8E8B /* [Expo] Configure project */,
+				EB599961C32A90346599256F /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				AA70BB94059BDCD22CDAC2A8 /* [CP] Embed Pods Frameworks */,
+				166F2E60773545A3FE2AA15B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -196,7 +196,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				EA579CE06B8A9ADA14C31DE2 /* PrivacyInfo.xcprivacy in Resources */,
+				EEAF8A7233A7FDBEFD43C011 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,29 +242,27 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		2CE94C6A830A4259374A8E8B /* [Expo] Configure project */ = {
+		166F2E60773545A3FE2AA15B /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
-				"$(SRCROOT)/.xcode.env",
-				"$(SRCROOT)/.xcode.env.local",
-				"$(SRCROOT)/velvet/velvet.entitlements",
-				"$(SRCROOT)/Pods/Target Support Files/Pods-velvet/expo-configure-project.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-velvet/Pods-velvet-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
 			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"$(SRCROOT)/Pods/Target Support Files/Pods-velvet/ExpoModulesProvider.swift",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-velvet/expo-configure-project.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-velvet/Pods-velvet-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -304,27 +302,29 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-velvet/Pods-velvet-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		AA70BB94059BDCD22CDAC2A8 /* [CP] Embed Pods Frameworks */ = {
+		EB599961C32A90346599256F /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-velvet/Pods-velvet-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			inputFileListPaths = (
 			);
-			name = "[CP] Embed Pods Frameworks";
+			inputPaths = (
+				"$(SRCROOT)/.xcode.env",
+				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/velvet/velvet.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-velvet/expo-configure-project.sh",
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-velvet/ExpoModulesProvider.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-velvet/Pods-velvet-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-velvet/expo-configure-project.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -334,7 +334,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				633DAA59334F5E1FEC4A6983 /* ExpoModulesProvider.swift in Sources */,
+				C9BD468FEABDA979665B348D /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,7 +343,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 884E5C74517EE632C7B3BC35 /* Pods-velvet.debug.xcconfig */;
+			baseConfigurationReference = 1057A6337AAC9CAB740DEE61 /* Pods-velvet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -379,7 +379,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2EA4629F0BE6BFFC52D3F770 /* Pods-velvet.release.xcconfig */;
+			baseConfigurationReference = 8DA2D5280250CABB4528199F /* Pods-velvet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

@@ -88,6 +88,7 @@ const DebugConsole = () => {
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
   const [filterLevel, setFilterLevel] = useState('ALL'); // ALL, LOG, WARN, ERROR
+  const [autoScroll, setAutoScroll] = useState(false); // Auto-scroll OFF by default - user can toggle
   const scrollViewRef = useRef(null);
   const { user } = useAuth();
 
@@ -115,10 +116,10 @@ const DebugConsole = () => {
   }, [visible]);
 
   useEffect(() => {
-    if (visible && scrollViewRef.current) {
+    if (visible && autoScroll && scrollViewRef.current) {
       scrollViewRef.current.scrollToEnd({ animated: true });
     }
-  }, [logs, visible]);
+  }, [logs, visible, autoScroll]);
 
   const handleCopyLogs = () => {
     const filteredLogs = getFilteredLogs();
@@ -235,6 +236,12 @@ const DebugConsole = () => {
             <TouchableOpacity style={styles.actionButton} onPress={handleClearLogs}>
               <Text style={styles.actionButtonText}>🗑️ Clear</Text>
             </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.actionButton, autoScroll && styles.actionButtonActive]} 
+              onPress={() => setAutoScroll(!autoScroll)}
+            >
+              <Text style={styles.actionButtonText}>{autoScroll ? '⏸️ Pause' : '▶️ Auto'}</Text>
+            </TouchableOpacity>
             <Text style={styles.logCount}>
               {getFilteredLogs().length} / {logs.length} logs
             </Text>
@@ -349,6 +356,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#DC143C',
     borderRadius: 8,
+  },
+  actionButtonActive: {
+    backgroundColor: '#28A745', // Green when auto-scroll is active
   },
   actionButtonText: {
     color: '#FFFFFF',
