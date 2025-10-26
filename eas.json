@@ -13,7 +13,8 @@
       },
       "env": {
         "REVENUECAT_API_KEY": "@REVENUECAT_API_KEY"
-      }
+      },
+      "prebuildCommand": "chmod +x eas-build-pre-install.sh && ./eas-build-pre-install.sh"
     },
     "preview": {
       "distribution": "internal",
@@ -26,19 +27,22 @@
       },
       "env": {
         "REVENUECAT_API_KEY": "@REVENUECAT_API_KEY"
-      }
+      },
+      "prebuildCommand": "chmod +x eas-build-pre-install.sh && ./eas-build-pre-install.sh"
     },
     "production": {
       "distribution": "store",
       "ios": {
-        "credentialsSource": "remote"
+        "credentialsSource": "remote",
+        "buildConfiguration": "Release"
       },
       "android": {
         "credentialsSource": "remote"
       },
       "env": {
         "REVENUECAT_API_KEY": "@REVENUECAT_API_KEY"
-      }
+      },
+      "prebuildCommand": "chmod +x eas-build-pre-install.sh && ./eas-build-pre-install.sh"
     }
   },
   "submit": {
