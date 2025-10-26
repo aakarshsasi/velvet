@@ -7,6 +7,9 @@ import Purchases, {
     PurchasesPackage,
 } from 'react-native-purchases';
 
+// HARDCODED API KEY FOR DEBUGGING (will use this as fallback)
+const HARDCODED_API_KEY = 'appl_BQMzwpJqCjLlTkdtLqggdfrziiQ';
+
 /**
  * RevenueCat Manager
  * Handles initialization and management of RevenueCat SDK for iOS subscriptions
@@ -28,22 +31,27 @@ class RevenueCatManager {
         return true;
       }
 
-      // Get API key from environment
-      const apiKey = REVENUECAT_API_KEY;
+      // Get API key from environment or use hardcoded fallback
+      let apiKey = REVENUECAT_API_KEY;
+      let keySource = 'environment';
       
-      console.log('🔑 API Key check:', {
-        exists: !!apiKey,
-        length: apiKey?.length || 0,
-        prefix: apiKey?.substring(0, 10) || 'undefined',
-        platform: Platform.OS,
-      });
-
-      if (!apiKey) {
-        console.error('❌ RevenueCat API key not found in environment variables');
-        console.error('💡 Check that .env file exists and REVENUECAT_API_KEY is set');
-        return false;
+      console.log('🔍 Environment variable check:');
+      console.log('  - REVENUECAT_API_KEY from @env:', apiKey || 'undefined');
+      console.log('  - Type:', typeof apiKey);
+      console.log('  - Length:', apiKey?.length || 0);
+      
+      if (!apiKey || apiKey === 'undefined' || apiKey === '') {
+        console.warn('⚠️ No API key from environment, using HARDCODED fallback');
+        apiKey = HARDCODED_API_KEY;
+        keySource = 'hardcoded';
       }
-
+      
+      console.log('🔑 Final API Key being used:');
+      console.log('  - Source:', keySource);
+      console.log('  - Full Key:', apiKey);  // Logging full key for debugging
+      console.log('  - Length:', apiKey.length);
+      console.log('  - Starts with appl_:', apiKey.startsWith('appl_'));
+      
       // Configure Purchases SDK
       if (Platform.OS === 'ios') {
         // Enable debug logs in development - ALWAYS enable for testing
