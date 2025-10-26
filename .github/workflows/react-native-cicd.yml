@@ -143,6 +143,14 @@ jobs:
           ./scripts/increment-build-number.sh
           echo "Build number incremented for this build"
 
+      - name: Create .env file for RevenueCat
+        run: |
+          echo "Creating .env file with RevenueCat API key..."
+          echo "REVENUECAT_API_KEY=${{ secrets.REVENUECAT_API_KEY }}" > .env
+          echo "✅ .env file created"
+          # Verify it was created
+          cat .env | grep -c "REVENUECAT_API_KEY" && echo "✓ REVENUECAT_API_KEY present in .env"
+
       - name: Build iOS Production
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"

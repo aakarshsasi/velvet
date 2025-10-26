@@ -1,28 +1,37 @@
 #!/bin/bash
 
-# EAS Build Hook: Generate .env file from environment variables
+# EAS Build Hook: Verify .env file exists
 # This script runs before npm install during EAS builds
 
 set -e  # Exit immediately if any command fails
 
-echo "🔧 EAS Build: Creating .env file from environment variables..."
+echo "🔧 EAS Build: Checking for .env file..."
 
-# Check if REVENUECAT_API_KEY is set
-if [ -z "$REVENUECAT_API_KEY" ]; then
-  echo "❌ ERROR: REVENUECAT_API_KEY environment variable is not set!"
-  echo "Please ensure the EAS secret is configured:"
-  echo "  npx eas-cli env:create --name REVENUECAT_API_KEY --value <your-key> --scope project --environment production"
-  exit 1
+# Check if .env file exists
+if [ -f .env ]; then
+  echo "✅ .env file exists"
+  
+  # Verify REVENUECAT_API_KEY is present
+  if grep -q "REVENUECAT_API_KEY" .env; then
+    echo "✅ REVENUECAT_API_KEY found in .env"
+    grep "REVENUECAT_API_KEY" .env | sed 's/REVENUECAT_API_KEY=\(.\{10\}\).*$/REVENUECAT_API_KEY=\1***/' || true
+  else
+    echo "❌ ERROR: REVENUECAT_API_KEY not found in .env file"
+    exit 1
+  fi
+else
+  echo "⚠️  .env file not found - checking for environment variable..."
+  
+  # Try to create from environment variable if available
+  if [ -n "$REVENUECAT_API_KEY" ]; then
+    echo "✅ REVENUECAT_API_KEY found in environment (length: ${#REVENUECAT_API_KEY} characters)"
+    echo "REVENUECAT_API_KEY=${REVENUECAT_API_KEY}" > .env
+    echo "✅ .env file created from environment variable"
+  else
+    echo "❌ ERROR: No .env file and REVENUECAT_API_KEY environment variable not set!"
+    exit 1
+  fi
 fi
 
-echo "✅ REVENUECAT_API_KEY found (length: ${#REVENUECAT_API_KEY} characters)"
-
-# Create .env file
-cat > .env << EOF
-REVENUECAT_API_KEY=${REVENUECAT_API_KEY}
-EOF
-
-echo "✅ .env file created successfully"
-echo "📋 Contents verification:"
-grep -c "REVENUECAT_API_KEY" .env && echo "   ✓ REVENUECAT_API_KEY present in .env"
+echo "✅ .env file ready for build"
 
