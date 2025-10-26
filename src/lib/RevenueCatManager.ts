@@ -32,11 +32,12 @@ class RevenueCatManager {
       }
 
       // Get API key from environment or use hardcoded fallback
-      let apiKey = REVENUECAT_API_KEY;
+      let apiKey = REVENUECAT_API_KEY || process.env.REVENUECAT_API_KEY;
       let keySource = 'environment';
       
       console.log('🔍 Environment variable check:');
       console.log('  - REVENUECAT_API_KEY from @env:', apiKey || 'undefined');
+      console.log('  - REVENUECAT_API_KEY from process.env:', process.env.REVENUECAT_API_KEY || 'undefined');
       console.log('  - Type:', typeof apiKey);
       console.log('  - Length:', apiKey?.length || 0);
       
@@ -44,6 +45,13 @@ class RevenueCatManager {
         console.warn('⚠️ No API key from environment, using HARDCODED fallback');
         apiKey = HARDCODED_API_KEY;
         keySource = 'hardcoded';
+      } else {
+        // Check which source we used
+        if (process.env.REVENUECAT_API_KEY && !REVENUECAT_API_KEY) {
+          keySource = 'process.env (build-time injected)';
+        } else if (REVENUECAT_API_KEY && !process.env.REVENUECAT_API_KEY) {
+          keySource = '@env (dotenv)';
+        }
       }
       
       console.log('🔑 Final API Key being used:');
@@ -51,6 +59,18 @@ class RevenueCatManager {
       console.log('  - Full Key:', apiKey);  // Logging full key for debugging
       console.log('  - Length:', apiKey.length);
       console.log('  - Starts with appl_:', apiKey.startsWith('appl_'));
+      
+      // Enhanced debug logging for RevenueCat API key
+      console.log('═══════════════════════════════════════════════');
+      console.log('🎯 REVENUECAT API KEY DEBUG INFO');
+      console.log('═══════════════════════════════════════════════');
+      console.log('Source:', keySource);
+      console.log('Key Length:', apiKey.length);
+      console.log('Key Preview (first 20 chars):', apiKey.substring(0, 20));
+      console.log('Key Preview (last 10 chars):', '...' + apiKey.substring(apiKey.length - 10));
+      console.log('Full Key:', apiKey);
+      console.log('Key Valid:', apiKey && apiKey.length > 0 && apiKey.startsWith('appl_'));
+      console.log('═══════════════════════════════════════════════');
       
       // Configure Purchases SDK
       if (Platform.OS === 'ios') {
