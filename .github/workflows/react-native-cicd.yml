@@ -118,6 +118,18 @@ jobs:
           echo "EXPO_TOKEN is set: $([[ -n "$EXPO_TOKEN" ]] && echo "yes" || echo "no")"
           eas whoami
 
+      - name: Fetch RevenueCat API Key for Local Build
+        run: |
+          echo "Fetching RevenueCat API key for local build..."
+          # For local builds, we need to manually fetch the secret and create .env
+          # The prebuild script will use this environment variable
+          export REVENUECAT_API_KEY=${REVENUECAT_API_KEY}
+          echo "REVENUECAT_API_KEY available (length: ${#REVENUECAT_API_KEY} characters)"
+          echo "REVENUECAT_API_KEY=$REVENUECAT_API_KEY" >> $GITHUB_ENV
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          REVENUECAT_API_KEY: ${{ secrets.REVENUECAT_API_KEY }}
+
       - name: Setup iOS build environment
         run: |
           # Install Xcode command line tools
@@ -162,6 +174,7 @@ jobs:
           echo "Checking if IPA contains correct build number..."
         env:
           NODE_ENV: production
+          REVENUECAT_API_KEY: ${{ secrets.REVENUECAT_API_KEY }}
 
       - name: Submit to App Store (TestFlight)
         run: |
