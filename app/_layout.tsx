@@ -15,6 +15,7 @@ import { AuthProvider } from '../src/contexts/AuthContext';
 import { IAPProvider } from '../src/contexts/IAPContext';
 import { RevenueCatProvider } from '../src/contexts/RevenueCatContext';
 import AnalyticsService from '../src/services/AnalyticsService';
+import DebugConsole from '../src/components/DebugConsole';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -108,6 +109,7 @@ export default function RootLayout() {
               <Stack.Screen name="+not-found" />
             </Stack>
             <StatusBar style="auto" />
+            <DebugConsole />
           </IAPProvider>
         </RevenueCatProvider>
       </AuthProvider>
