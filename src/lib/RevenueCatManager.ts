@@ -99,7 +99,7 @@ class RevenueCatManager {
         console.log('🔑 API Key being passed to Purchases.configure():');
         console.log('   Raw value:', apiKey);
         console.log('   Stringified:', JSON.stringify(apiKey));
-        console.log('   Character codes:', Array.from(apiKey.substring(0, 10)).map(c => c.charCodeAt(0)));
+        console.log('   Character codes:', Array.from(apiKey.substring(0, 10)).map((c: string) => c.charCodeAt(0)));
         
         console.log('📍 CHECKPOINT 11: Calling Purchases.configure() NOW...');
         await Purchases.configure({
@@ -132,7 +132,7 @@ class RevenueCatManager {
         console.log('📍 CHECKPOINT 16: About to return false (non-iOS)');
         return false;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('📍 CHECKPOINT 17: EXCEPTION CAUGHT!');
       console.error('❌ ============= REVENUECAT INITIALIZATION FAILED =============');
       console.error('❌ Failed to initialize RevenueCat:', error);
