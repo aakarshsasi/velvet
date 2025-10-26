@@ -179,8 +179,9 @@ jobs:
 
           # Now run the actual build with build-specific filename
           echo "Starting EAS build..."
+          # The .env file is already created and REVENUECAT_API_KEY is in the environment
           REVENUECAT_API_KEY=${{ secrets.REVENUECAT_API_KEY }} \
-          eas build --platform ios --profile production --local --non-interactive --output=./app-ios-build-${BUILD_NUMBER}.ipa --env-file .env || {
+          eas build --platform ios --profile production --local --non-interactive --output=./app-ios-build-${BUILD_NUMBER}.ipa || {
             echo "EAS build failed - check the logs above for details"
             exit 1
           }
