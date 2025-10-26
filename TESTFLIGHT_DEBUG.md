@@ -9,9 +9,9 @@
 
 ### Activation
 
-1. **Triple-tap** anywhere on the screen (3 quick taps)
+1. **Tap the floating 🐛 button** in the bottom-right corner of the screen
 2. The debug console will open showing all logs
-3. Only works for:
+3. Only visible for:
    - Test account: `meow@gmail.com`
    - Development builds (`__DEV__` mode)
 

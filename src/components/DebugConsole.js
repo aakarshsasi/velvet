@@ -87,10 +87,8 @@ export const clearDebugLogs = () => {
 const DebugConsole = () => {
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
-  const [tapCount, setTapCount] = useState(0);
   const [filterLevel, setFilterLevel] = useState('ALL'); // ALL, LOG, WARN, ERROR
   const scrollViewRef = useRef(null);
-  const tapTimerRef = useRef(null);
   const { user } = useAuth();
 
   // Check if user is test account
@@ -121,25 +119,6 @@ const DebugConsole = () => {
       scrollViewRef.current.scrollToEnd({ animated: true });
     }
   }, [logs, visible]);
-
-  const handleScreenTap = () => {
-    if (!isTestAccount) return;
-
-    setTapCount((prev) => prev + 1);
-
-    if (tapTimerRef.current) {
-      clearTimeout(tapTimerRef.current);
-    }
-
-    tapTimerRef.current = setTimeout(() => {
-      if (tapCount >= 2) {
-        // Triple tap detected
-        setVisible(true);
-        setLogs([...getDebugLogs()]);
-      }
-      setTapCount(0);
-    }, 500);
-  };
 
   const handleCopyLogs = () => {
     const filteredLogs = getFilteredLogs();
@@ -181,16 +160,17 @@ const DebugConsole = () => {
 
   return (
     <>
+      {/* Floating debug button - only visible when console is closed */}
       {!visible && (
         <TouchableOpacity
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: 'transparent', zIndex: 9999 },
-          ]}
-          activeOpacity={1}
-          onPress={handleScreenTap}
-          pointerEvents="box-none" // Pass through to children, only capture taps
-        />
+          style={styles.floatingButton}
+          onPress={() => {
+            setVisible(true);
+            setLogs([...getDebugLogs()]);
+          }}
+        >
+          <Text style={styles.floatingButtonText}>🐛</Text>
+        </TouchableOpacity>
       )}
 
       <Modal
@@ -378,6 +358,26 @@ const styles = StyleSheet.create({
   logCount: {
     color: '#666666',
     fontSize: 12,
+  },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 100,
+    right: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#DC143C',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 8,
+    zIndex: 9999,
+  },
+  floatingButtonText: {
+    fontSize: 30,
   },
 });
 

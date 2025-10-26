@@ -11,11 +11,11 @@ import { ActivityIndicator, Image, View } from 'react-native';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '../hooks/useColorScheme';
+import DebugConsole from '../src/components/DebugConsole';
 import { AuthProvider } from '../src/contexts/AuthContext';
 import { IAPProvider } from '../src/contexts/IAPContext';
 import { RevenueCatProvider } from '../src/contexts/RevenueCatContext';
 import AnalyticsService from '../src/services/AnalyticsService';
-import DebugConsole from '../src/components/DebugConsole';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
