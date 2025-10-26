@@ -99,7 +99,7 @@ class RevenueCatManager {
         console.log('🔑 API Key being passed to Purchases.configure():');
         console.log('   Raw value:', apiKey);
         console.log('   Stringified:', JSON.stringify(apiKey));
-        console.log('   Character codes:', Array.from(apiKey.substring(0, 10)).map((c: string) => c.charCodeAt(0)));
+        console.log('   Character codes:', apiKey.substring(0, 10).split('').map(c => c.charCodeAt(0)));
         
         console.log('📍 CHECKPOINT 11: Calling Purchases.configure() NOW...');
         await Purchases.configure({
