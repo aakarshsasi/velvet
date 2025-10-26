@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  Clipboard,
-  Alert,
-  Platform,
+    Alert,
+    Clipboard,
+    Modal,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -176,23 +176,22 @@ const DebugConsole = () => {
   };
 
   if (!isTestAccount) {
-    return (
-      <TouchableOpacity
-        style={StyleSheet.absoluteFill}
-        activeOpacity={1}
-        onPress={handleScreenTap}
-      />
-    );
+    return null; // Don't render anything for non-test accounts
   }
 
   return (
     <>
-      <TouchableOpacity
-        style={StyleSheet.absoluteFill}
-        activeOpacity={1}
-        onPress={handleScreenTap}
-        pointerEvents="box-none"
-      />
+      {!visible && (
+        <TouchableOpacity
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: 'transparent', zIndex: 9999 },
+          ]}
+          activeOpacity={1}
+          onPress={handleScreenTap}
+          pointerEvents="box-none" // Pass through to children, only capture taps
+        />
+      )}
 
       <Modal
         visible={visible}
