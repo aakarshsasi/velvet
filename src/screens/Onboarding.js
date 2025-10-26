@@ -1,21 +1,22 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Slider from '@react-native-community/slider';
+import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  Animated,
-  Dimensions,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Animated,
+    Dimensions,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useAuth } from '../contexts/AuthContext';
@@ -798,6 +799,9 @@ export default function OnboardingScreen() {
     console.log('📝 New answers:', newAnswers);
     setAnswers(newAnswers);
 
+    // Haptic feedback when selecting an option
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     // Save incremental data after each answer
     setTimeout(() => {
       console.log('💾 Saving incremental data for step:', currentStep);
@@ -806,6 +810,9 @@ export default function OnboardingScreen() {
   };
 
   const nextStep = () => {
+    // Haptic feedback when going to next question
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     const currentSteps = getCurrentSteps();
     if (currentStep < currentSteps.length - 1) {
       analytics.trackFunnelStep(

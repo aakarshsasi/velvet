@@ -2,9 +2,10 @@
 // Replace these placeholder values with your actual Firebase project configuration
 // Get these values from Firebase Console > Project Settings > General > Your apps
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAnalytics } from 'firebase/analytics';
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getReactNativePersistence, initializeAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 // Firebase configuration object
@@ -21,8 +22,13 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase services
-export const auth = getAuth(app);
+// Initialize Firebase Auth with React Native persistence (AsyncStorage)
+// This ensures the user session persists across app restarts
+export const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
+
+// Initialize Firestore
 export const db = getFirestore(app);
 
 // Initialize Analytics (only if measurementId is provided)
@@ -38,29 +44,29 @@ if (firebaseConfig.measurementId) {
 export { analytics };
 
 // Export Firebase functions for compatibility
-export {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-  updateProfile,
-} from 'firebase/auth';
+    export {
+        createUserWithEmailAndPassword,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        signOut,
+        updateProfile
+    } from 'firebase/auth';
 
 export {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  setDoc,
-  updateDoc,
-  where,
+    addDoc,
+    collection,
+    deleteDoc,
+    doc,
+    getDoc,
+    getDocs,
+    limit,
+    orderBy,
+    query,
+    setDoc,
+    updateDoc,
+    where
 } from 'firebase/firestore';
 
-export { getAuth, getFirestore, initializeApp };
+export { getFirestore, initializeApp };
 
 export default app;

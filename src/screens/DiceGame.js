@@ -1,16 +1,17 @@
+import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  Animated,
-  Dimensions,
-  Modal,
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Animated,
+    Dimensions,
+    Modal,
+    SafeAreaView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import PremiumUpgrade from '../components/PremiumUpgrade';
 import { useAuth } from '../contexts/AuthContext';
@@ -127,6 +128,9 @@ export default function DiceGame() {
       return;
     }
 
+    // Haptic feedback when starting to roll
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     setIsRolling(true);
 
     // Shake animation
@@ -178,6 +182,9 @@ export default function DiceGame() {
         currentCategory.targets[
           Math.floor(Math.random() * currentCategory.targets.length)
         ];
+
+      // Haptic feedback when results are shown
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
       setActionResult(randomAction);
       setTargetResult(randomTarget);
@@ -470,6 +477,8 @@ export default function DiceGame() {
                           styles.categoryItemSelected,
                       ]}
                       onPress={() => {
+                        // Haptic feedback when selecting category
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                         console.log('Changing category to:', category);
                         setSelectedCategory(category);
                         setShowMenu(false);

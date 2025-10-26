@@ -1,16 +1,17 @@
+import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import useAnalytics from '../hooks/useAnalytics';
@@ -49,6 +50,10 @@ export default function LoginScreen() {
         analytics.trackSignUp('email', true);
         analytics.trackFunnelStep('signup_funnel', 'signup_attempt', 1, 3);
         await signUp(email, password, displayName);
+        
+        // Haptic feedback on successful signup
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        
         analytics.trackFunnelConversion('signup_funnel', 'signup_success', {
           email_domain: email.split('@')[1],
         });
@@ -59,6 +64,10 @@ export default function LoginScreen() {
         analytics.trackSignIn('email', true);
         analytics.trackFunnelStep('login_funnel', 'login_attempt', 1, 2);
         await signIn(email, password);
+        
+        // Haptic feedback on successful login
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        
         analytics.trackFunnelConversion('login_funnel', 'login_success', {
           email_domain: email.split('@')[1],
         });

@@ -1,17 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
-  auth,
-  createUserWithEmailAndPassword,
-  db,
-  doc,
-  getDoc,
-  onAuthStateChanged,
-  setDoc,
-  signInWithEmailAndPassword,
-  signOut,
-  updateDoc,
-  updateProfile,
+    auth,
+    createUserWithEmailAndPassword,
+    db,
+    doc,
+    getDoc,
+    onAuthStateChanged,
+    setDoc,
+    signInWithEmailAndPassword,
+    signOut,
+    updateDoc,
+    updateProfile,
 } from '../config/firebase';
 import AnalyticsService from '../services/AnalyticsService';
 
@@ -189,7 +189,27 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       AnalyticsService.trackSignIn('email', false, error);
       AnalyticsService.trackError(error, 'signin', 'error');
-      throw error;
+
+      // Handle specific Firebase Auth errors
+      let errorMessage = 'Failed to sign in';
+
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+      } else if (error.code === 'auth/user-disabled') {
+        errorMessage = 'This account has been disabled. Please contact support.';
+      } else if (error.code === 'auth/user-not-found') {
+        errorMessage = 'No account found with this email. Please sign up first.';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Incorrect password. Please try again.';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many failed login attempts. Please try again later.';
+      } else if (error.code === 'auth/network-request-failed') {
+        errorMessage = 'Network error. Please check your internet connection and try again.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
     }
   };
 
