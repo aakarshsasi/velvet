@@ -137,6 +137,12 @@ jobs:
           # Install CocoaPods
           sudo gem install cocoapods
 
+      - name: Increment Build Number
+        run: |
+          chmod +x scripts/increment-build-number.sh
+          ./scripts/increment-build-number.sh
+          echo "Build number incremented for this build"
+
       - name: Build iOS Production
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
