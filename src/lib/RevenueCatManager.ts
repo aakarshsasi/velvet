@@ -1,10 +1,10 @@
 import { REVENUECAT_API_KEY } from '@env';
 import { Platform } from 'react-native';
 import Purchases, {
-    CustomerInfo,
-    LOG_LEVEL,
-    PurchasesOfferings,
-    PurchasesPackage,
+  CustomerInfo,
+  LOG_LEVEL,
+  PurchasesOfferings,
+  PurchasesPackage,
 } from 'react-native-purchases';
 
 // HARDCODED API KEY FOR DEBUGGING (will use this as fallback)

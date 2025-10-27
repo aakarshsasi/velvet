@@ -131,19 +131,29 @@ jobs:
         run: |
           echo "🔐 Setting up RevenueCat API key for EAS build..."
           
+          # Check if secret is available
+          if [ -z "${{ secrets.REVENUECAT_API_KEY }}" ]; then
+            echo "❌ ERROR: REVENUECAT_API_KEY secret is not set in GitHub!"
+            exit 1
+          fi
+          
           # Create .env file for Metro bundler
           echo "REVENUECAT_API_KEY=${{ secrets.REVENUECAT_API_KEY }}" > .env
-          cp .env ./app/.env || true
-          cp .env ./src/.env || true
-          echo "✅ Created .env in root, app/, and src/"
+          echo "✅ Created .env file"
+          
+          # Verify .env file contents
+          echo "📄 .env file contents:"
+          cat .env
+          echo ""
+          
+          # Verify API key format
+          API_KEY_LENGTH=$(echo "${{ secrets.REVENUECAT_API_KEY }}" | wc -c)
+          echo "🔑 API Key length: $API_KEY_LENGTH characters"
+          echo "🔑 API Key starts with: $(echo "${{ secrets.REVENUECAT_API_KEY }}" | cut -c1-5)"
           
           # Set environment variable for EAS build
           echo "REVENUECAT_API_KEY=${{ secrets.REVENUECAT_API_KEY }}" >> $GITHUB_ENV
           echo "✅ EAS environment variable set"
-          
-          # Verify setup
-          ls -la .env app/.env src/.env 2>/dev/null || echo "⚠️ Some .env files missing"
-          cat .env | head -c 50 | echo "..."
 
       - name: Build iOS Production
         run: |
@@ -156,10 +166,40 @@ jobs:
           echo "Files in current directory: $(ls -la)"
           echo "Checking app.json build number:"
           cat app.json | grep -A 5 -B 5 "buildNumber"
-          echo "Verifying .env file exists before build:"
-          ls -la .env || echo "⚠️ .env file not found!"
-          cat .env || echo "⚠️ Cannot read .env file!"
-          echo "Note: RevenueCat API key loaded from GitHub secret and .env file"
+          
+          echo ""
+          echo "🔍 VERIFYING .env FILE BEFORE BUILD:"
+          echo "=================================="
+          if [ -f .env ]; then
+            echo "✅ .env file exists"
+            echo "📄 .env file contents (masked):"
+            cat .env | sed 's/\(.\{20\}\).*/\1***/' || echo "Cannot read .env"
+            
+            # Check if REVENUECAT_API_KEY is in .env
+            if grep -q "REVENUECAT_API_KEY" .env; then
+              echo "✅ REVENUECAT_API_KEY found in .env"
+              API_KEY_VALUE=$(grep REVENUECAT_API_KEY .env | cut -d'=' -f2)
+              echo "   Key length: ${#API_KEY_VALUE} characters"
+              echo "   Key starts with: ${API_KEY_VALUE:0:5}"
+            else
+              echo "❌ REVENUECAT_API_KEY NOT FOUND in .env"
+              exit 1
+            fi
+          else
+            echo "❌ .env file NOT FOUND!"
+            exit 1
+          fi
+          
+          echo ""
+          echo "🔍 VERIFYING ENVIRONMENT VARIABLE:"
+          echo "================================="
+          if [ -n "$REVENUECAT_API_KEY" ]; then
+            echo "✅ REVENUECAT_API_KEY environment variable is set"
+            echo "   Length: ${#REVENUECAT_API_KEY} characters"
+            echo "   Starts with: ${REVENUECAT_API_KEY:0:5}"
+          else
+            echo "❌ REVENUECAT_API_KEY environment variable NOT SET"
+          fi
 
           # Test bundling first
           echo "Testing bundling..."
