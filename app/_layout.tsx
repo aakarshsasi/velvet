@@ -1,3 +1,6 @@
+// IMPORT DEBUG CONSOLE FIRST to start log capture immediately
+import DebugConsole from '../src/components/DebugConsole';
+
 import {
     DarkTheme,
     DefaultTheme,
@@ -11,7 +14,6 @@ import { ActivityIndicator, Image, View } from 'react-native';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '../hooks/useColorScheme';
-import DebugConsole from '../src/components/DebugConsole';
 import { AuthProvider } from '../src/contexts/AuthContext';
 import { IAPProvider } from '../src/contexts/IAPContext';
 import { RevenueCatProvider } from '../src/contexts/RevenueCatContext';

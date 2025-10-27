@@ -1,4 +1,5 @@
 import { REVENUECAT_API_KEY } from '@env';
+import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import Purchases, {
     CustomerInfo,
@@ -26,6 +27,9 @@ class RevenueCatManager {
     console.log('🚀 ============= REVENUECAT INITIALIZATION START =============');
     console.log('📍 CHECKPOINT 1: Entered initializeRevenueCat()');
     
+    // Declare variables outside try block for error logging
+    let apiKey = '';
+    
     try {
       console.log('📍 CHECKPOINT 2: Inside try block');
       
@@ -38,7 +42,7 @@ class RevenueCatManager {
 
       // Get API key from environment or use hardcoded fallback
       console.log('📍 CHECKPOINT 4: About to read API key from environment...');
-      let apiKey = REVENUECAT_API_KEY || process.env.REVENUECAT_API_KEY;
+      apiKey = REVENUECAT_API_KEY || process.env.REVENUECAT_API_KEY || '';
       let keySource = 'environment';
       console.log('📍 CHECKPOINT 5: API key read from environment');
       
@@ -93,13 +97,31 @@ class RevenueCatManager {
 
         // Configure with API key
         console.log('📍 CHECKPOINT 10: About to configure RevenueCat...');
+        
+        // Get actual bundle ID from the app
+        const bundleId = Constants.expoConfig?.ios?.bundleIdentifier || 'unknown';
+        const appName = Constants.expoConfig?.name || 'unknown';
+        const appVersion = Constants.expoConfig?.version || 'unknown';
+        
+        console.log('═══════════════════════════════════════════════');
+        console.log('📱 APP CONFIGURATION');
+        console.log('═══════════════════════════════════════════════');
+        console.log('App Name:', appName);
+        console.log('App Version:', appVersion);
+        console.log('Platform:', Platform.OS);
+        console.log('Bundle ID (Expected):', 'com.ritzakku.velvet');
+        console.log('Bundle ID (Actual):', bundleId);
+        console.log('Bundle ID Match:', bundleId === 'com.ritzakku.velvet' ? '✅ YES' : '❌ NO - MISMATCH!');
+        console.log('═══════════════════════════════════════════════');
+        
         console.log('🔑 Configuring RevenueCat with API key...');
-        console.log('📱 Platform:', Platform.OS);
-        console.log('📦 Bundle ID: com.ritzakku.velvet');
         console.log('🔑 API Key being passed to Purchases.configure():');
         console.log('   Raw value:', apiKey);
+        console.log('   Length:', apiKey.length);
+        console.log('   Starts with appl_:', apiKey.startsWith('appl_'));
         console.log('   Stringified:', JSON.stringify(apiKey));
-        console.log('   Character codes:', apiKey.substring(0, 10).split('').map((c: string) => c.charCodeAt(0)));
+        console.log('   First 10 char codes:', apiKey.substring(0, 10).split('').map((c: string) => c.charCodeAt(0)));
+        console.log('   Trimmed equals original:', apiKey === apiKey.trim());
         
         console.log('📍 CHECKPOINT 11: Calling Purchases.configure() NOW...');
         await Purchases.configure({
@@ -141,6 +163,52 @@ class RevenueCatManager {
       console.error('Error code:', error?.code);
       console.error('Error details:', JSON.stringify(error, null, 2));
       console.error('Error stack:', error?.stack);
+      
+      // Special handling for Invalid API Key error (code 7225)
+      if (error?.code === '7225' || error?.message?.includes('Invalid API Key')) {
+        console.error('');
+        console.error('🚨 ============= INVALID API KEY ERROR (7225) =============');
+        console.error('This error means RevenueCat\'s servers rejected the API key.');
+        console.error('');
+        console.error('📋 TROUBLESHOOTING STEPS:');
+        console.error('');
+        console.error('1️⃣ CHECK REVENUECAT DASHBOARD:');
+        console.error('   • Go to: https://app.revenuecat.com/');
+        console.error('   • Select your project: "VelvetX" (or correct project name)');
+        console.error('   • Go to: Project Settings > API Keys');
+        console.error('   • Verify the iOS API key matches: appl_BQMzwpJqCjLlTkdtLqggdfrziiQ');
+        console.error('');
+        console.error('2️⃣ VERIFY APP CONFIGURATION:');
+        console.error('   • In RevenueCat dashboard, go to: Project Settings > Apps');
+        console.error('   • Find your iOS app entry');
+        console.error('   • Verify Bundle ID is set to: com.ritzakku.velvet');
+        console.error('   • If mismatch, either:');
+        console.error('     a) Update RevenueCat to match: com.ritzakku.velvet');
+        console.error('     b) Or get the correct API key for the existing app');
+        console.error('');
+        console.error('3️⃣ CHECK APP STORE CONNECT:');
+        console.error('   • Verify the app exists in App Store Connect');
+        console.error('   • Bundle ID should be: com.ritzakku.velvet');
+        console.error('   • App must be in "Prepare for Submission" or later');
+        console.error('');
+        console.error('4️⃣ VERIFY PRODUCTS:');
+        console.error('   • In RevenueCat: Products > iOS Products');
+        console.error('   • Ensure products are added for this app');
+        console.error('   • Product IDs should match App Store Connect exactly');
+        console.error('');
+        console.error('💡 MOST COMMON CAUSES:');
+        console.error('   ✗ Using API key from wrong RevenueCat project/app');
+        console.error('   ✗ Bundle ID mismatch between app and RevenueCat');
+        console.error('   ✗ RevenueCat app not linked to App Store Connect');
+        console.error('   ✗ No iOS app created in RevenueCat dashboard');
+        console.error('');
+        console.error('🔍 CURRENT CONFIG:');
+        console.error('   API Key:', apiKey);
+        console.error('   Bundle ID:', Constants.expoConfig?.ios?.bundleIdentifier || 'unknown');
+        console.error('   Platform:', Platform.OS);
+        console.error('========================================================');
+      }
+      
       console.error('📍 CHECKPOINT 18: About to return false (error)');
       return false;
     }

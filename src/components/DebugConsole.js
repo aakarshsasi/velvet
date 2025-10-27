@@ -84,6 +84,11 @@ export const clearDebugLogs = () => {
   debugLogs.length = 0;
 };
 
+// START LOG CAPTURE IMMEDIATELY ON MODULE LOAD (before any other code runs)
+// This ensures we capture RevenueCat initialization logs
+startLogCapture();
+console.log('🚀 Debug console module loaded - log capture started immediately');
+
 const DebugConsole = () => {
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
@@ -92,19 +97,17 @@ const DebugConsole = () => {
   const scrollViewRef = useRef(null);
   const { user } = useAuth();
 
-  // Check if user is test account
-  const isTestAccount = user?.email === 'meow@gmail.com' || __DEV__;
+  // ENABLE DEBUG CONSOLE FOR EVERYONE (not just test account)
+  // We need to see the logs for all users to diagnose the RevenueCat issue
+  const isTestAccount = true; // Always enabled for debugging
 
+  // Log capture is already started at module load, this useEffect is kept for future cleanup
   useEffect(() => {
-    if (isTestAccount) {
-      startLogCapture();
-    }
+    // Already started at module load, but keeping this for reference
     return () => {
-      if (isTestAccount) {
-        stopLogCapture();
-      }
+      // Don't stop capture on unmount - keep it running
     };
-  }, [isTestAccount]);
+  }, []);
 
   useEffect(() => {
     if (visible) {
