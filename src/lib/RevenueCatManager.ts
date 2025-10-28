@@ -52,8 +52,18 @@ class RevenueCatManager {
       console.log('  - Type:', typeof apiKey);
       console.log('  - Length:', apiKey?.length || 0);
       
-      if (!apiKey || apiKey === 'undefined' || apiKey === '') {
-        console.warn('⚠️ No API key from environment, using HARDCODED fallback');
+      // Check if API key is missing, invalid, or not in correct format
+      const isValidKey = apiKey && 
+                        apiKey !== 'undefined' && 
+                        apiKey !== '' && 
+                        apiKey.startsWith('appl_') && 
+                        apiKey.length > 30; // RevenueCat keys are typically 38 chars
+      
+      if (!isValidKey) {
+        console.warn('⚠️ Invalid or missing API key from environment, using HARDCODED fallback');
+        console.warn('   Received key:', apiKey);
+        console.warn('   Key starts with appl_:', apiKey?.startsWith('appl_') || false);
+        console.warn('   Key length:', apiKey?.length || 0);
         apiKey = HARDCODED_API_KEY;
         keySource = 'hardcoded';
       } else {
