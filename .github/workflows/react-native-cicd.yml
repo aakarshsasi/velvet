@@ -181,6 +181,8 @@ jobs:
               API_KEY_VALUE=$(grep REVENUECAT_API_KEY .env | cut -d'=' -f2)
               echo "   Key length: ${#API_KEY_VALUE} characters"
               echo "   Key starts with: ${API_KEY_VALUE:0:5}"
+              echo "   Key ends with: ${API_KEY_VALUE: -10}"
+              echo "   Full key value: ${API_KEY_VALUE}"
             else
               echo "❌ REVENUECAT_API_KEY NOT FOUND in .env"
               exit 1
@@ -197,6 +199,8 @@ jobs:
             echo "✅ REVENUECAT_API_KEY environment variable is set"
             echo "   Length: ${#REVENUECAT_API_KEY} characters"
             echo "   Starts with: ${REVENUECAT_API_KEY:0:5}"
+            echo "   Ends with: ${REVENUECAT_API_KEY: -10}"
+            echo "   Full env value: ${REVENUECAT_API_KEY}"
           else
             echo "❌ REVENUECAT_API_KEY environment variable NOT SET"
           fi

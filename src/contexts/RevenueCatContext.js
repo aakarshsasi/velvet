@@ -115,10 +115,26 @@ export const RevenueCatProvider = ({ children }) => {
         const hasActiveEntitlement = await RevenueCatManager.hasActiveEntitlement();
 
         if (hasActiveEntitlement) {
-          // Upgrade user to premium
+          // Extract transaction details from the active subscription
+          let transactionId = null;
+          let purchaseTime = null;
+          let orderId = null;
+          
+          // Get the first active entitlement to find transaction info
+          const activeEntitlements = Object.keys(result.customerInfo.entitlements.active);
+          if (activeEntitlements.length > 0) {
+            const entitlement = result.customerInfo.entitlements.active[activeEntitlements[0]];
+            transactionId = entitlement.originalTransactionIdentifier || entitlement.transactionIdentifier;
+            purchaseTime = entitlement.purchaseDate || entitlement.originalPurchaseDate;
+            orderId = entitlement.originalTransactionIdentifier || entitlement.transactionIdentifier;
+          }
+
+          // Upgrade user to premium with purchase data
           await upgradeToPremium({
             productId: packageToPurchase.product.identifier,
-            purchaseDate: new Date().toISOString(),
+            transactionId: transactionId || `revcat_${Date.now()}`,
+            purchaseTime: purchaseTime || Date.now(),
+            orderId: orderId || `revcat_order_${Date.now()}`,
           });
 
           Alert.alert(

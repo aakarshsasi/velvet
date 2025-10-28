@@ -246,13 +246,19 @@ export const AuthProvider = ({ children }) => {
 
       // Add purchase data if provided
       if (purchaseData) {
-        updateData.purchaseData = {
-          productId: purchaseData.productId,
-          transactionId: purchaseData.transactionId,
-          purchaseTime: purchaseData.purchaseTime,
-          purchaseToken: purchaseData.purchaseToken,
-          orderId: purchaseData.orderId,
-        };
+        // Only include defined values to avoid undefined errors
+        const purchaseDataObj = {};
+        if (purchaseData.productId) purchaseDataObj.productId = purchaseData.productId;
+        if (purchaseData.transactionId) purchaseDataObj.transactionId = purchaseData.transactionId;
+        if (purchaseData.purchaseTime) purchaseDataObj.purchaseTime = purchaseData.purchaseTime;
+        if (purchaseData.purchaseToken) purchaseDataObj.purchaseToken = purchaseData.purchaseToken;
+        if (purchaseData.orderId) purchaseDataObj.orderId = purchaseData.orderId;
+        if (purchaseData.purchaseDate) purchaseDataObj.purchaseDate = purchaseData.purchaseDate;
+        
+        // Only add if we have at least productId
+        if (Object.keys(purchaseDataObj).length > 0) {
+          updateData.purchaseData = purchaseDataObj;
+        }
       }
 
       await updateDoc(doc(db, 'users', user.uid), updateData);

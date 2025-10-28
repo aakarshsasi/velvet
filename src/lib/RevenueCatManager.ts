@@ -46,11 +46,14 @@ class RevenueCatManager {
       let keySource = 'environment';
       console.log('📍 CHECKPOINT 5: API key read from environment');
       
-      console.log('🔍 Environment variable check:');
-      console.log('  - REVENUECAT_API_KEY from @env:', apiKey || 'undefined');
-      console.log('  - REVENUECAT_API_KEY from process.env:', process.env.REVENUECAT_API_KEY || 'undefined');
-      console.log('  - Type:', typeof apiKey);
-      console.log('  - Length:', apiKey?.length || 0);
+      console.warn('🔍 Environment variable check (WARN):');
+      console.warn('  - REVENUECAT_API_KEY from @env:', apiKey || 'undefined');
+      console.warn('  - REVENUECAT_API_KEY from process.env:', process.env.REVENUECAT_API_KEY || 'undefined');
+      console.warn('  - Type:', typeof apiKey);
+      console.warn('  - Length:', apiKey?.length || 0);
+      console.warn('  - First 10 chars:', apiKey?.substring(0, 10) || 'N/A');
+      console.warn('  - Last 10 chars:', apiKey?.substring(Math.max(0, (apiKey?.length || 0) - 10)) || 'N/A');
+      console.warn('  - Value (full, careful!):', apiKey);
       
       // Check if API key is missing, invalid, or not in correct format
       const isValidKey = apiKey && 
@@ -61,9 +64,10 @@ class RevenueCatManager {
       
       if (!isValidKey) {
         console.warn('⚠️ Invalid or missing API key from environment, using HARDCODED fallback');
-        console.warn('   Received key:', apiKey);
+        console.warn('   Received key value:', apiKey);
         console.warn('   Key starts with appl_:', apiKey?.startsWith('appl_') || false);
         console.warn('   Key length:', apiKey?.length || 0);
+        console.warn('   Key chars:', apiKey?.split('').map((c, i) => `[${i}]=${c.charCodeAt(0)}`).join(', '));
         apiKey = HARDCODED_API_KEY;
         keySource = 'hardcoded';
       } else {
