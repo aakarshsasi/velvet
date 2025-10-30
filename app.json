@@ -11,10 +11,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ritzakku.velvet",
-      "buildNumber": "23",
+      "buildNumber": "24",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "CFBundleVersion": "23"
+        "CFBundleVersion": "24"
       }
     },
     "android": {
@@ -24,7 +24,7 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.ritzakku.velvet",
-      "versionCode": 23
+      "versionCode": 24
     },
     "web": {
       "bundler": "metro",

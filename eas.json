@@ -25,9 +25,7 @@
       "android": {
         "credentialsSource": "remote"
       },
-      "env": {
-        "REVENUECAT_API_KEY": "@REVENUECAT_API_KEY"
-      },
+      "env": {},
       "prebuildCommand": "chmod +x eas-build-pre-install.sh && ./eas-build-pre-install.sh"
     },
     "production": {
@@ -39,9 +37,7 @@
       "android": {
         "credentialsSource": "remote"
       },
-      "env": {
-        "REVENUECAT_API_KEY": "@REVENUECAT_API_KEY"
-      },
+      "env": {},
       "prebuildCommand": "chmod +x eas-build-pre-install.sh && ./eas-build-pre-install.sh"
     }
   },
