@@ -24,7 +24,7 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.ritzakku.velvet",
-      "versionCode": 1
+      "versionCode": 23
     },
     "web": {
       "bundler": "metro",
